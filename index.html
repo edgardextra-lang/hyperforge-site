@@ -123,6 +123,22 @@ ul { list-style: none; }
 .fade-in-delay-4 { transition-delay: 0.4s; }
 .fade-in-delay-5 { transition-delay: 0.5s; }
 
+/* Live pulse dot */
+.live-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  background: var(--accent-green);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(16,185,129,0.6);
+  animation: live-pulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes live-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(16,185,129,0.6); }
+  60%  { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+  100% { box-shadow: 0 0 0 0   rgba(16,185,129,0); }
+}
+
 /* ============================================================
    Navigation
    ============================================================ */
@@ -604,7 +620,7 @@ ul { list-style: none; }
    ============================================================ */
 .pricing .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   align-items: start;
 }
@@ -703,7 +719,14 @@ ul { list-style: none; }
   opacity: 0.9;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
+  .pricing .pricing-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 760px;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 640px) {
   .pricing .pricing-grid {
     grid-template-columns: 1fr;
     max-width: 440px;
@@ -906,9 +929,9 @@ ul { list-style: none; }
     <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:32px;" class="fade-in">
       <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-green);"></div>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Combined · 4 Days</div>
-        <div style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:var(--accent-green);line-height:1;margin-bottom:6px;">+9.26%</div>
-        <div style="font-size:12px;color:var(--text-muted);">+$18.52 realized · 3 live bots</div>
+        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px;">Combined · Live <span class="live-dot"></span></div>
+        <div id="live-pnl-pct" style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:var(--accent-green);line-height:1;margin-bottom:6px;">+9.26%</div>
+        <div id="live-pnl-usd" style="font-size:12px;color:var(--text-muted);">+$18.52 realized · 3 live bots</div>
       </div>
       <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-cyan);"></div>
@@ -918,15 +941,15 @@ ul { list-style: none; }
       </div>
       <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#c084fc;"></div>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Total Trades</div>
-        <div style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:#c084fc;line-height:1;margin-bottom:6px;">94</div>
-        <div style="font-size:12px;color:var(--text-muted);">Delta 69 · EFC 16 · Squeeze 8</div>
+        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px;">Total Trades <span class="live-dot"></span></div>
+        <div id="live-trade-count" style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:#c084fc;line-height:1;margin-bottom:6px;">94</div>
+        <div id="live-trade-detail" style="font-size:12px;color:var(--text-muted);">Delta 69 · EFC 16 · Squeeze 8</div>
       </div>
       <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-amber);"></div>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Win Rate</div>
-        <div style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:var(--accent-amber);line-height:1;margin-bottom:6px;">61.7%</div>
-        <div style="font-size:12px;color:var(--text-muted);">58W / 36L combined</div>
+        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px;">Win Rate <span class="live-dot"></span></div>
+        <div id="live-win-rate" style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:var(--accent-amber);line-height:1;margin-bottom:6px;">61.7%</div>
+        <div id="live-win-detail" style="font-size:12px;color:var(--text-muted);">58W / 36L combined</div>
       </div>
       <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--border-light);"></div>
@@ -943,7 +966,13 @@ ul { list-style: none; }
           <div style="font-size:15px;font-weight:800;color:var(--text-primary);">HyperBot vs Bitcoin vs S&amp;P 500</div>
           <div style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono);margin-top:3px;">Monte Carlo · 1-year · 10,000 simulations · realistic edge-decay model</div>
         </div>
-        <div style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:100px;padding:5px 12px;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);letter-spacing:.06em;">LIVE DATA</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+        <span id="live-updated" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);"></span>
+        <div style="display:flex;align-items:center;gap:6px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:100px;padding:5px 12px;">
+          <span class="live-dot"></span>
+          <span style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);letter-spacing:.06em;">LIVE</span>
+        </div>
+      </div>
       </div>
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
@@ -957,8 +986,8 @@ ul { list-style: none; }
           </thead>
           <tbody>
             <tr style="border-bottom:1px solid var(--border); background:rgba(34,211,238,0.03);">
-              <td style="padding:13px 24px;color:var(--text-secondary);">4-day actual return</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--accent-green);">+9.26%</td>
+              <td style="padding:13px 24px;color:var(--text-secondary);">Live actual return</td>
+              <td id="live-table-pnl" style="padding:13px 16px;text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--accent-green);">+9.26%</td>
               <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">+4.22%</td>
               <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">+3.23%</td>
             </tr>
@@ -1224,7 +1253,7 @@ ul { list-style: none; }
     <div style="text-align:center; margin-bottom:56px;" class="fade-in">
       <div class="section-label">Pricing</div>
       <h2 class="section-title">Start building <span class="text-gradient-green">today.</span></h2>
-      <p class="section-subtitle" style="margin:0 auto;">One-time payment. Lifetime access. No subscriptions.</p>
+      <p class="section-subtitle" style="margin:0 auto;">One-time kits. Or ongoing mentorship. Build the way that works for you.</p>
     </div>
     <div class="pricing-grid">
       <!-- Starter -->
@@ -1272,6 +1301,24 @@ ul { list-style: none; }
           <li><span class="check">&#10003;</span> Future course modules free</li>
         </ul>
         <button class="price-btn" onclick="alert('Coming soon!')">Go VIP &rarr;</button>
+      </div>
+      <!-- Mentoring -->
+      <div class="price-card fade-in fade-in-delay-3" style="border-color:rgba(16,185,129,0.3);">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent-green),var(--accent-cyan));border-radius:var(--radius-xl) var(--radius-xl) 0 0;"></div>
+        <div class="tier-name">Mentoring</div>
+        <div class="tier-desc">Build with someone who's done it live</div>
+        <div class="price"><span class="dollar">$</span>99<span style="font-size:16px;font-weight:500;color:var(--text-muted);">/mo</span></div>
+        <ul class="features-list">
+          <li><span class="check">&#10003;</span> Weekly 30-min 1-on-1 session</li>
+          <li><span class="check">&#10003;</span> Strategy &amp; edge development</li>
+          <li><span class="check">&#10003;</span> Live code &amp; bot review</li>
+          <li><span class="check">&#10003;</span> AI-assisted dev workflow coaching</li>
+          <li><span class="check">&#10003;</span> Direct Discord access (async Q&amp;A)</li>
+          <li><span class="check">&#10003;</span> Signal debugging &amp; parameter tuning</li>
+          <li><span class="check">&#10003;</span> Cancel anytime</li>
+        </ul>
+        <button class="price-btn" style="background:linear-gradient(135deg,var(--accent-green),var(--accent-cyan));color:#0a0f1e;" onclick="alert('Coming soon!')">Start Mentoring &rarr;</button>
+        <div style="margin-top:16px;font-size:11px;color:var(--text-muted);text-align:center;line-height:1.5;">Limited spots · Reviewed weekly · Real strategies, not theory</div>
       </div>
     </div>
   </div>
@@ -1405,6 +1452,77 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     }
   });
 });
+
+/* ------- Live PnL stats (fetches from HyperBot cloud every 60s) ------- */
+(function() {
+  var API = 'https://competent-beach-notre-meter.trycloudflare.com/api/hyperforge/live-stats';
+
+  function fmt(n, decimals) {
+    return n.toFixed(decimals !== undefined ? decimals : 2);
+  }
+
+  function applyStats(d) {
+    var pnlPct  = d.sum_pnl_pct;
+    var pnlUsd  = d.combined_realized_pnl;
+    var trades  = d.combined_trade_count;
+    var wr      = d.combined_win_rate;
+    var bots    = d.bots || [];
+
+    // stat cards
+    var pctEl = document.getElementById('live-pnl-pct');
+    if (pctEl) pctEl.textContent = (pnlPct >= 0 ? '+' : '') + fmt(pnlPct) + '%';
+
+    var usdEl = document.getElementById('live-pnl-usd');
+    if (usdEl) usdEl.textContent = (pnlUsd >= 0 ? '+$' : '-$') + fmt(Math.abs(pnlUsd)) + ' realized · 3 live bots';
+
+    var tcEl = document.getElementById('live-trade-count');
+    if (tcEl) tcEl.textContent = trades;
+
+    var tdEl = document.getElementById('live-trade-detail');
+    if (tdEl) {
+      var parts = bots.map(function(b) {
+        var label = b.key === 'deltabot' ? 'Delta' : b.key === 'efcbot' ? 'EFC' : 'Squeeze';
+        return label + ' ' + (b.trade_count || 0);
+      });
+      tdEl.textContent = parts.join(' · ');
+    }
+
+    var wrEl = document.getElementById('live-win-rate');
+    if (wrEl) wrEl.textContent = fmt(wr, 1) + '%';
+
+    // win/loss detail — recalculate from win_rate × trades
+    var wdEl = document.getElementById('live-win-detail');
+    if (wdEl) {
+      var wins = Math.round(wr / 100 * trades);
+      var losses = trades - wins;
+      wdEl.textContent = wins + 'W / ' + losses + 'L combined';
+    }
+
+    // comparison table
+    var tblEl = document.getElementById('live-table-pnl');
+    if (tblEl) tblEl.textContent = (pnlPct >= 0 ? '+' : '') + fmt(pnlPct) + '%';
+
+    // last updated
+    var upEl = document.getElementById('live-updated');
+    if (upEl) {
+      var now = new Date();
+      upEl.textContent = 'updated ' + now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', timeZone:'America/New_York' }) + ' EDT';
+    }
+  }
+
+  function fetchStats() {
+    fetch(API)
+      .then(function(r) { return r.json(); })
+      .then(applyStats)
+      .catch(function() {
+        var upEl = document.getElementById('live-updated');
+        if (upEl) upEl.textContent = '';
+      });
+  }
+
+  fetchStats();
+  setInterval(fetchStats, 60000);
+})();
 </script>
 
 </body>
