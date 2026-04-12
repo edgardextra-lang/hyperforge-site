@@ -139,6 +139,93 @@ ul { list-style: none; }
   100% { box-shadow: 0 0 0 0   rgba(16,185,129,0); }
 }
 
+/* ── Stat cards ─────────────────────────────────────────────── */
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 20px 18px;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: transform 0.3s cubic-bezier(.22,1,.36,1),
+              box-shadow 0.3s cubic-bezier(.22,1,.36,1),
+              border-color 0.3s;
+  /* entrance animation */
+  opacity: 0;
+  transform: translateY(18px);
+}
+.stat-card.card-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+}
+/* accent glow on hover, keyed to data-color attr */
+.stat-card[data-color="green"]:hover  { border-color: rgba(52,211,153,0.5); box-shadow: 0 16px 40px rgba(52,211,153,0.12); }
+.stat-card[data-color="cyan"]:hover   { border-color: rgba(34,211,238,0.5); box-shadow: 0 16px 40px rgba(34,211,238,0.12); }
+.stat-card[data-color="purple"]:hover { border-color: rgba(192,132,252,0.5); box-shadow: 0 16px 40px rgba(192,132,252,0.12); }
+.stat-card[data-color="amber"]:hover  { border-color: rgba(251,191,36,0.5);  box-shadow: 0 16px 40px rgba(251,191,36,0.12); }
+.stat-card[data-color="slate"]:hover  { border-color: rgba(148,163,184,0.4); box-shadow: 0 16px 40px rgba(148,163,184,0.08); }
+
+/* top accent bar */
+.stat-card-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  border-radius: 2px 2px 0 0;
+}
+/* shimmer sweep on value flash */
+.stat-card::after {
+  content: '';
+  position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+  pointer-events: none;
+  transition: none;
+}
+.stat-card.flash::after {
+  animation: card-shimmer 0.55s ease-out forwards;
+}
+@keyframes card-shimmer {
+  0%   { left: -60%; }
+  100% { left: 140%; }
+}
+/* value flash on update */
+.stat-card.flash .stat-value {
+  animation: value-flash 0.4s ease-out;
+}
+@keyframes value-flash {
+  0%   { opacity: 0.5; transform: scale(0.97); }
+  60%  { opacity: 1;   transform: scale(1.03); }
+  100% { opacity: 1;   transform: scale(1); }
+}
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stat-value {
+  font-size: 30px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  line-height: 1;
+  margin-bottom: 8px;
+  transition: color 0.3s;
+}
+.stat-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 /* ============================================================
    Navigation
    ============================================================ */
@@ -924,37 +1011,43 @@ ul { list-style: none; }
     </div>
 
     <!-- 5 stat cards -->
-    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:32px;" class="fade-in">
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-green);"></div>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px;">Combined · Live <span class="live-dot"></span></div>
-        <div id="live-pnl-pct" style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:var(--accent-green);line-height:1;margin-bottom:6px;">+9.26%</div>
-        <div id="live-pnl-usd" style="font-size:12px;color:var(--text-muted);">+$17.45 realized · 5 live bots</div>
+    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:32px;" id="stat-cards-grid">
+
+      <div class="stat-card" data-color="green" style="transition-delay:0s;">
+        <div class="stat-card-bar" style="background:var(--accent-green);"></div>
+        <div class="stat-label">Combined · Live <span class="live-dot"></span></div>
+        <div id="live-pnl-pct" class="stat-value" style="color:var(--accent-green);">+8.71%</div>
+        <div id="live-pnl-usd" class="stat-sub">+$17.45 realized · 5 live bots</div>
       </div>
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-cyan);"></div>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">MC Projection · 1 Year</div>
-        <div style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:var(--accent-cyan);line-height:1;margin-bottom:6px;">+440%</div>
-        <div style="font-size:12px;color:var(--text-muted);">median · base · 10k simulations</div>
+
+      <div class="stat-card" data-color="cyan" style="transition-delay:.07s;">
+        <div class="stat-card-bar" style="background:var(--accent-cyan);"></div>
+        <div class="stat-label">MC Projection · 1 Year</div>
+        <div class="stat-value" style="color:var(--accent-cyan);">+440%</div>
+        <div class="stat-sub">median · base · 10k simulations</div>
       </div>
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#c084fc;"></div>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px;">Total Trades <span class="live-dot"></span></div>
-        <div id="live-trade-count" style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:#c084fc;line-height:1;margin-bottom:6px;">94</div>
-        <div id="live-trade-detail" style="font-size:12px;color:var(--text-muted);">across 5 live bots</div>
+
+      <div class="stat-card" data-color="purple" style="transition-delay:.14s;">
+        <div class="stat-card-bar" style="background:#c084fc;"></div>
+        <div class="stat-label">Total Trades <span class="live-dot"></span></div>
+        <div id="live-trade-count" class="stat-value" style="color:#c084fc;">131</div>
+        <div id="live-trade-detail" class="stat-sub">across 5 live bots</div>
       </div>
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-amber);"></div>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px;">Win Rate <span class="live-dot"></span></div>
-        <div id="live-win-rate" style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:var(--accent-amber);line-height:1;margin-bottom:6px;">61.7%</div>
-        <div id="live-win-detail" style="font-size:12px;color:var(--text-muted);">58W / 36L combined</div>
+
+      <div class="stat-card" data-color="amber" style="transition-delay:.21s;">
+        <div class="stat-card-bar" style="background:var(--accent-amber);"></div>
+        <div class="stat-label">Win Rate <span class="live-dot"></span></div>
+        <div id="live-win-rate" class="stat-value" style="color:var(--accent-amber);">58.0%</div>
+        <div id="live-win-detail" class="stat-sub">combined across all bots</div>
       </div>
-      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--border-light);"></div>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">P(Profit) 1 Year</div>
-        <div style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:var(--text-primary);line-height:1;margin-bottom:6px;">100%</div>
-        <div style="font-size:12px;color:var(--text-muted);">across all 10k simulations</div>
+
+      <div class="stat-card" data-color="slate" style="transition-delay:.28s;">
+        <div class="stat-card-bar" style="background:var(--border-light);"></div>
+        <div class="stat-label">P(Profit) 1 Year</div>
+        <div class="stat-value" style="color:var(--text-primary);">100%</div>
+        <div class="stat-sub">across all 10k simulations</div>
       </div>
+
     </div>
 
     <!-- HyperBot vs BTC vs S&P comparison table -->
@@ -984,10 +1077,19 @@ ul { list-style: none; }
           </thead>
           <tbody>
             <tr style="border-bottom:1px solid var(--border); background:rgba(34,211,238,0.03);">
-              <td style="padding:13px 24px;color:var(--text-secondary);">Live actual return</td>
-              <td id="live-table-pnl" style="padding:13px 16px;text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--accent-green);">+9.26%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">+4.22%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">+3.23%</td>
+              <td style="padding:13px 24px;color:var(--text-secondary);">
+                Live actual return
+                <div style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px;" id="bench-since-label">since Apr 6</div>
+              </td>
+              <td id="live-table-pnl" style="padding:13px 16px;text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--accent-green);">+8.71%</td>
+              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);">
+                <span id="live-btc-ret" style="color:var(--accent-amber);">—</span>
+                <div id="live-btc-24h" style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px;"></div>
+              </td>
+              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);">
+                <span id="live-spy-ret" style="color:var(--text-secondary);">—</span>
+                <div id="live-spy-24h" style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px;"></div>
+              </td>
             </tr>
             <tr style="border-bottom:1px solid var(--border);">
               <td style="padding:13px 24px;color:var(--text-secondary);">1-year MC median</td>
@@ -1379,8 +1481,7 @@ ul { list-style: none; }
         <button class="price-btn" onclick="alert('Waitlist opening soon!')">Join Pro &rarr;</button>
       </div>
       <!-- Alpha -->
-      <div class="price-card popular fade-in fade-in-delay-2">
-        <div class="popular-badge">Most Popular</div>
+      <div class="price-card fade-in fade-in-delay-2">
         <div class="tier-name">Alpha</div>
         <div class="tier-desc">For serious traders</div>
         <div class="price"><span class="dollar">$</span>149<span style="font-size:16px;font-weight:500;color:var(--text-muted);">/mo</span></div>
@@ -1553,58 +1654,117 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
   });
 });
 
+/* ------- Stat card entrance animation ------- */
+(function() {
+  var cards = document.querySelectorAll('.stat-card');
+  if (!cards.length) return;
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        var el = e.target;
+        var delay = parseFloat(el.style.transitionDelay || 0) * 1000;
+        setTimeout(function() { el.classList.add('card-visible'); }, delay);
+        io.unobserve(el);
+      }
+    });
+  }, { threshold: 0.15 });
+  cards.forEach(function(c) { io.observe(c); });
+})();
+
 /* ------- Live PnL stats (fetches from stats.json every 60s) ------- */
 (function() {
   var API = 'https://edgardextra-lang.github.io/crack-the-bot/stats.json';
+  var _prev = {};
 
   function fmt(n, decimals) {
     return n.toFixed(decimals !== undefined ? decimals : 2);
   }
 
+  function fmtSign(n, dec) {
+    return (n >= 0 ? '+' : '') + fmt(n, dec !== undefined ? dec : 2) + '%';
+  }
+
+  /* flash the card containing an element when its value changes */
+  function flashCard(el) {
+    if (!el) return;
+    var card = el.closest ? el.closest('.stat-card') : null;
+    if (!card) return;
+    card.classList.remove('flash');
+    void card.offsetWidth; // reflow
+    card.classList.add('flash');
+    setTimeout(function() { card.classList.remove('flash'); }, 600);
+  }
+
+  function setEl(id, text) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.textContent !== text) {
+      el.textContent = text;
+      flashCard(el);
+    }
+  }
+
   function applyStats(d) {
-    var pnlPct  = d.sum_pnl_pct;
-    var pnlUsd  = d.combined_realized_pnl;
-    var trades  = d.combined_trade_count;
-    var wr      = d.combined_win_rate;
-    var bots    = d.bots || [];
+    var pnlPct = d.sum_pnl_pct;
+    var pnlUsd = d.combined_realized_pnl;
+    var trades = d.combined_trade_count;
+    var wr     = d.combined_win_rate;
+    var bots   = d.bots || [];
+    var bench  = d.benchmarks || {};
 
     // stat cards
-    var pctEl = document.getElementById('live-pnl-pct');
-    if (pctEl) pctEl.textContent = (pnlPct >= 0 ? '+' : '') + fmt(pnlPct) + '%';
+    setEl('live-pnl-pct', fmtSign(pnlPct));
+    setEl('live-pnl-usd', (pnlUsd >= 0 ? '+$' : '-$') + fmt(Math.abs(pnlUsd)) + ' realized · ' + (bots.length || 5) + ' live bots');
+    setEl('live-trade-count', String(trades));
+    setEl('live-trade-detail', 'across ' + (bots.length || 5) + ' live bots');
+    setEl('live-win-rate', fmt(wr, 1) + '%');
 
-    var usdEl = document.getElementById('live-pnl-usd');
-    if (usdEl) usdEl.textContent = (pnlUsd >= 0 ? '+$' : '-$') + fmt(Math.abs(pnlUsd)) + ' realized · ' + (bots.length || 5) + ' live bots';
+    var wins = Math.round(wr / 100 * trades);
+    setEl('live-win-detail', wins + 'W / ' + (trades - wins) + 'L combined');
 
-    var tcEl = document.getElementById('live-trade-count');
-    if (tcEl) tcEl.textContent = trades;
+    // comparison table — HyperBot
+    setEl('live-table-pnl', fmtSign(pnlPct));
 
-    var tdEl = document.getElementById('live-trade-detail');
-    if (tdEl) {
-      tdEl.textContent = 'across ' + (bots.length || 5) + ' live bots';
-    }
-
-    // update bot count in proof bar label
+    // proof bar
+    setEl('proof-pnl', fmtSign(pnlPct));
     var bcEl = document.getElementById('proof-bot-count');
     if (bcEl) bcEl.textContent = bots.length || 5;
 
-    var wrEl = document.getElementById('live-win-rate');
-    if (wrEl) wrEl.textContent = fmt(wr, 1) + '%';
-
-    // win/loss detail — recalculate from win_rate × trades
-    var wdEl = document.getElementById('live-win-detail');
-    if (wdEl) {
-      var wins = Math.round(wr / 100 * trades);
-      var losses = trades - wins;
-      wdEl.textContent = wins + 'W / ' + losses + 'L combined';
+    // BTC benchmark
+    if (bench.btc_return_pct != null) {
+      var btcRet = bench.btc_return_pct;
+      var btcEl  = document.getElementById('live-btc-ret');
+      if (btcEl) {
+        btcEl.textContent = fmtSign(btcRet);
+        btcEl.style.color = btcRet >= 0 ? 'var(--accent-amber)' : 'var(--accent-rose)';
+      }
+      if (bench.btc_24h_pct != null) {
+        var b24 = bench.btc_24h_pct;
+        var el24 = document.getElementById('live-btc-24h');
+        if (el24) {
+          el24.textContent = (b24 >= 0 ? '▲' : '▼') + Math.abs(b24).toFixed(2) + '% 24h';
+          el24.style.color = b24 >= 0 ? 'rgba(52,211,153,.7)' : 'rgba(251,113,133,.7)';
+        }
+      }
     }
 
-    // comparison table
-    var tblEl = document.getElementById('live-table-pnl');
-    if (tblEl) tblEl.textContent = (pnlPct >= 0 ? '+' : '') + fmt(pnlPct) + '%';
-
-    // sync proof bar
-    var proofEl = document.getElementById('proof-pnl');
-    if (proofEl) proofEl.textContent = (pnlPct >= 0 ? '+' : '') + fmt(pnlPct) + '%';
+    // S&P benchmark
+    if (bench.spy_return_pct != null) {
+      var spyRet = bench.spy_return_pct;
+      var spyEl  = document.getElementById('live-spy-ret');
+      if (spyEl) {
+        spyEl.textContent = fmtSign(spyRet);
+        spyEl.style.color = spyRet >= 0 ? 'var(--text-secondary)' : 'var(--accent-rose)';
+      }
+      if (bench.spy_24h_pct != null) {
+        var s24 = bench.spy_24h_pct;
+        var sp24 = document.getElementById('live-spy-24h');
+        if (sp24) {
+          sp24.textContent = (s24 >= 0 ? '▲' : '▼') + Math.abs(s24).toFixed(2) + '% 24h';
+          sp24.style.color = s24 >= 0 ? 'rgba(52,211,153,.7)' : 'rgba(251,113,133,.7)';
+        }
+      }
+    }
 
     // last updated
     var upEl = document.getElementById('live-updated');
@@ -1615,7 +1775,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
   }
 
   function fetchStats() {
-    fetch(API)
+    fetch(API + '?t=' + Date.now(), { cache: 'no-store' })
       .then(function(r) { return r.json(); })
       .then(applyStats)
       .catch(function() {
