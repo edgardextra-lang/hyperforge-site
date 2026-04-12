@@ -698,22 +698,20 @@ ul { list-style: none; }
   padding: 14px 0;
   border-radius: var(--radius-sm);
   font-weight: 700;
-  font-size: 16px;
-  border: 2px solid var(--border-light);
-  background: transparent;
-  color: var(--text-primary);
+  font-size: 15px;
+  border: none;
+  background: var(--gradient-indigo);
+  color: #fff;
   cursor: pointer;
-  transition: all 0.25s;
+  transition: opacity 0.2s, transform 0.2s;
 }
 .price-btn:hover {
-  border-color: var(--accent-indigo);
-  background: var(--accent-indigo-bg);
-  color: var(--accent-indigo);
+  opacity: 0.88;
+  transform: translateY(-1px);
 }
 .price-card.popular .price-btn {
   background: var(--gradient-indigo);
-  border: none;
-  color: #fff;
+  box-shadow: 0 6px 20px rgba(99,102,241,0.35);
 }
 .price-card.popular .price-btn:hover {
   opacity: 0.9;
@@ -901,16 +899,16 @@ ul { list-style: none; }
   <div class="container">
     <div class="proof-grid">
       <div class="proof-item fade-in">
-        <div class="proof-number" id="proof-pnl">+9.27%</div>
-        <div class="proof-label">Live realized return · 3 AI bots running</div>
+        <div class="proof-number" id="proof-pnl">+8.71%</div>
+        <div class="proof-label">Live realized return · <span id="proof-bot-count">5</span> AI bots running</div>
       </div>
       <div class="proof-item fade-in fade-in-delay-1">
         <div class="proof-number">0.025%</div>
         <div class="proof-label">Builder fee on free tier · lowest on Hyperliquid</div>
       </div>
       <div class="proof-item fade-in fade-in-delay-2">
-        <div class="proof-number">97%</div>
-        <div class="proof-label">Gross margin at scale · builder fee + subscriptions</div>
+        <div class="proof-number">&lt;5 min</div>
+        <div class="proof-label">From strategy idea to backtested bot · no code needed</div>
       </div>
     </div>
   </div>
@@ -922,7 +920,7 @@ ul { list-style: none; }
     <div class="text-center fade-in" style="text-align:center; margin-bottom:48px;">
       <div class="section-label">Founder's Live Proof</div>
       <h2 class="section-title">Real money. Real mainnet.<br><span class="text-gradient-green">Real performance.</span></h2>
-      <p class="section-subtitle" style="margin:0 auto;">The platform founder runs 3 AI bots live on Hyperliquid. These are real realized PnL numbers — the same infrastructure you'll deploy on HyperForge.</p>
+      <p class="section-subtitle" style="margin:0 auto;">The platform founder runs 5 AI bots live on Hyperliquid. These are real realized PnL numbers — the same infrastructure you'll deploy on HyperForge.</p>
     </div>
 
     <!-- 5 stat cards -->
@@ -931,7 +929,7 @@ ul { list-style: none; }
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-green);"></div>
         <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px;">Combined · Live <span class="live-dot"></span></div>
         <div id="live-pnl-pct" style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:var(--accent-green);line-height:1;margin-bottom:6px;">+9.26%</div>
-        <div id="live-pnl-usd" style="font-size:12px;color:var(--text-muted);">+$18.52 realized · 3 live bots</div>
+        <div id="live-pnl-usd" style="font-size:12px;color:var(--text-muted);">+$17.45 realized · 5 live bots</div>
       </div>
       <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-cyan);"></div>
@@ -943,7 +941,7 @@ ul { list-style: none; }
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:#c084fc;"></div>
         <div style="font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px;">Total Trades <span class="live-dot"></span></div>
         <div id="live-trade-count" style="font-size:28px;font-weight:800;font-family:var(--font-mono);color:#c084fc;line-height:1;margin-bottom:6px;">94</div>
-        <div id="live-trade-detail" style="font-size:12px;color:var(--text-muted);">Delta 69 · EFC 16 · Squeeze 8</div>
+        <div id="live-trade-detail" style="font-size:12px;color:var(--text-muted);">across 5 live bots</div>
       </div>
       <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md); padding:20px 18px; position:relative; overflow:hidden;">
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent-amber);"></div>
@@ -1396,7 +1394,7 @@ ul { list-style: none; }
           <li><span class="check">&#10003;</span> Early access to new bot types</li>
         </ul>
         <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);background:var(--accent-green-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">Zero builder fee</div>
-        <button class="price-btn" onclick="alert('Waitlist opening soon!')">Join Alpha &rarr;</button>
+        <button class="price-btn" onclick="alert('Waitlist opening soon!')">Join Waitlist &rarr;</button>
       </div>
       <!-- Desk -->
       <div class="price-card fade-in fade-in-delay-3" style="border-color:rgba(99,102,241,0.3);">
@@ -1414,7 +1412,7 @@ ul { list-style: none; }
           <li><span class="check">&#10003;</span> SLA + 24h support</li>
         </ul>
         <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);background:var(--accent-green-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">Zero builder fee</div>
-        <button class="price-btn" style="background:var(--gradient-indigo);" onclick="alert('Contact us for Desk access')">Contact for Desk &rarr;</button>
+        <button class="price-btn" onclick="alert('Contact us for Desk access')">Join Waitlist &rarr;</button>
         <div style="margin-top:14px;font-size:11px;color:var(--text-muted);text-align:center;line-height:1.5;">Prop firms · Funds · Multi-trader desks</div>
       </div>
     </div>
@@ -1555,9 +1553,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
   });
 });
 
-/* ------- Live PnL stats (fetches from HyperBot cloud every 60s) ------- */
+/* ------- Live PnL stats (fetches from stats.json every 60s) ------- */
 (function() {
-  var API = 'https://competent-beach-notre-meter.trycloudflare.com/api/hyperforge/live-stats';
+  var API = 'https://edgardextra-lang.github.io/crack-the-bot/stats.json';
 
   function fmt(n, decimals) {
     return n.toFixed(decimals !== undefined ? decimals : 2);
@@ -1575,19 +1573,19 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     if (pctEl) pctEl.textContent = (pnlPct >= 0 ? '+' : '') + fmt(pnlPct) + '%';
 
     var usdEl = document.getElementById('live-pnl-usd');
-    if (usdEl) usdEl.textContent = (pnlUsd >= 0 ? '+$' : '-$') + fmt(Math.abs(pnlUsd)) + ' realized · 3 live bots';
+    if (usdEl) usdEl.textContent = (pnlUsd >= 0 ? '+$' : '-$') + fmt(Math.abs(pnlUsd)) + ' realized · ' + (bots.length || 5) + ' live bots';
 
     var tcEl = document.getElementById('live-trade-count');
     if (tcEl) tcEl.textContent = trades;
 
     var tdEl = document.getElementById('live-trade-detail');
     if (tdEl) {
-      var parts = bots.map(function(b) {
-        var label = b.key === 'deltabot' ? 'Delta' : b.key === 'efcbot' ? 'EFC' : 'Squeeze';
-        return label + ' ' + (b.trade_count || 0);
-      });
-      tdEl.textContent = parts.join(' · ');
+      tdEl.textContent = 'across ' + (bots.length || 5) + ' live bots';
     }
+
+    // update bot count in proof bar label
+    var bcEl = document.getElementById('proof-bot-count');
+    if (bcEl) bcEl.textContent = bots.length || 5;
 
     var wrEl = document.getElementById('live-win-rate');
     if (wrEl) wrEl.textContent = fmt(wr, 1) + '%';
