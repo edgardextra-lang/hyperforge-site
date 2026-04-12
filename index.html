@@ -220,6 +220,42 @@ ul { list-style: none; }
   margin-bottom: 8px;
   transition: color 0.3s;
 }
+/* stat cards grid */
+.stat-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+@media (max-width: 900px) {
+  .stat-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .stat-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  /* last card (5th) spans full width so it centers */
+  .stat-cards-grid .stat-card:last-child {
+    grid-column: 1 / -1;
+    max-width: 50%;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .stat-card {
+    padding: 16px 14px 14px;
+  }
+  .stat-value {
+    font-size: 24px;
+  }
+  .stat-label {
+    white-space: normal;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+}
+
 .stat-sub {
   font-size: 12px;
   color: var(--text-muted);
@@ -1011,7 +1047,7 @@ ul { list-style: none; }
     </div>
 
     <!-- 5 stat cards -->
-    <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:32px;" id="stat-cards-grid">
+    <div class="stat-cards-grid" id="stat-cards-grid">
 
       <div class="stat-card" data-color="green" style="transition-delay:0s;">
         <div class="stat-card-bar" style="background:var(--accent-green);"></div>
@@ -1052,18 +1088,18 @@ ul { list-style: none; }
 
     <!-- HyperBot vs BTC vs S&P comparison table -->
     <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:20px;" class="fade-in fade-in-delay-1">
-      <div style="padding:20px 24px 0; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:16px;">
-        <div>
+      <div style="padding:16px 20px; display:flex; align-items:flex-start; justify-content:space-between; gap:12px; border-bottom:1px solid var(--border); flex-wrap:wrap;">
+        <div style="min-width:0;">
           <div style="font-size:15px;font-weight:800;color:var(--text-primary);">HyperBot vs Bitcoin vs S&amp;P 500</div>
-          <div style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono);margin-top:3px;">Monte Carlo · 1-year · 10,000 simulations · realistic edge-decay model</div>
+          <div style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);margin-top:3px;line-height:1.5;">Monte Carlo · 1-year · 10,000 simulations<br class="mobile-break"> · realistic edge-decay model</div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-        <span id="live-updated" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);"></span>
-        <div style="display:flex;align-items:center;gap:6px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:100px;padding:5px 12px;">
-          <span class="live-dot"></span>
-          <span style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);letter-spacing:.06em;">LIVE</span>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+          <span id="live-updated" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);"></span>
+          <div style="display:flex;align-items:center;gap:6px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:100px;padding:5px 12px;">
+            <span class="live-dot"></span>
+            <span style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);letter-spacing:.06em;">LIVE</span>
+          </div>
         </div>
-      </div>
       </div>
       <div style="overflow-x:auto;">
         <table style="width:100%;border-collapse:collapse;font-size:13px;">
