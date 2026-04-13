@@ -1001,8 +1001,8 @@ ul { list-style: none; }
     rgba(99,102,241,0.9)  0%,
     rgba(34,211,238,0.9)  25%,
     rgba(167,139,250,0.9) 50%,
-    rgba(52,211,153,0.9)  75%,
-    rgba(245,158,11,0.9)  100%);
+    rgba(56,189,248,0.9)  75%,
+    rgba(192,132,252,0.9) 100%);
   filter: blur(0.5px);
 }
 /* Progress fill overlay */
@@ -1013,7 +1013,7 @@ ul { list-style: none; }
   top: 28px;
   width: 4px;
   height: var(--pl-progress, 0%);
-  background: linear-gradient(to bottom, #6366f1, #22d3ee, #a78bfa, #34d399, #f59e0b);
+  background: linear-gradient(to bottom, #6366f1, #22d3ee, #a78bfa, #38bdf8, #c084fc);
   border-radius: 2px;
   box-shadow: 0 0 8px rgba(99,102,241,0.5);
   transition: height 0.6s cubic-bezier(0.16,1,0.3,1);
@@ -1605,7 +1605,7 @@ ul { list-style: none; }
   <div class="container">
     <div style="text-align:center;margin-bottom:64px;" class="fade-in">
       <div class="section-label">The Platform</div>
-      <h2 class="section-title">Build. Test. Deploy.<br><span class="text-gradient-green">Optimize — in one workflow.</span></h2>
+      <h2 class="section-title">Build. Test. Deploy.<br><span class="text-gradient-indigo">Optimize — in one workflow.</span></h2>
       <p class="section-subtitle" style="margin:12px auto 0;">No other platform takes your strategy from idea to live — and keeps improving it automatically.</p>
     </div>
 
@@ -1643,18 +1643,18 @@ ul { list-style: none; }
           </div>
 
           <div class="pl-step inactive" data-step="3" onclick="pipelineGoTo(3)">
-            <div class="pl-dot" style="background:linear-gradient(135deg,#059669,#34d399);">4</div>
+            <div class="pl-dot" style="background:linear-gradient(135deg,#0369a1,#38bdf8);">4</div>
             <div class="pl-info">
-              <div class="pl-tag" style="color:#34d399;">Live Deploy</div>
+              <div class="pl-tag" style="color:#38bdf8;">Live Deploy</div>
               <div class="pl-name">One click to mainnet</div>
               <div class="pl-sub">Non-custodial · circuit breakers</div>
             </div>
           </div>
 
           <div class="pl-step inactive" data-step="4" onclick="pipelineGoTo(4)">
-            <div class="pl-dot" style="background:linear-gradient(135deg,#b45309,#f59e0b);">5</div>
+            <div class="pl-dot" style="background:linear-gradient(135deg,#7e22ce,#c084fc);">5</div>
             <div class="pl-info">
-              <div class="pl-tag" style="color:#f59e0b;">AI Optimization</div>
+              <div class="pl-tag" style="color:#c084fc;">AI Optimization</div>
               <div class="pl-name">Gets smarter 24/7</div>
               <div class="pl-sub">GLM-5.1 · continuous tuning</div>
             </div>
@@ -1707,11 +1707,11 @@ ul { list-style: none; }
               <div class="pl-card-body">
                 <div class="pl-mrow"><span class="pl-mlabel">Sharpe Ratio</span><span class="pl-mval" style="color:#22d3ee;">2.41</span></div>
                 <div class="pl-bar-bg"><div class="pl-bar-f" style="width:80%;background:#22d3ee;"></div></div>
-                <div class="pl-mrow"><span class="pl-mlabel">Win Rate</span><span class="pl-mval" style="color:var(--accent-green);">64.2%</span></div>
-                <div class="pl-bar-bg"><div class="pl-bar-f" style="width:64%;background:var(--accent-green);"></div></div>
-                <div class="pl-mrow"><span class="pl-mlabel">Max Drawdown</span><span class="pl-mval" style="color:var(--accent-rose);">-8.3%</span></div>
-                <div class="pl-bar-bg"><div class="pl-bar-f" style="width:8%;background:var(--accent-rose);"></div></div>
-                <div class="pl-mrow" style="margin-top:4px;"><span class="pl-mlabel">Est. Annual Return</span><span class="pl-mval" style="color:var(--accent-green);">+312%</span></div>
+                <div class="pl-mrow"><span class="pl-mlabel">Win Rate</span><span class="pl-mval" style="color:#22d3ee;">64.2%</span></div>
+                <div class="pl-bar-bg"><div class="pl-bar-f" style="width:64%;background:#22d3ee;"></div></div>
+                <div class="pl-mrow"><span class="pl-mlabel">Max Drawdown</span><span class="pl-mval" style="color:#a78bfa;">-8.3%</span></div>
+                <div class="pl-bar-bg"><div class="pl-bar-f" style="width:8%;background:#a78bfa;"></div></div>
+                <div class="pl-mrow" style="margin-top:4px;"><span class="pl-mlabel">Est. Annual Return</span><span class="pl-mval" style="color:#818cf8;">+312%</span></div>
               </div>
             </div>
           </div>
@@ -1733,9 +1733,9 @@ ul { list-style: none; }
               <div class="pl-card-body">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
                   <span style="font-size:10px;font-family:var(--font-mono);color:var(--text-muted);">PAPER MODE</span>
-                  <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);border-radius:100px;padding:3px 10px;"><span class="live-dot"></span><span style="font-size:9px;font-family:var(--font-mono);color:var(--accent-green);font-weight:700;">LIVE PRICES</span></span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);border-radius:100px;padding:3px 10px;"><span class="live-dot" style="background:#a78bfa;box-shadow:0 0 6px #a78bfa;"></span><span style="font-size:9px;font-family:var(--font-mono);color:#a78bfa;font-weight:700;">LIVE PRICES</span></span>
                 </div>
-                <div class="pl-mrow"><span class="pl-mlabel">Paper PnL (7d)</span><span class="pl-mval" style="color:var(--accent-green);">+$142.30</span></div>
+                <div class="pl-mrow"><span class="pl-mlabel">Paper PnL (7d)</span><span class="pl-mval" style="color:#a78bfa;">+$142.30</span></div>
                 <div class="pl-mrow"><span class="pl-mlabel">vs Backtest</span><span class="pl-mval" style="color:#a78bfa;">97% match</span></div>
                 <div class="pl-mrow"><span class="pl-mlabel">Avg slippage</span><span class="pl-mval" style="color:var(--text-secondary);">0.012%</span></div>
                 <div style="margin-top:8px;padding:6px 10px;background:rgba(167,139,250,.1);border-radius:6px;font-size:10px;color:#a78bfa;font-family:var(--font-mono);">✓ Edge confirmed — ready to go live</div>
@@ -1747,27 +1747,27 @@ ul { list-style: none; }
         <!-- Panel 4: Live Deploy -->
         <div class="pl-panel" data-panel="3">
           <div class="pl-panel-inner">
-            <div class="pl-panel-tag" style="color:var(--accent-green);">04 · Live Deploy</div>
+            <div class="pl-panel-tag" style="color:#38bdf8;">04 · Live Deploy</div>
             <div class="pl-panel-title">One click to mainnet</div>
             <div class="pl-panel-desc">Deploy to Hyperliquid with circuit breakers, crash recovery, and position isolation built in. Non-custodial — your keys, your funds, always.</div>
             <div class="pl-chips">
-              <span class="pl-chip" style="background:rgba(52,211,153,.1);color:var(--accent-green);border:1px solid rgba(52,211,153,.2);">Non-custodial</span>
-              <span class="pl-chip" style="background:rgba(52,211,153,.1);color:var(--accent-green);border:1px solid rgba(52,211,153,.2);">Circuit breakers</span>
-              <span class="pl-chip" style="background:rgba(52,211,153,.1);color:var(--accent-green);border:1px solid rgba(52,211,153,.2);">24/7 uptime</span>
+              <span class="pl-chip" style="background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.2);">Non-custodial</span>
+              <span class="pl-chip" style="background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.2);">Circuit breakers</span>
+              <span class="pl-chip" style="background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.2);">24/7 uptime</span>
             </div>
             <div class="pl-preview-card">
               <div class="pl-card-bar"><span class="pl-cd" style="background:#ef4444"></span><span class="pl-cd" style="background:#eab308"></span><span class="pl-cd" style="background:#22c55e"></span><span class="pl-card-title">live-dashboard.forge</span></div>
               <div class="pl-card-body">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
                   <span style="font-size:13px;font-weight:700;color:var(--text-primary);">EMA Bot</span>
-                  <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);border-radius:100px;padding:3px 10px;"><span class="live-dot"></span><span style="font-size:9px;font-family:var(--font-mono);color:var(--accent-green);font-weight:700;">LIVE</span></span>
+                  <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);border-radius:100px;padding:3px 10px;"><span class="live-dot" style="background:#38bdf8;box-shadow:0 0 6px #38bdf8;"></span><span style="font-size:9px;font-family:var(--font-mono);color:#38bdf8;font-weight:700;">LIVE</span></span>
                 </div>
-                <div class="pl-mrow"><span class="pl-mlabel">Realized PnL</span><span class="pl-mval" style="color:var(--accent-green);">+$318.40</span></div>
+                <div class="pl-mrow"><span class="pl-mlabel">Realized PnL</span><span class="pl-mval" style="color:#38bdf8;">+$318.40</span></div>
                 <div class="pl-mrow"><span class="pl-mlabel">Open positions</span><span class="pl-mval" style="color:var(--text-secondary);">3</span></div>
-                <div class="pl-mrow"><span class="pl-mlabel">Uptime</span><span class="pl-mval" style="color:var(--accent-green);">99.9%</span></div>
+                <div class="pl-mrow"><span class="pl-mlabel">Uptime</span><span class="pl-mval" style="color:#38bdf8;">99.9%</span></div>
                 <div style="display:flex;gap:6px;margin-top:8px;">
-                  <div style="flex:1;background:rgba(52,211,153,.1);border-radius:5px;padding:5px 8px;font-size:9px;color:var(--accent-green);font-family:var(--font-mono);text-align:center;">BTC LONG ↑</div>
-                  <div style="flex:1;background:rgba(52,211,153,.1);border-radius:5px;padding:5px 8px;font-size:9px;color:var(--accent-green);font-family:var(--font-mono);text-align:center;">ETH SHORT ↓</div>
+                  <div style="flex:1;background:rgba(56,189,248,.1);border-radius:5px;padding:5px 8px;font-size:9px;color:#38bdf8;font-family:var(--font-mono);text-align:center;">BTC LONG ↑</div>
+                  <div style="flex:1;background:rgba(56,189,248,.1);border-radius:5px;padding:5px 8px;font-size:9px;color:#38bdf8;font-family:var(--font-mono);text-align:center;">ETH SHORT ↓</div>
                 </div>
               </div>
             </div>
@@ -1777,22 +1777,22 @@ ul { list-style: none; }
         <!-- Panel 5: AI Optimization -->
         <div class="pl-panel" data-panel="4">
           <div class="pl-panel-inner">
-            <div class="pl-panel-tag" style="color:var(--accent-amber);">05 · AI Optimization</div>
+            <div class="pl-panel-tag" style="color:#c084fc;">05 · AI Optimization</div>
             <div class="pl-panel-title">Gets smarter while you sleep</div>
             <div class="pl-panel-desc">GLM-5.1 continuously re-tunes your parameters as market conditions evolve. No manual intervention needed. Your edge compounds over time.</div>
             <div class="pl-chips">
-              <span class="pl-chip" style="background:rgba(245,158,11,.1);color:var(--accent-amber);border:1px solid rgba(245,158,11,.2);">Hourly on Alpha</span>
-              <span class="pl-chip" style="background:rgba(245,158,11,.1);color:var(--accent-amber);border:1px solid rgba(245,158,11,.2);">GLM-5.1 · #1 SWE-Bench</span>
-              <span class="pl-chip" style="background:rgba(245,158,11,.1);color:var(--accent-amber);border:1px solid rgba(245,158,11,.2);">Zero manual work</span>
+              <span class="pl-chip" style="background:rgba(192,132,252,.1);color:#c084fc;border:1px solid rgba(192,132,252,.2);">Hourly on Alpha</span>
+              <span class="pl-chip" style="background:rgba(192,132,252,.1);color:#c084fc;border:1px solid rgba(192,132,252,.2);">GLM-5.1 · #1 SWE-Bench</span>
+              <span class="pl-chip" style="background:rgba(192,132,252,.1);color:#c084fc;border:1px solid rgba(192,132,252,.2);">Zero manual work</span>
             </div>
             <div class="pl-preview-card">
               <div class="pl-card-bar"><span class="pl-cd" style="background:#ef4444"></span><span class="pl-cd" style="background:#eab308"></span><span class="pl-cd" style="background:#22c55e"></span><span class="pl-card-title">ai-optimizer.forge</span></div>
               <div class="pl-card-body">
                 <div style="font-size:9px;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:10px;">LAST OPTIMIZATION · 2h ago</div>
-                <div class="pl-airow"><span class="pl-ailabel">EMA Fast Period</span><span class="pl-aival">9 → <span style="color:var(--accent-green);">12</span></span></div>
-                <div class="pl-airow"><span class="pl-ailabel">Stop Loss %</span><span class="pl-aival">1.5% → <span style="color:var(--accent-green);">1.2%</span></span></div>
-                <div class="pl-airow"><span class="pl-ailabel">Position Size</span><span class="pl-aival">5% → <span style="color:var(--accent-green);">6%</span></span></div>
-                <div style="margin-top:8px;padding:6px 10px;background:rgba(245,158,11,.08);border-radius:6px;font-size:10px;color:var(--accent-amber);font-family:var(--font-mono);">↑ +0.3% projected daily edge improvement</div>
+                <div class="pl-airow"><span class="pl-ailabel">EMA Fast Period</span><span class="pl-aival">9 → <span style="color:#22d3ee;">12</span></span></div>
+                <div class="pl-airow"><span class="pl-ailabel">Stop Loss %</span><span class="pl-aival">1.5% → <span style="color:#22d3ee;">1.2%</span></span></div>
+                <div class="pl-airow"><span class="pl-ailabel">Position Size</span><span class="pl-aival">5% → <span style="color:#22d3ee;">6%</span></span></div>
+                <div style="margin-top:8px;padding:6px 10px;background:rgba(192,132,252,.08);border-radius:6px;font-size:10px;color:#c084fc;font-family:var(--font-mono);">↑ +0.3% projected daily edge improvement</div>
               </div>
             </div>
           </div>
@@ -2241,7 +2241,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
   var timeline = document.querySelector('.pipeline-timeline-inner');
 
   // Per-step accent colors matching CSS gradients
-  var COLORS = ['#818cf8', '#22d3ee', '#a78bfa', '#34d399', '#f59e0b'];
+  var COLORS = ['#818cf8', '#22d3ee', '#a78bfa', '#38bdf8', '#c084fc'];
 
   // Wire CSS var --pl-step-color onto each step (drives left border + ring)
   steps.forEach(function(s, i) {
