@@ -1,222 +1,79 @@
-<!--
-  HyperForge — Waitlist Confirmation Email Template (EmailJS)
+<div style="margin:0;padding:40px 16px;background:#080a12;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#e6e8ef;">
+  <div style="max-width:560px;margin:0 auto;background:#0f1421;border:1px solid rgba(99,102,241,0.28);border-radius:16px;padding:36px 36px 30px;">
 
-  HOW TO INSTALL:
-  1. Go to https://dashboard.emailjs.com/admin/templates
-  2. Click "Create New Template"
-  3. Set:
-       Name:    HyperForge Waitlist
-       Subject: Welcome to the HyperForge waitlist
-       From Name: HyperForge
-       To Email:  {{to_email}}
-       Reply To:  hello@hyperforge.dev    (or your preferred reply address)
-  4. Click the "Content" tab, switch to HTML view, DELETE everything,
-     then paste the entire <!doctype html>...</html> block below.
-  5. Save. Copy the resulting template ID (e.g. "template_xxxxxxx").
-  6. In hyperforge-site/index.html, replace:
-       var EJS_TEMPLATE  = 'template_hyperforge_wl';
-     with your new template ID.
-  7. Commit + push. Done.
+    <!-- Brand header -->
+    <div style="display:block;margin-bottom:26px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:18px;font-weight:800;color:#ffffff;">
+      <span style="display:inline-block;width:26px;height:26px;border-radius:6px;background:#6366f1;color:#ffffff;text-align:center;line-height:26px;font-size:13px;margin-right:10px;vertical-align:middle;">/&gt;</span>
+      <span style="vertical-align:middle;">HyperForge</span>
+      <span style="float:right;font-size:10px;font-weight:700;letter-spacing:0.08em;color:#818cf8;padding:5px 10px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.28);border-radius:999px;">&#9679; BETA</span>
+    </div>
 
-  Variables the site passes:
-    {{to_email}}    — recipient address (required — set as "To Email" in template settings)
-    {{plan_label}}  — e.g. "Pro ($49/mo)", "Alpha ($149/mo)", or "HyperForge Beta" for general signups
-    {{plan_key}}    — machine key: free / pro / alpha / desk / general
--->
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="dark light">
-<meta name="supported-color-schemes" content="dark light">
-<title>Welcome to the HyperForge waitlist</title>
-<!--[if mso]>
-<xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
-<![endif]-->
-</head>
-<body style="margin:0;padding:0;background:#080a12;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#e6e8ef;-webkit-font-smoothing:antialiased;">
-  <!-- Preheader (hidden in the body, shown in inbox preview) -->
-  <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#080a12;">
-    You're on the HyperForge waitlist. Beta access opens soon — here's what happens next.
+    <!-- Headline -->
+    <h1 style="margin:0 0 12px;font-size:26px;line-height:1.22;font-weight:800;color:#ffffff;">
+      You're on the list.
+    </h1>
+
+    <!-- Intro -->
+    <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#a8adc2;">
+      Thanks for joining the HyperForge waitlist. We're onboarding in small batches so every early builder gets up and trading quickly &mdash; we'll email you the moment your access opens.
+    </p>
+
+    <!-- Plan selected -->
+    <div style="background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.28);border-radius:10px;padding:14px 18px;margin:0 0 28px;">
+      <div style="font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#818cf8;margin-bottom:4px;">Your selection</div>
+      <div style="font-size:15px;font-weight:700;color:#ffffff;">{{plan_label}}</div>
+    </div>
+
+    <!-- What happens next -->
+    <div style="font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8a8fa3;margin:0 0 16px;">What happens next</div>
+
+    <div style="margin:0 0 14px;">
+      <span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:rgba(99,102,241,0.18);border:1px solid rgba(99,102,241,0.4);text-align:center;line-height:22px;font-size:11px;font-weight:800;color:#a5b4fc;margin-right:12px;vertical-align:top;">1</span>
+      <span style="display:inline-block;font-size:14px;line-height:1.55;color:#d4d7e2;width:calc(100% - 44px);vertical-align:top;">
+        <strong style="color:#ffffff;">We're reviewing the queue.</strong> We prioritise early signups so you get access first.
+      </span>
+    </div>
+
+    <div style="margin:0 0 14px;">
+      <span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:rgba(99,102,241,0.18);border:1px solid rgba(99,102,241,0.4);text-align:center;line-height:22px;font-size:11px;font-weight:800;color:#a5b4fc;margin-right:12px;vertical-align:top;">2</span>
+      <span style="display:inline-block;font-size:14px;line-height:1.55;color:#d4d7e2;width:calc(100% - 44px);vertical-align:top;">
+        <strong style="color:#ffffff;">You'll get a setup link.</strong> Connect your Hyperliquid wallet, pick a strategy template, deploy a bot &mdash; no code.
+      </span>
+    </div>
+
+    <div style="margin:0 0 28px;">
+      <span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:rgba(99,102,241,0.18);border:1px solid rgba(99,102,241,0.4);text-align:center;line-height:22px;font-size:11px;font-weight:800;color:#a5b4fc;margin-right:12px;vertical-align:top;">3</span>
+      <span style="display:inline-block;font-size:14px;line-height:1.55;color:#d4d7e2;width:calc(100% - 44px);vertical-align:top;">
+        <strong style="color:#ffffff;">AI optimises 24/7.</strong> Backtest &rarr; forward test &rarr; live, with continuous tuning on your real performance.
+      </span>
+    </div>
+
+    <!-- CTA -->
+    <div style="text-align:center;margin:0 0 24px;">
+      <a href="https://edgardextra-lang.github.io/hyperforge-site/" target="_blank" style="display:inline-block;padding:14px 28px;background:#6366f1;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:10px;">Explore HyperForge &rarr;</a>
+    </div>
+
+    <!-- Live proof -->
+    <p style="margin:0 0 24px;font-size:12px;line-height:1.6;color:#8a8fa3;text-align:center;">
+      While you wait, see HyperForge's own bots trading live on Hyperliquid:<br>
+      <a href="https://edgardextra-lang.github.io/hyperforge-site/" target="_blank" style="color:#a5b4fc;text-decoration:none;font-weight:600;">live PnL dashboard &rarr;</a>
+    </p>
+
+    <!-- Divider -->
+    <div style="height:1px;background:rgba(255,255,255,0.08);margin:0 0 18px;"></div>
+
+    <!-- Footer -->
+    <p style="margin:0 0 8px;font-size:11px;line-height:1.6;color:#5a6076;text-align:center;">
+      You received this email because you joined the HyperForge waitlist at<br>
+      <a href="https://edgardextra-lang.github.io/hyperforge-site/" target="_blank" style="color:#8a8fa3;text-decoration:none;">edgardextra-lang.github.io/hyperforge-site</a>
+    </p>
+    <p style="margin:0;font-size:11px;line-height:1.6;color:#5a6076;text-align:center;">
+      Questions? Reply to this email &mdash; a real human reads every one.
+    </p>
+
   </div>
 
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#080a12;">
-    <tr>
-      <td align="center" style="padding:40px 16px;">
-        <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;background:linear-gradient(180deg,#0f1421 0%,#0a0d17 100%);border:1px solid rgba(99,102,241,0.28);border-radius:16px;overflow:hidden;">
-
-          <!-- Brand header -->
-          <tr>
-            <td style="padding:32px 36px 8px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td align="left" style="font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:18px;font-weight:800;letter-spacing:-0.01em;color:#ffffff;">
-                    <span style="display:inline-block;width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,#6366f1,#818cf8);color:#0a0d17;text-align:center;line-height:26px;font-size:13px;vertical-align:middle;margin-right:10px;">/&gt;</span>
-                    <span style="vertical-align:middle;">HyperForge</span>
-                  </td>
-                  <td align="right" style="font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#818cf8;">
-                    <span style="display:inline-block;padding:5px 10px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.28);border-radius:999px;">
-                      <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#22c55e;vertical-align:middle;margin-right:6px;"></span>
-                      BETA
-                    </span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Headline -->
-          <tr>
-            <td style="padding:26px 36px 6px;">
-              <h1 style="margin:0;font-size:26px;line-height:1.22;font-weight:800;color:#ffffff;letter-spacing:-0.01em;">
-                You're on the list.
-              </h1>
-            </td>
-          </tr>
-
-          <!-- Intro copy -->
-          <tr>
-            <td style="padding:10px 36px 4px;">
-              <p style="margin:0;font-size:15px;line-height:1.6;color:#a8adc2;">
-                Thanks for joining the HyperForge waitlist. We're onboarding in small batches so we can get every early builder up and trading quickly — we'll email you the moment your access opens.
-              </p>
-            </td>
-          </tr>
-
-          <!-- Plan selected card -->
-          <tr>
-            <td style="padding:22px 36px 4px;">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:rgba(99,102,241,0.07);border:1px solid rgba(99,102,241,0.25);border-radius:10px;">
-                <tr>
-                  <td style="padding:14px 18px;">
-                    <div style="font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#818cf8;margin-bottom:4px;">
-                      Your selection
-                    </div>
-                    <div style="font-size:15px;font-weight:700;color:#ffffff;">
-                      {{plan_label}}
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- What happens next -->
-          <tr>
-            <td style="padding:26px 36px 4px;">
-              <div style="font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8a8fa3;margin-bottom:14px;">
-                What happens next
-              </div>
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="padding:0 0 14px;vertical-align:top;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td width="28" valign="top" style="padding-right:12px;">
-                          <div style="width:24px;height:24px;border-radius:50%;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.4);text-align:center;line-height:22px;font-size:11px;font-weight:800;color:#a5b4fc;">1</div>
-                        </td>
-                        <td style="font-size:14px;line-height:1.55;color:#d4d7e2;">
-                          <strong style="color:#ffffff;">We're reviewing the queue.</strong>
-                          We prioritise early signups so you get access first.
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:0 0 14px;vertical-align:top;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td width="28" valign="top" style="padding-right:12px;">
-                          <div style="width:24px;height:24px;border-radius:50%;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.4);text-align:center;line-height:22px;font-size:11px;font-weight:800;color:#a5b4fc;">2</div>
-                        </td>
-                        <td style="font-size:14px;line-height:1.55;color:#d4d7e2;">
-                          <strong style="color:#ffffff;">You'll get a setup link.</strong>
-                          Connect your Hyperliquid wallet, pick a strategy template, and deploy a bot — no code.
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:0;vertical-align:top;">
-                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                      <tr>
-                        <td width="28" valign="top" style="padding-right:12px;">
-                          <div style="width:24px;height:24px;border-radius:50%;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.4);text-align:center;line-height:22px;font-size:11px;font-weight:800;color:#a5b4fc;">3</div>
-                        </td>
-                        <td style="font-size:14px;line-height:1.55;color:#d4d7e2;">
-                          <strong style="color:#ffffff;">AI optimises 24/7.</strong>
-                          Backtest &rarr; forward test &rarr; live &mdash; with continuous tuning on your real performance.
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- CTA -->
-          <tr>
-            <td style="padding:30px 36px 8px;" align="center">
-              <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td align="center" style="border-radius:10px;background:linear-gradient(135deg,#6366f1 0%,#818cf8 100%);">
-                    <a href="https://edgardextra-lang.github.io/hyperforge-site/" target="_blank"
-                       style="display:inline-block;padding:14px 28px;font-size:14px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.01em;">
-                      Explore HyperForge &rarr;
-                    </a>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- Live proof -->
-          <tr>
-            <td style="padding:24px 36px 4px;">
-              <p style="margin:0;font-size:12px;line-height:1.6;color:#8a8fa3;text-align:center;">
-                While you wait, see HyperForge's own bots trading live on Hyperliquid:
-                <a href="https://edgardextra-lang.github.io/hyperforge-site/" target="_blank" style="color:#a5b4fc;text-decoration:none;font-weight:600;">live PnL dashboard &rarr;</a>
-              </p>
-            </td>
-          </tr>
-
-          <!-- Divider -->
-          <tr>
-            <td style="padding:28px 36px 0;">
-              <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
-            </td>
-          </tr>
-
-          <!-- Footer -->
-          <tr>
-            <td style="padding:18px 36px 30px;" align="center">
-              <p style="margin:0 0 8px;font-size:11px;line-height:1.6;color:#5a6076;">
-                You received this email because you joined the HyperForge waitlist at<br>
-                <a href="https://edgardextra-lang.github.io/hyperforge-site/" target="_blank" style="color:#8a8fa3;text-decoration:none;">edgardextra-lang.github.io/hyperforge-site</a>
-              </p>
-              <p style="margin:0;font-size:11px;line-height:1.6;color:#5a6076;">
-                Questions? Reply to this email &mdash; a real human reads every one.
-              </p>
-            </td>
-          </tr>
-
-        </table>
-
-        <!-- Outer footer -->
-        <table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;">
-          <tr>
-            <td align="center" style="padding:18px 16px 0;font-size:11px;line-height:1.6;color:#4a4f63;">
-              &copy; HyperForge &middot; Built with Claude
-            </td>
-          </tr>
-        </table>
-
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
+  <p style="max-width:560px;margin:18px auto 0;text-align:center;font-size:11px;line-height:1.6;color:#4a4f63;">
+    &copy; HyperForge &middot; Built with Claude
+  </p>
+</div>
