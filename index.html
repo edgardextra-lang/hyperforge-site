@@ -2413,13 +2413,18 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
 <script>
 /* ====== Waitlist: Supabase + EmailJS ====== */
 (function(){
-  // Share the same Supabase table + EmailJS template as Crack the Bot so all
-  // beta signups land in one place. See CLAUDE.md for config rationale.
+  // Supabase: shared ctb_beta_emails table (one place for all beta signups).
   var SUPABASE_URL  = 'https://pugmrupmlxckmrlcuzby.supabase.co';
   var SUPABASE_KEY  = 'sb_publishable_pEhpLWsASpjHABotE1eYeg_YoS_H32C';
+  // EmailJS: HyperForge-specific template. This MUST NOT be the Crack the Bot
+  // template — those emails are game-branded and confuse HyperForge signups.
+  // If this constant is still the placeholder, we skip sending rather than
+  // accidentally send a CTB-branded email. See docs/emailjs-waitlist-template.html
+  // in this repo for the ready-to-paste template body and setup steps.
   var EJS_PUBLIC    = 'jc1UmY3TfWj2x66qG';
   var EJS_SERVICE   = 'service_hr2mfry';
-  var EJS_TEMPLATE  = 'template_30zl6lf';
+  var EJS_TEMPLATE  = 'template_hyperforge_wl'; // ← replace with real ID after creating the template in EmailJS dashboard
+  var EJS_TEMPLATE_PLACEHOLDER = 'template_hyperforge_wl';
 
   // Init EmailJS once the SDK is ready
   if (window.emailjs && typeof emailjs.init === 'function') {
@@ -2522,21 +2527,27 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
       return;
     }
 
-    // 2. Send confirmation email via EmailJS (best-effort — don't block success on this)
-    if (window.emailjs && typeof emailjs.send === 'function') {
+    // 2. Send HyperForge-branded confirmation email via EmailJS.
+    //    Best-effort — never blocks the success popup. Deliberately skipped
+    //    if the template ID is still the placeholder, so we never send
+    //    Crack the Bot-branded emails by accident.
+    if (
+      window.emailjs &&
+      typeof emailjs.send === 'function' &&
+      EJS_TEMPLATE &&
+      EJS_TEMPLATE !== EJS_TEMPLATE_PLACEHOLDER
+    ) {
       try {
         await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
-          to_email:  email,
-          to_name:   email.split('@')[0],
-          call_sign: 'HyperForge Beta',
-          score:     planLabel,
-          from_name: 'HyperForge',
-          subject:   'You\'re on the HyperForge waitlist',
-          message:   'Thanks for joining the HyperForge waitlist! You selected: ' + planLabel + '. We\'ll email you as soon as your beta access is ready.'
+          to_email:   email,
+          plan_label: planLabel || 'HyperForge Beta',
+          plan_key:   currentPlan
         }, EJS_PUBLIC);
       } catch (e) {
         console.warn('EmailJS error:', e);
       }
+    } else if (EJS_TEMPLATE === EJS_TEMPLATE_PLACEHOLDER) {
+      console.info('Waitlist: email sending skipped — HyperForge EmailJS template not configured yet. See docs/emailjs-waitlist-template.html');
     }
 
     // 3. Show success state
