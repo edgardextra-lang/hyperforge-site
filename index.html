@@ -1361,6 +1361,8 @@ ul { list-style: none; }
   }
 }
 </style>
+  <!-- EmailJS SDK for waitlist confirmation emails -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -1376,7 +1378,7 @@ ul { list-style: none; }
       <a href="#pipeline">Pipeline</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
-      <a href="#pricing" class="nav-cta">Join Waitlist</a>
+      <a href="javascript:openWaitlistModal('general')" class="nav-cta">Join Waitlist</a>
     </div>
   </div>
 </nav>
@@ -1396,7 +1398,7 @@ ul { list-style: none; }
       No code. No guesswork. AI builds your bots, backtests your strategy, deploys live<br>
       — and continuously optimizes to maximize your edge.
     </p>
-    <a href="#pricing" class="hero-cta fade-in fade-in-delay-3">
+    <a href="javascript:openWaitlistModal('general')" class="hero-cta fade-in fade-in-delay-3">
       Join the Waitlist <span>&rarr;</span>
     </a>
     <div class="hero-meta fade-in fade-in-delay-4">
@@ -1908,7 +1910,7 @@ ul { list-style: none; }
           <li style="color:var(--text-muted);"><span style="color:var(--text-muted);">&#x2715;</span> Live deployment (paid)</li>
         </ul>
         <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-amber);background:var(--accent-amber-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">0.025% builder fee per order</div>
-        <button class="price-btn" onclick="alert('Waitlist opening soon!')">Join Waitlist &rarr;</button>
+        <button class="price-btn" onclick="openWaitlistModal('free')">Join Waitlist &rarr;</button>
       </div>
       <!-- Pro -->
       <div class="price-card fade-in fade-in-delay-1">
@@ -1925,7 +1927,7 @@ ul { list-style: none; }
           <li style="color:var(--text-muted);"><span style="color:var(--text-muted);">&#x2715;</span> Multi-account (Alpha)</li>
         </ul>
         <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-amber);background:var(--accent-amber-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">0.01% builder fee per order</div>
-        <button class="price-btn" onclick="alert('Waitlist opening soon!')">Join Waitlist &rarr;</button>
+        <button class="price-btn" onclick="openWaitlistModal('pro')">Join Waitlist &rarr;</button>
       </div>
       <!-- Alpha -->
       <div class="price-card fade-in fade-in-delay-2">
@@ -1942,7 +1944,7 @@ ul { list-style: none; }
           <li><span class="check">&#10003;</span> Early access to new bot types</li>
         </ul>
         <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);background:var(--accent-green-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">Zero builder fee</div>
-        <button class="price-btn" onclick="alert('Waitlist opening soon!')">Join Waitlist &rarr;</button>
+        <button class="price-btn" onclick="openWaitlistModal('alpha')">Join Waitlist &rarr;</button>
       </div>
       <!-- Desk -->
       <div class="price-card fade-in fade-in-delay-3" style="border-color:rgba(99,102,241,0.3);">
@@ -1959,7 +1961,7 @@ ul { list-style: none; }
           <li><span class="check">&#10003;</span> SLA + 24h support</li>
         </ul>
         <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);background:var(--accent-green-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">Zero builder fee</div>
-        <button class="price-btn" onclick="alert('Contact us for Desk access')">Join Waitlist &rarr;</button>
+        <button class="price-btn" onclick="openWaitlistModal('desk')">Join Waitlist &rarr;</button>
         <div style="margin-top:14px;font-size:11px;color:var(--text-muted);text-align:center;line-height:1.5;">Prop firms · Funds · Multi-trader desks</div>
       </div>
     </div>
@@ -2023,7 +2025,7 @@ ul { list-style: none; }
   <div class="container">
     <h2 class="fade-in">Stop deploying blind.<br><span class="text-gradient-indigo">Start with a pipeline.</span></h2>
     <p class="fade-in fade-in-delay-1">Every other platform drops you straight into live trading. HyperForge validates your edge first — backtest, forward test, then live with AI optimizing 24/7.</p>
-    <a href="#pricing" class="hero-cta fade-in fade-in-delay-2">Join the Waitlist &rarr;</a>
+    <a href="javascript:openWaitlistModal('general')" class="hero-cta fade-in fade-in-delay-2">Join the Waitlist &rarr;</a>
   </div>
 </section>
 
@@ -2304,6 +2306,245 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     panels[0].classList.add('visible');
     setActive(0);
   }
+})();
+</script>
+
+<!-- ====== Waitlist Modal ====== -->
+<style>
+  .wl-overlay{
+    position:fixed;inset:0;background:rgba(8,10,18,0.82);backdrop-filter:blur(6px);
+    display:none;align-items:center;justify-content:center;z-index:9999;
+    opacity:0;transition:opacity .25s ease;
+  }
+  .wl-overlay.show{display:flex;opacity:1;}
+  .wl-modal{
+    width:min(460px,calc(100% - 32px));
+    background:linear-gradient(180deg,#0f1421 0%,#0a0d17 100%);
+    border:1px solid rgba(99,102,241,0.28);
+    border-radius:var(--radius-lg,16px);
+    box-shadow:0 20px 60px -20px rgba(99,102,241,0.35),0 8px 24px rgba(0,0,0,0.55);
+    padding:30px 28px 26px;position:relative;
+    transform:translateY(14px) scale(.98);transition:transform .25s ease;
+  }
+  .wl-overlay.show .wl-modal{transform:translateY(0) scale(1);}
+  .wl-close{
+    position:absolute;top:14px;right:14px;width:32px;height:32px;
+    display:flex;align-items:center;justify-content:center;
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+    border-radius:8px;color:var(--text-muted,#8a8fa3);font-size:18px;line-height:1;
+    cursor:pointer;transition:all .15s ease;
+  }
+  .wl-close:hover{background:rgba(239,68,68,0.12);color:#ef4444;border-color:rgba(239,68,68,0.3);}
+  .wl-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:var(--font-mono,ui-monospace,monospace);font-size:10px;font-weight:700;
+    letter-spacing:0.08em;text-transform:uppercase;
+    color:#818cf8;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.28);
+    padding:5px 10px;border-radius:999px;margin-bottom:14px;
+  }
+  .wl-badge .dot{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;}
+  .wl-title{font-size:22px;font-weight:800;color:#fff;line-height:1.25;margin:0 0 8px;letter-spacing:-0.01em;}
+  .wl-sub{font-size:13px;color:var(--text-muted,#8a8fa3);line-height:1.55;margin:0 0 22px;}
+  .wl-sub .plan-chip{
+    display:inline-block;padding:2px 8px;border-radius:6px;margin-left:4px;
+    font-family:var(--font-mono,ui-monospace,monospace);font-size:11px;font-weight:700;
+    background:rgba(99,102,241,0.14);color:#a5b4fc;border:1px solid rgba(99,102,241,0.28);
+  }
+  .wl-input{
+    width:100%;padding:14px 16px;background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.1);border-radius:10px;
+    font-size:14px;color:#fff;font-family:inherit;
+    transition:border-color .15s ease,background .15s ease;
+  }
+  .wl-input::placeholder{color:#5a6076;}
+  .wl-input:focus{outline:none;border-color:rgba(99,102,241,0.55);background:rgba(99,102,241,0.06);}
+  .wl-submit{
+    width:100%;margin-top:12px;padding:14px 18px;
+    background:linear-gradient(135deg,#6366f1 0%,#818cf8 100%);
+    color:#fff;font-weight:700;font-size:14px;letter-spacing:0.01em;
+    border:none;border-radius:10px;cursor:pointer;
+    box-shadow:0 8px 24px -10px rgba(99,102,241,0.75);
+    transition:transform .12s ease,filter .12s ease;
+  }
+  .wl-submit:hover{filter:brightness(1.08);}
+  .wl-submit:active{transform:translateY(1px);}
+  .wl-submit:disabled{opacity:0.6;cursor:not-allowed;filter:grayscale(0.2);}
+  .wl-note{font-size:11px;color:#5a6076;text-align:center;margin-top:14px;line-height:1.5;}
+  .wl-success{
+    display:none;text-align:center;padding:14px 0 6px;
+  }
+  .wl-success.show{display:block;}
+  .wl-check{
+    width:56px;height:56px;border-radius:50%;margin:0 auto 14px;
+    background:rgba(34,197,94,0.12);border:1.5px solid rgba(34,197,94,0.45);
+    display:flex;align-items:center;justify-content:center;
+    font-size:28px;color:#22c55e;
+    animation:wl-pop .4s cubic-bezier(.2,1.4,.4,1);
+  }
+  @keyframes wl-pop{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
+  .wl-success-title{font-size:19px;font-weight:800;color:#fff;margin:0 0 6px;}
+  .wl-success-sub{font-size:13px;color:var(--text-muted,#8a8fa3);line-height:1.55;margin:0;}
+  .wl-error{color:#ef4444;font-size:12px;margin-top:8px;min-height:14px;}
+</style>
+
+<div class="wl-overlay" id="wl-overlay" onclick="if(event.target===this)closeWaitlistModal()">
+  <div class="wl-modal" role="dialog" aria-modal="true" aria-labelledby="wl-title">
+    <button class="wl-close" onclick="closeWaitlistModal()" aria-label="Close">&times;</button>
+
+    <div id="wl-form-view">
+      <div class="wl-badge"><span class="dot"></span> HyperForge Beta</div>
+      <h3 class="wl-title" id="wl-title">Join the waitlist</h3>
+      <p class="wl-sub">Be first in line when HyperForge opens. We'll email you the moment your access is ready.<span id="wl-plan-chip"></span></p>
+      <input type="email" class="wl-input" id="wl-email" placeholder="you@example.com" autocomplete="email"
+             onkeydown="if(event.key==='Enter')submitWaitlist()">
+      <div class="wl-error" id="wl-error"></div>
+      <button class="wl-submit" id="wl-submit-btn" onclick="submitWaitlist()">Join Waitlist &rarr;</button>
+      <p class="wl-note">No spam. We'll only email you about HyperForge beta access.</p>
+    </div>
+
+    <div class="wl-success" id="wl-success-view">
+      <div class="wl-check">&#10003;</div>
+      <h3 class="wl-success-title">You're on the list.</h3>
+      <p class="wl-success-sub">A confirmation email is on its way. We'll reach out when your HyperForge beta access opens.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== Waitlist: Supabase + EmailJS ====== */
+(function(){
+  // Share the same Supabase table + EmailJS template as Crack the Bot so all
+  // beta signups land in one place. See CLAUDE.md for config rationale.
+  var SUPABASE_URL  = 'https://pugmrupmlxckmrlcuzby.supabase.co';
+  var SUPABASE_KEY  = 'sb_publishable_pEhpLWsASpjHABotE1eYeg_YoS_H32C';
+  var EJS_PUBLIC    = 'jc1UmY3TfWj2x66qG';
+  var EJS_SERVICE   = 'service_hr2mfry';
+  var EJS_TEMPLATE  = 'template_30zl6lf';
+
+  // Init EmailJS once the SDK is ready
+  if (window.emailjs && typeof emailjs.init === 'function') {
+    try { emailjs.init({ publicKey: EJS_PUBLIC }); } catch(e){}
+  }
+
+  var PLAN_LABELS = {
+    general: '',
+    free:    'Free plan',
+    pro:     'Pro ($49/mo)',
+    alpha:   'Alpha ($149/mo)',
+    desk:    'Desk ($499/mo)'
+  };
+
+  var currentPlan = 'general';
+
+  window.openWaitlistModal = function(plan){
+    currentPlan = plan || 'general';
+    var chip = document.getElementById('wl-plan-chip');
+    if (chip) {
+      var label = PLAN_LABELS[currentPlan] || '';
+      chip.innerHTML = label ? ' You selected: <span class="plan-chip">' + label + '</span>' : '';
+    }
+    // Reset to form view
+    var f = document.getElementById('wl-form-view');
+    var s = document.getElementById('wl-success-view');
+    if (f) f.style.display = '';
+    if (s) s.classList.remove('show');
+    var err = document.getElementById('wl-error'); if (err) err.textContent = '';
+    var btn = document.getElementById('wl-submit-btn');
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Join Waitlist &rarr;'; }
+    var email = document.getElementById('wl-email'); if (email) email.value = '';
+    document.getElementById('wl-overlay').classList.add('show');
+    setTimeout(function(){ if(email) email.focus(); }, 150);
+  };
+
+  window.closeWaitlistModal = function(){
+    document.getElementById('wl-overlay').classList.remove('show');
+  };
+
+  // Esc to close
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeWaitlistModal();
+  });
+
+  window.submitWaitlist = async function(){
+    var emailInput = document.getElementById('wl-email');
+    var errEl      = document.getElementById('wl-error');
+    var btn        = document.getElementById('wl-submit-btn');
+    var email      = (emailInput.value || '').trim().toLowerCase();
+    errEl.textContent = '';
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errEl.textContent = 'Please enter a valid email address.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Joining…';
+
+    var planLabel = PLAN_LABELS[currentPlan] || 'HyperForge Waitlist';
+    var callSign  = 'HyperForge:' + currentPlan;
+
+    // 1. Write to Supabase ctb_beta_emails
+    var supabaseOk = false;
+    try {
+      var resp = await fetch(SUPABASE_URL + '/rest/v1/ctb_beta_emails', {
+        method: 'POST',
+        headers: {
+          'apikey':        SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Content-Type':  'application/json',
+          'Prefer':        'return=minimal'
+        },
+        body: JSON.stringify({
+          email:      email,
+          call_sign:  callSign,
+          score:      0,
+          created_at: new Date().toISOString()
+        })
+      });
+      supabaseOk = resp.ok;
+      if (!resp.ok) {
+        var txt = await resp.text();
+        // Duplicate email → treat as success (already subscribed)
+        if (resp.status === 409 || /duplicate/i.test(txt)) {
+          supabaseOk = true;
+        } else {
+          console.warn('Supabase insert failed:', resp.status, txt);
+        }
+      }
+    } catch (e) {
+      console.warn('Supabase insert error:', e);
+    }
+
+    if (!supabaseOk) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      btn.disabled = false;
+      btn.innerHTML = 'Join Waitlist &rarr;';
+      return;
+    }
+
+    // 2. Send confirmation email via EmailJS (best-effort — don't block success on this)
+    if (window.emailjs && typeof emailjs.send === 'function') {
+      try {
+        await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+          to_email:  email,
+          to_name:   email.split('@')[0],
+          call_sign: 'HyperForge Beta',
+          score:     planLabel,
+          from_name: 'HyperForge',
+          subject:   'You\'re on the HyperForge waitlist',
+          message:   'Thanks for joining the HyperForge waitlist! You selected: ' + planLabel + '. We\'ll email you as soon as your beta access is ready.'
+        }, EJS_PUBLIC);
+      } catch (e) {
+        console.warn('EmailJS error:', e);
+      }
+    }
+
+    // 3. Show success state
+    document.getElementById('wl-form-view').style.display = 'none';
+    document.getElementById('wl-success-view').classList.add('show');
+    // Auto-close after 4s
+    setTimeout(closeWaitlistModal, 4000);
+  };
 })();
 </script>
 
