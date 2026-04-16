@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HyperForge — AI Trading Platform for Hyperliquid</title>
-<meta name="description" content="Build AI trading bots that cut your fees, trade 24/7, and get smarter every hour — no code needed. Backtest, forward test, and deploy on Hyperliquid in minutes.">
+<meta name="description" content="Build AI trading bots that cut your fees, trade 24/7, and get smarter every hour — no code needed. Forward test live, deploy on Hyperliquid, and let AI optimize 24/7.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='32' y2='32' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%236366f1'/%3E%3Cstop offset='100%25' stop-color='%23818cf8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='monospace' font-weight='700' font-size='13' fill='white'%3E/%3E%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1000,9 +1000,8 @@ ul { list-style: none; }
   width: 2px;
   background: linear-gradient(to bottom,
     rgba(99,102,241,0.9)  0%,
-    rgba(34,211,238,0.9)  25%,
-    rgba(167,139,250,0.9) 50%,
-    rgba(56,189,248,0.9)  75%,
+    rgba(167,139,250,0.9) 33%,
+    rgba(56,189,248,0.9)  66%,
     rgba(192,132,252,0.9) 100%);
   filter: blur(0.5px);
 }
@@ -1014,7 +1013,7 @@ ul { list-style: none; }
   top: 28px;
   width: 4px;
   height: var(--pl-progress, 0%);
-  background: linear-gradient(to bottom, #6366f1, #22d3ee, #a78bfa, #38bdf8, #c084fc);
+  background: linear-gradient(to bottom, #6366f1, #a78bfa, #38bdf8, #c084fc);
   border-radius: 2px;
   box-shadow: 0 0 8px rgba(99,102,241,0.5);
   transition: height 0.6s cubic-bezier(0.16,1,0.3,1);
@@ -1493,7 +1492,7 @@ ul { list-style: none; }
     </h1>
     <p class="hero-sub fade-in fade-in-delay-2">
       Every other platform drops you straight into live markets with an unproven strategy.<br>
-      HyperForge validates your edge first — backtest, forward test, then live with AI optimizing 24/7.
+      HyperForge validates your edge first — forward test on live markets, then deploy with AI optimizing 24/7.
     </p>
     <a href="javascript:openWaitlistModal('general')" class="hero-cta fade-in fade-in-delay-3">
       Join the Waitlist <span>&rarr;</span>
@@ -1501,7 +1500,7 @@ ul { list-style: none; }
     <div class="hero-meta fade-in fade-in-delay-4">
       <span>Non-custodial</span>
       <span class="dot"></span>
-      <span>Backtest → Forward test → Live</span>
+      <span>Forward test → Live → AI optimize</span>
       <span class="dot"></span>
       <span>AI-optimized 24/7</span>
     </div>
@@ -1522,7 +1521,7 @@ ul { list-style: none; }
       </div>
       <div class="proof-item fade-in fade-in-delay-2">
         <div class="proof-number">&lt;5 min</div>
-        <div class="proof-label">From strategy idea to backtested bot · no code needed</div>
+        <div class="proof-label">From strategy idea to forward-tested live bot · no code needed</div>
       </div>
     </div>
   </div>
@@ -1687,8 +1686,8 @@ ul { list-style: none; }
       </div>
       <div class="pain-card fade-in">
         <div class="pain-icon">⚠</div>
-        <h3>Backtests lie even worse</h3>
-        <p>So you decide to automate. Your "94% win rate" strategy is curve-fit to noise. LLM-assisted strategies have collapsed from <strong style="color:var(--accent-rose);">+23.3% to −22%</strong> under honest out-of-sample testing.</p>
+        <h3>Unvalidated strategies blow up</h3>
+        <p>So you decide to automate. Your "94% win rate" strategy is curve-fit to noise. LLM-assisted strategies have collapsed from <strong style="color:var(--accent-rose);">+23.3% to −22%</strong> under honest out-of-sample forward testing.</p>
         <span class="pain-cite">Source: arxiv.org/abs/2505.07078</span>
       </div>
     </div>
@@ -1708,8 +1707,8 @@ ul { list-style: none; }
   <div class="container">
     <div style="text-align:center;margin-bottom:64px;" class="fade-in">
       <div class="section-label">The Platform</div>
-      <h2 class="section-title">Build. Test. Deploy.<br><span class="text-gradient-indigo">Optimize — in one workflow.</span></h2>
-      <p class="section-subtitle" style="margin:12px auto 0;">No other platform takes your strategy from idea to live — and keeps improving it automatically.</p>
+      <h2 class="section-title">Build. Test. Deploy.<br><span class="text-gradient-indigo">Optimize — four steps.</span></h2>
+      <p class="section-subtitle" style="margin:12px auto 0;">Create your strategy, validate it live in paper mode, deploy to mainnet, then let AI compound your edge — all in one platform.</p>
     </div>
 
     <div class="pipeline-layout">
@@ -1728,16 +1727,7 @@ ul { list-style: none; }
           </div>
 
           <div class="pl-step inactive" data-step="1" onclick="pipelineGoTo(1)">
-            <div class="pl-dot" style="background:linear-gradient(135deg,#0891b2,#22d3ee);">2</div>
-            <div class="pl-info">
-              <div class="pl-tag" style="color:#22d3ee;">Backtest</div>
-              <div class="pl-name">Validate on history</div>
-              <div class="pl-sub">3+ years data · fee-adjusted</div>
-            </div>
-          </div>
-
-          <div class="pl-step inactive" data-step="2" onclick="pipelineGoTo(2)">
-            <div class="pl-dot" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);">3</div>
+            <div class="pl-dot" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);">2</div>
             <div class="pl-info">
               <div class="pl-tag" style="color:#a78bfa;">Forward Test</div>
               <div class="pl-name">Paper trade live</div>
@@ -1745,8 +1735,8 @@ ul { list-style: none; }
             </div>
           </div>
 
-          <div class="pl-step inactive" data-step="3" onclick="pipelineGoTo(3)">
-            <div class="pl-dot" style="background:linear-gradient(135deg,#0369a1,#38bdf8);">4</div>
+          <div class="pl-step inactive" data-step="2" onclick="pipelineGoTo(2)">
+            <div class="pl-dot" style="background:linear-gradient(135deg,#0369a1,#38bdf8);">3</div>
             <div class="pl-info">
               <div class="pl-tag" style="color:#38bdf8;">Live Deploy</div>
               <div class="pl-name">One click to mainnet</div>
@@ -1754,8 +1744,8 @@ ul { list-style: none; }
             </div>
           </div>
 
-          <div class="pl-step inactive" data-step="4" onclick="pipelineGoTo(4)">
-            <div class="pl-dot" style="background:linear-gradient(135deg,#7e22ce,#c084fc);">5</div>
+          <div class="pl-step inactive" data-step="3" onclick="pipelineGoTo(3)">
+            <div class="pl-dot" style="background:linear-gradient(135deg,#7e22ce,#c084fc);">4</div>
             <div class="pl-info">
               <div class="pl-tag" style="color:#c084fc;">AI Optimization</div>
               <div class="pl-name">Gets smarter 24/7</div>
@@ -1794,42 +1784,16 @@ ul { list-style: none; }
           </div>
         </div>
 
-        <!-- Panel 2: Backtest -->
+        <!-- Panel 2: Forward Test -->
         <div class="pl-panel" data-panel="1">
           <div class="pl-panel-inner">
-            <div class="pl-panel-tag" style="color:#22d3ee;">02 · Backtest</div>
-            <div class="pl-panel-title" style="color:#22d3ee;">Validate on historical data</div>
-            <div class="pl-panel-desc">Run your strategy against years of Hyperliquid market data. See Sharpe ratio, max drawdown, win rate, and fee-adjusted returns before risking a dollar.</div>
-            <div class="pl-chips">
-              <span class="pl-chip" style="background:rgba(34,211,238,.1);color:#22d3ee;border:1px solid rgba(34,211,238,.2);">3+ years data</span>
-              <span class="pl-chip" style="background:rgba(34,211,238,.1);color:#22d3ee;border:1px solid rgba(34,211,238,.2);">Fee-adjusted</span>
-              <span class="pl-chip" style="background:rgba(34,211,238,.1);color:#22d3ee;border:1px solid rgba(34,211,238,.2);">Monte Carlo sim</span>
-            </div>
-            <div class="pl-preview-card">
-              <div class="pl-card-bar"><span class="pl-cd" style="background:#ef4444"></span><span class="pl-cd" style="background:#eab308"></span><span class="pl-cd" style="background:#22c55e"></span><span class="pl-card-title">backtest-results.forge</span></div>
-              <div class="pl-card-body">
-                <div class="pl-mrow"><span class="pl-mlabel">Sharpe Ratio</span><span class="pl-mval" style="color:#22d3ee;">2.41</span></div>
-                <div class="pl-bar-bg"><div class="pl-bar-f" style="width:80%;background:#22d3ee;"></div></div>
-                <div class="pl-mrow"><span class="pl-mlabel">Win Rate</span><span class="pl-mval" style="color:#22d3ee;">64.2%</span></div>
-                <div class="pl-bar-bg"><div class="pl-bar-f" style="width:64%;background:#22d3ee;"></div></div>
-                <div class="pl-mrow"><span class="pl-mlabel">Max Drawdown</span><span class="pl-mval" style="color:#a78bfa;">-8.3%</span></div>
-                <div class="pl-bar-bg"><div class="pl-bar-f" style="width:8%;background:#a78bfa;"></div></div>
-                <div class="pl-mrow" style="margin-top:4px;"><span class="pl-mlabel">Est. Annual Return</span><span class="pl-mval" style="color:#818cf8;">+312%</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel 3: Forward Test -->
-        <div class="pl-panel" data-panel="2">
-          <div class="pl-panel-inner">
-            <div class="pl-panel-tag" style="color:#a78bfa;">03 · Forward Test</div>
-            <div class="pl-panel-title" style="color:#a78bfa;">Paper trade in live markets</div>
-            <div class="pl-panel-desc">Deploy in paper mode against live Hyperliquid prices. Confirms your backtest holds under real microstructure — fills, slippage, funding — before real capital.</div>
+            <div class="pl-panel-tag" style="color:#a78bfa;">02 · Forward Test</div>
+            <div class="pl-panel-title">Paper trade in live markets</div>
+            <div class="pl-panel-desc">Deploy in paper mode against real Hyperliquid prices. Real fills, real funding, real slippage — zero capital at risk. When the numbers hold, you promote to live.</div>
             <div class="pl-chips">
               <span class="pl-chip" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Real prices</span>
-              <span class="pl-chip" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Zero risk</span>
-              <span class="pl-chip" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">vs Backtest comparison</span>
+              <span class="pl-chip" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Zero capital at risk</span>
+              <span class="pl-chip" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Daily AI diagnostics</span>
             </div>
             <div class="pl-preview-card">
               <div class="pl-card-bar"><span class="pl-cd" style="background:#ef4444"></span><span class="pl-cd" style="background:#eab308"></span><span class="pl-cd" style="background:#22c55e"></span><span class="pl-card-title">forward-test.forge</span></div>
@@ -1839,7 +1803,7 @@ ul { list-style: none; }
                   <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);border-radius:100px;padding:3px 10px;"><span class="live-dot" style="background:#a78bfa;box-shadow:0 0 6px #a78bfa;"></span><span style="font-size:9px;font-family:var(--font-mono);color:#a78bfa;font-weight:700;">LIVE PRICES</span></span>
                 </div>
                 <div class="pl-mrow"><span class="pl-mlabel">Paper PnL (7d)</span><span class="pl-mval" style="color:#a78bfa;">+$142.30</span></div>
-                <div class="pl-mrow"><span class="pl-mlabel">vs Backtest</span><span class="pl-mval" style="color:#a78bfa;">97% match</span></div>
+                <div class="pl-mrow"><span class="pl-mlabel">Win rate (7d)</span><span class="pl-mval" style="color:#a78bfa;">64.2%</span></div>
                 <div class="pl-mrow"><span class="pl-mlabel">Avg slippage</span><span class="pl-mval" style="color:var(--text-secondary);">0.012%</span></div>
                 <div style="margin-top:8px;padding:6px 10px;background:rgba(167,139,250,.1);border-radius:6px;font-size:10px;color:#a78bfa;font-family:var(--font-mono);">✓ Edge confirmed — ready to go live</div>
               </div>
@@ -1847,11 +1811,11 @@ ul { list-style: none; }
           </div>
         </div>
 
-        <!-- Panel 4: Live Deploy -->
-        <div class="pl-panel" data-panel="3">
+        <!-- Panel 3: Live Deploy -->
+        <div class="pl-panel" data-panel="2">
           <div class="pl-panel-inner">
-            <div class="pl-panel-tag" style="color:#38bdf8;">04 · Live Deploy</div>
-            <div class="pl-panel-title" style="color:#38bdf8;">One click to mainnet</div>
+            <div class="pl-panel-tag" style="color:#38bdf8;">03 · Live Deploy</div>
+            <div class="pl-panel-title">One click to mainnet</div>
             <div class="pl-panel-desc">Deploy to Hyperliquid with circuit breakers, crash recovery, and position isolation built in. Non-custodial — your keys, your funds, always.</div>
             <div class="pl-chips">
               <span class="pl-chip" style="background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.2);">Non-custodial</span>
@@ -1927,13 +1891,6 @@ ul { list-style: none; }
           </thead>
           <tbody>
               <tr style="border-bottom:1px solid var(--border);background:rgba(34,211,238,0.03);">
-                <td style="padding:13px 20px;color:var(--text-secondary);">Backtesting</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-rose);font-size:16px;">&#x2715;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-rose);font-size:16px;">&#x2715;</td>
-              </tr>
-              <tr style="border-bottom:1px solid var(--border);">
                 <td style="padding:13px 20px;color:var(--text-secondary);">Forward Testing</td>
                 <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
                 <td style="text-align:center;padding:13px 12px;color:var(--accent-rose);font-size:16px;">&#x2715;</td>
@@ -2003,7 +1960,7 @@ ul { list-style: none; }
         <div class="price"><span class="dollar">$</span>0</div>
         <ul class="features-list">
           <li><span class="check">&#10003;</span> 1 active bot</li>
-          <li><span class="check">&#10003;</span> Backtesting engine</li>
+          <li><span class="check">&#10003;</span> No-code strategy builder</li>
           <li><span class="check">&#10003;</span> No-code agent builder</li>
           <li><span class="check">&#10003;</span> Non-custodial deployment</li>
           <li><span class="check">&#10003;</span> Community support</li>
@@ -2020,7 +1977,7 @@ ul { list-style: none; }
         <div class="price"><span class="dollar">$</span>49<span style="font-size:16px;font-weight:500;color:var(--text-muted);">/mo</span></div>
         <ul class="features-list">
           <li><span class="check">&#10003;</span> 5 active bots</li>
-          <li><span class="check">&#10003;</span> Backtest + Forward test</li>
+          <li><span class="check">&#10003;</span> Forward test (paper mode)</li>
           <li><span class="check">&#10003;</span> Live deployment</li>
           <li><span class="check">&#10003;</span> Daily AI optimization</li>
           <li><span class="check">&#10003;</span> Email support</li>
@@ -2112,10 +2069,10 @@ ul { list-style: none; }
       </div>
       <div class="faq-item fade-in">
         <button class="faq-question" onclick="toggleFaq(this)">
-          What's the difference between backtesting and forward testing?
+          What is forward testing and why does HyperForge require it?
           <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </button>
-        <div class="faq-answer"><p>Backtesting runs your strategy on historical data — fast, but can overfit to the past. Forward testing runs your strategy in paper mode on live market data, validating that backtest performance holds under real conditions (slippage, spreads, order flow). Most strategies that look great in backtests fail forward tests. HyperForge requires both stages before live deployment.</p></div>
+        <div class="faq-answer"><p>Forward testing runs your strategy in paper mode on live market data — real prices, real spreads, real order flow, zero capital at risk. It proves your edge holds under current conditions before a dollar goes live. HyperForge requires this validation stage before live deployment. Strategies that pass forward testing consistently outperform strategies deployed blind.</p></div>
       </div>
     </div>
   </div>
@@ -2125,7 +2082,7 @@ ul { list-style: none; }
 <section class="final-cta">
   <div class="container">
     <h2 class="fade-in">Stop deploying blind.<br><span class="text-gradient-indigo">Start with a pipeline.</span></h2>
-    <p class="fade-in fade-in-delay-1">Every other platform drops you straight into live trading. HyperForge validates your edge first — backtest, forward test, then live with AI optimizing 24/7.</p>
+    <p class="fade-in fade-in-delay-1">Every other platform drops you straight into live trading. HyperForge validates your edge first — forward test on live markets, then deploy with AI optimizing 24/7.</p>
     <a href="javascript:openWaitlistModal('general')" class="hero-cta fade-in fade-in-delay-2">Join the Waitlist &rarr;</a>
   </div>
 </section>
