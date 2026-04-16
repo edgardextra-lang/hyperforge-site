@@ -2003,6 +2003,23 @@ ul { list-style: none; }
         <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);background:var(--accent-green-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">Zero builder fee</div>
         <button class="price-btn" onclick="openWaitlistModal('alpha')">Join Waitlist &rarr;</button>
       </div>
+      <!-- Desk -->
+      <div class="price-card fade-in fade-in-delay-3" style="border-color:rgba(99,102,241,0.3);">
+        <div class="tier-name">Desk</div>
+        <div class="tier-desc">Prop firms &amp; teams</div>
+        <ul class="features-list">
+          <li><span class="check">&#10003;</span> Everything in Alpha</li>
+          <li><span class="check">&#10003;</span> Platform API access</li>
+          <li><span class="check">&#10003;</span> Custom strategy builds</li>
+          <li><span class="check">&#10003;</span> Near-realtime AI optimization</li>
+          <li><span class="check">&#10003;</span> Dedicated account manager</li>
+          <li><span class="check">&#10003;</span> Team seat licensing</li>
+          <li><span class="check">&#10003;</span> SLA + 24h support</li>
+        </ul>
+        <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);background:var(--accent-green-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">Zero builder fee</div>
+        <button class="price-btn" onclick="openWaitlistModal('desk')">Join Waitlist &rarr;</button>
+        <div style="margin-top:14px;font-size:11px;color:var(--text-muted);text-align:center;line-height:1.5;">Prop firms · Funds · Multi-trader desks</div>
+      </div>
     </div>
 
     <!-- Revenue model note -->
@@ -2474,7 +2491,8 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     general: '',
     free:    'Free plan',
     pro:     'Pro ($49/mo)',
-    alpha:   'Alpha ($499/mo)'
+    alpha:   'Alpha ($499/mo)',
+    desk:    'Desk'
   };
 
   var currentPlan = 'general';
