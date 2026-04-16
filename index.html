@@ -1348,6 +1348,102 @@ ul { list-style: none; }
 }
 
 /* ============================================================
+   Reality Check Pain Cards
+   ============================================================ */
+.pain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+@media (max-width: 860px) { .pain-grid { grid-template-columns: 1fr; } }
+
+.pain-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent-rose);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.pain-card:hover {
+  border-color: var(--accent-rose);
+  border-top-color: var(--accent-rose);
+  transform: translateY(-4px);
+}
+.pain-card .pain-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(251,113,133,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 18px;
+}
+.pain-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+.pain-card p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.pain-card .pain-cite {
+  display: block;
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+.pain-bridge {
+  margin-top: 56px;
+  padding: 32px 36px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(34,211,238,0.06) 100%);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.pain-bridge-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent-indigo);
+  margin-bottom: 8px;
+}
+.pain-bridge-text {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.5;
+  flex: 1;
+  min-width: 260px;
+}
+.pain-bridge-text span { color: var(--accent-cyan); }
+.pain-bridge-cta {
+  flex-shrink: 0;
+  background: var(--gradient-indigo);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.pain-bridge-cta:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* ============================================================
    Comp Table Mobile
    ============================================================ */
 @media (max-width: 640px) {
@@ -1392,11 +1488,11 @@ ul { list-style: none; }
       Now in Beta · Join the Waitlist
     </div>
     <h1 class="fade-in fade-in-delay-1">
-      Build AI bots that trade,<br>cut your fees, and get<br><span class="highlight">smarter every hour.</span>
+      92% of perp traders<br>get liquidated.<br><span class="highlight">You don't have to.</span>
     </h1>
     <p class="hero-sub fade-in fade-in-delay-2">
-      No code. No guesswork. AI builds your bots, backtests your strategy, deploys live<br>
-      — and continuously optimizes to maximize your edge.
+      Every other platform drops you straight into live markets with an unproven strategy.<br>
+      HyperForge validates your edge first — backtest, forward test, then live with AI optimizing 24/7.
     </p>
     <a href="javascript:openWaitlistModal('general')" class="hero-cta fade-in fade-in-delay-3">
       Join the Waitlist <span>&rarr;</span>
@@ -1404,9 +1500,9 @@ ul { list-style: none; }
     <div class="hero-meta fade-in fade-in-delay-4">
       <span>Non-custodial</span>
       <span class="dot"></span>
-      <span>AI-optimized 24/7</span>
+      <span>Backtest → Forward test → Live</span>
       <span class="dot"></span>
-      <span>Built by traders, for traders</span>
+      <span>AI-optimized 24/7</span>
     </div>
   </div>
 </section>
@@ -1566,38 +1662,42 @@ ul { list-style: none; }
   </div>
 </section>
 
-<!-- ====== Problem / Solution ====== -->
-<section class="section problem-solution" id="problem">
+<!-- ====== Reality Check ====== -->
+<section class="section" id="problem">
   <div class="container">
-    <div class="text-center fade-in" style="text-align:center; margin-bottom:56px;">
-      <div class="section-label">The Gap</div>
-      <h2 class="section-title">Every platform stops<br><span class="text-gradient-indigo">at execution.</span></h2>
+    <div class="fade-in" style="text-align:center;margin-bottom:8px;">
+      <div class="section-label">The Reality Check</div>
+      <h2 class="section-title">Manual perp trading<br><span class="text-gradient-indigo">is a graveyard.</span></h2>
+      <p class="section-subtitle" style="margin:16px auto 0;">You already know this. The numbers just make it official.<br>Three walls closing in on every unprotected trader:</p>
     </div>
-    <div class="ps-grid">
-      <div class="ps-card problem fade-in">
-        <h3><span class="icon-circle">&#x26A0;</span> The Problem</h3>
-        <p>Existing bot platforms are execution-only. There's no safe way to validate your strategy before it touches real money.</p>
-        <ul class="ps-bullets">
-          <li>No backtesting — deploy blind or code it yourself</li>
-          <li>No forward testing — paper trading before live</li>
-          <li>No AI optimization — set parameters, hope for the best</li>
-          <li>No non-custodial safety — platform holds keys</li>
-          <li>No full pipeline — every tool is a different product</li>
-          <li>No systematic traders' workflow — built for retail clickers</li>
-        </ul>
+
+    <div class="pain-grid">
+      <div class="pain-card fade-in">
+        <div class="pain-icon">⚡</div>
+        <h3>Leverage kills you</h3>
+        <p><strong style="color:var(--accent-rose);">79%</strong> of perp traders use &gt;20× leverage. In simulations of 25× trades, <strong style="color:var(--accent-rose);">92.95%</strong> get liquidated. You're not stupid — you're playing a game where the math is rigged against manual reflexes.</p>
+        <span class="pain-cite">Source: Binance internal study</span>
       </div>
-      <div class="ps-card solution fade-in fade-in-delay-2">
-        <h3><span class="icon-circle">&#x2713;</span> The Solution</h3>
-        <p>HyperForge is the only platform with a complete pipeline — from idea to live, with AI continuously improving your edge.</p>
-        <ul class="ps-bullets">
-          <li>Backtest on historical data before deploying a dollar</li>
-          <li>Forward test in paper mode to validate live conditions</li>
-          <li>AI optimization loop tuning parameters 24/7</li>
-          <li>Non-custodial agent wallets — trade-only, no withdrawal risk</li>
-          <li>Full pipeline in one platform, one dashboard</li>
-          <li>Built for systematic traders, quants, and algo builders</li>
-        </ul>
+      <div class="pain-card fade-in">
+        <div class="pain-icon">⌛</div>
+        <h3>Time kills you next</h3>
+        <p>Only <strong style="color:var(--accent-rose);">10%</strong> of day traders ever make money. <strong style="color:var(--accent-rose);">80%</strong> quit within a year — not because their ideas are bad, but because screens don't sleep and neither can you.</p>
+        <span class="pain-cite">Source: Forbes + Optimus Futures compilation</span>
       </div>
+      <div class="pain-card fade-in">
+        <div class="pain-icon">⚠</div>
+        <h3>Backtests lie even worse</h3>
+        <p>So you decide to automate. Your "94% win rate" strategy is curve-fit to noise. LLM-assisted strategies have collapsed from <strong style="color:var(--accent-rose);">+23.3% to −22%</strong> under honest out-of-sample testing.</p>
+        <span class="pain-cite">Source: arxiv.org/abs/2505.07078</span>
+      </div>
+    </div>
+
+    <div class="pain-bridge fade-in">
+      <div style="flex:1;min-width:260px;">
+        <div class="pain-bridge-label">The only way out</div>
+        <div class="pain-bridge-text">Validate your edge <span>before</span> a dollar goes live.<br>Then let AI keep improving it while you sleep.</div>
+      </div>
+      <a href="#pipeline" class="pain-bridge-cta">See how HyperForge does it &rarr;</a>
     </div>
   </div>
 </section>
