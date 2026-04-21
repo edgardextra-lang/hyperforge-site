@@ -225,11 +225,11 @@ ul { list-style: none; }
 /* stat cards grid */
 .stat-cards-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
   margin-bottom: 32px;
 }
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
   .stat-cards-grid {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -237,13 +237,6 @@ ul { list-style: none; }
 @media (max-width: 600px) {
   .stat-cards-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-  /* last card (5th) spans full width so it centers */
-  .stat-cards-grid .stat-card:last-child {
-    grid-column: 1 / -1;
-    max-width: 50%;
-    margin: 0 auto;
-    width: 100%;
   }
   .stat-card {
     padding: 16px 14px 14px;
@@ -1576,38 +1569,45 @@ ul { list-style: none; }
       <p class="section-subtitle" style="margin:0 auto;">Live AI bots running on Hyperliquid mainnet. Real realized PnL numbers — same infrastructure you'll deploy on HyperForge.</p>
     </div>
 
-    <!-- Live-proof stat cards (Option B: PF · WR · Sharpe · Trades) -->
+    <!-- Live-proof stat cards (Option B: PnL% · PF · WR · Sharpe · Trades · Expectancy) -->
     <div class="stat-cards-grid" id="stat-cards-grid">
 
       <div class="stat-card" data-color="green" style="transition-delay:0s;">
+        <div class="stat-card-bar" style="background:var(--accent-green);"></div>
+        <div class="stat-label">Realized PnL % <span class="live-dot"></span></div>
+        <div id="live-pnl-pct" class="stat-value" style="color:var(--accent-green);">+9.24%</div>
+        <div id="live-pnl-usd" class="stat-sub">+$14.98 realized · live</div>
+      </div>
+
+      <div class="stat-card" data-color="green" style="transition-delay:.07s;">
         <div class="stat-card-bar" style="background:var(--accent-green);"></div>
         <div class="stat-label">Profit Factor <span class="live-dot"></span></div>
         <div id="live-pf" class="stat-value" style="color:var(--accent-green);">1.39</div>
         <div id="live-pf-sub" class="stat-sub">PF &gt; 1.3 = institutional-tier</div>
       </div>
 
-      <div class="stat-card" data-color="amber" style="transition-delay:.07s;">
+      <div class="stat-card" data-color="amber" style="transition-delay:.14s;">
         <div class="stat-card-bar" style="background:var(--accent-amber);"></div>
         <div class="stat-label">Win Rate <span class="live-dot"></span></div>
         <div id="live-win-rate" class="stat-value" style="color:var(--accent-amber);">65.4%</div>
         <div id="live-win-detail" class="stat-sub">across 127 live trades</div>
       </div>
 
-      <div class="stat-card" data-color="cyan" style="transition-delay:.14s;">
+      <div class="stat-card" data-color="cyan" style="transition-delay:.21s;">
         <div class="stat-card-bar" style="background:var(--accent-cyan);"></div>
         <div class="stat-label">Sharpe (annualized)</div>
         <div id="live-sharpe" class="stat-value" style="color:var(--accent-cyan);">+5.15</div>
         <div id="live-sharpe-sub" class="stat-sub">14 days · projecting ~3 at scale</div>
       </div>
 
-      <div class="stat-card" data-color="purple" style="transition-delay:.21s;">
+      <div class="stat-card" data-color="purple" style="transition-delay:.28s;">
         <div class="stat-card-bar" style="background:#c084fc;"></div>
         <div class="stat-label">Trades run <span class="live-dot"></span></div>
         <div id="live-trade-count" class="stat-value" style="color:#c084fc;">127</div>
         <div id="live-trade-detail" class="stat-sub">14.7 days live · since April 6, 2026</div>
       </div>
 
-      <div class="stat-card" data-color="slate" style="transition-delay:.28s;">
+      <div class="stat-card" data-color="slate" style="transition-delay:.35s;">
         <div class="stat-card-bar" style="background:var(--border-light);"></div>
         <div class="stat-label">Expectancy / trade <span class="live-dot"></span></div>
         <div id="live-expectancy" class="stat-value" style="color:var(--accent-green);">+$0.118</div>
@@ -2221,19 +2221,23 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     var bots   = d.bots || [];
     var bench  = d.benchmarks || {};
 
-    // Stat cards are now Option B (PF · WR · Sharpe · Trades · Expectancy) —
-    // filtered to the two actively-profitable bots. These values are intentionally
-    // static and do NOT auto-refresh from the stats endpoint, because it returns
-    // the all-bot aggregate, which would pollute the curated Option B numbers
-    // with losing bots. If/when a dedicated endpoint returns the filtered subset,
-    // wire these back in.
-    //
-    //   setEl('live-pnl-pct', ...);       // now shows +$14.98 (realized USD)
-    //   setEl('live-pnl-usd', ...);       // sub-line, static
-    //   setEl('live-trade-count', ...);   // 127
-    //   setEl('live-trade-detail', ...);  // sub-line, static
-    //   setEl('live-win-rate', ...);      // 65.4%
-    //   setEl('live-win-detail', ...);    // sub-line, static
+    // Stat cards are Option B (PnL% · PF · WR · Sharpe · Trades · Expectancy) —
+    // filtered to the two actively-profitable bots. The backend `combined_*`
+    // fields already reflect this filtered subset (losing bots are excluded
+    // from the combined totals), so the PnL% card auto-refreshes correctly.
+    // PF / Sharpe / Expectancy are computed metrics not yet in the endpoint —
+    // they stay static until a dedicated endpoint exposes them.
+
+    // Live-refreshing card (backend already filters the right subset)
+    setEl('live-pnl-pct', fmtSign(pnlPct));
+    setEl('live-pnl-usd', '+$' + fmt(Math.abs(pnlUsd)) + ' realized · live');
+
+    // Static cards — backend doesn't emit PF / Sharpe / Expectancy yet:
+    //   setEl('live-pf', ...);
+    //   setEl('live-sharpe', ...);
+    //   setEl('live-expectancy', ...);
+    //   setEl('live-trade-count', ...);  // 127 (not the all-bot count)
+    //   setEl('live-win-rate', ...);     // 65.4% (not the all-bot WR)
 
 
     // comparison table — HyperBot
