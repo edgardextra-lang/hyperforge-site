@@ -2221,12 +2221,12 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     var bots   = d.bots || [];
     var bench  = d.benchmarks || {};
 
-    // Stat cards are now Option B (PF · WR · Sharpe · Trades · PnL) — filtered to
-    // DeltaBot + EFCBot only. These values are intentionally static and do NOT
-    // auto-refresh from /api/live_proof because the endpoint returns the all-bot
-    // aggregate, which would pollute the curated Option B numbers with losing
-    // bots (TrendBot, KronosBot, etc.). If/when a dedicated endpoint returns
-    // DeltaBot+EFCBot-only stats, wire these back in.
+    // Stat cards are now Option B (PF · WR · Sharpe · Trades · Expectancy) —
+    // filtered to the two actively-profitable bots. These values are intentionally
+    // static and do NOT auto-refresh from the stats endpoint, because it returns
+    // the all-bot aggregate, which would pollute the curated Option B numbers
+    // with losing bots. If/when a dedicated endpoint returns the filtered subset,
+    // wire these back in.
     //
     //   setEl('live-pnl-pct', ...);       // now shows +$14.98 (realized USD)
     //   setEl('live-pnl-usd', ...);       // sub-line, static
