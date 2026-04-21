@@ -1573,48 +1573,52 @@ ul { list-style: none; }
     <div class="text-center fade-in" style="text-align:center; margin-bottom:48px;">
       <div class="section-label">Founder's Live Proof</div>
       <h2 class="section-title">Real money. Real mainnet.<br><span class="text-gradient-green">Real performance.</span></h2>
-      <p class="section-subtitle" style="margin:0 auto;">The platform founder runs 5 AI bots live on Hyperliquid. These are real realized PnL numbers — the same infrastructure you'll deploy on HyperForge.</p>
+      <p class="section-subtitle" style="margin:0 auto;">The platform founder runs two top-performing AI bots live on Hyperliquid — DeltaBot (OI-Price Divergence) and EFCBot (Extreme Funding Capture). Real realized PnL numbers. Same infrastructure you'll deploy on HyperForge.</p>
     </div>
 
-    <!-- 5 stat cards -->
+    <!-- Live-proof stat cards (Option B: PF · WR · Sharpe · Trades) -->
     <div class="stat-cards-grid" id="stat-cards-grid">
 
       <div class="stat-card" data-color="green" style="transition-delay:0s;">
         <div class="stat-card-bar" style="background:var(--accent-green);"></div>
-        <div class="stat-label">Combined · Live <span class="live-dot"></span></div>
-        <div id="live-pnl-pct" class="stat-value" style="color:var(--accent-green);">+8.71%</div>
-        <div id="live-pnl-usd" class="stat-sub">+$17.45 realized · 5 live bots</div>
+        <div class="stat-label">Profit Factor <span class="live-dot"></span></div>
+        <div id="live-pf" class="stat-value" style="color:var(--accent-green);">1.39</div>
+        <div id="live-pf-sub" class="stat-sub">PF &gt; 1.3 = institutional-tier</div>
       </div>
 
-      <div class="stat-card" data-color="cyan" style="transition-delay:.07s;">
-        <div class="stat-card-bar" style="background:var(--accent-cyan);"></div>
-        <div class="stat-label">MC Projection · 1 Year</div>
-        <div class="stat-value" style="color:var(--accent-cyan);">+440%</div>
-        <div class="stat-sub">median · base · 10k simulations</div>
-      </div>
-
-      <div class="stat-card" data-color="purple" style="transition-delay:.14s;">
-        <div class="stat-card-bar" style="background:#c084fc;"></div>
-        <div class="stat-label">Total Trades <span class="live-dot"></span></div>
-        <div id="live-trade-count" class="stat-value" style="color:#c084fc;">131</div>
-        <div id="live-trade-detail" class="stat-sub">across 5 live bots</div>
-      </div>
-
-      <div class="stat-card" data-color="amber" style="transition-delay:.21s;">
+      <div class="stat-card" data-color="amber" style="transition-delay:.07s;">
         <div class="stat-card-bar" style="background:var(--accent-amber);"></div>
         <div class="stat-label">Win Rate <span class="live-dot"></span></div>
-        <div id="live-win-rate" class="stat-value" style="color:var(--accent-amber);">58.0%</div>
-        <div id="live-win-detail" class="stat-sub">combined across all bots</div>
+        <div id="live-win-rate" class="stat-value" style="color:var(--accent-amber);">65.4%</div>
+        <div id="live-win-detail" class="stat-sub">across 127 live trades</div>
+      </div>
+
+      <div class="stat-card" data-color="cyan" style="transition-delay:.14s;">
+        <div class="stat-card-bar" style="background:var(--accent-cyan);"></div>
+        <div class="stat-label">Sharpe (annualized)</div>
+        <div id="live-sharpe" class="stat-value" style="color:var(--accent-cyan);">+5.15</div>
+        <div id="live-sharpe-sub" class="stat-sub">14 days · projecting ~3 at scale</div>
+      </div>
+
+      <div class="stat-card" data-color="purple" style="transition-delay:.21s;">
+        <div class="stat-card-bar" style="background:#c084fc;"></div>
+        <div class="stat-label">Trades run <span class="live-dot"></span></div>
+        <div id="live-trade-count" class="stat-value" style="color:#c084fc;">127</div>
+        <div id="live-trade-detail" class="stat-sub">DeltaBot + EFCBot · 14.7 days live</div>
       </div>
 
       <div class="stat-card" data-color="slate" style="transition-delay:.28s;">
         <div class="stat-card-bar" style="background:var(--border-light);"></div>
-        <div class="stat-label">P(Profit) 1 Year</div>
-        <div class="stat-value" style="color:var(--text-primary);">100%</div>
-        <div class="stat-sub">across all 10k simulations</div>
+        <div class="stat-label">Realized PnL <span class="live-dot"></span></div>
+        <div id="live-pnl-pct" class="stat-value" style="color:var(--text-primary);">+$14.98</div>
+        <div id="live-pnl-usd" class="stat-sub">net of fees and funding</div>
       </div>
 
     </div>
+
+    <p style="max-width:780px;margin:16px auto 0;text-align:center;color:var(--text-muted);font-size:12px;line-height:1.6;">
+      Live since April 6, 2026 · 127 trades · 14.7 days. Small-sample Sharpe is biased upward; expect regression toward ~3 as the trade count grows beyond 500. Past performance does not guarantee future results.
+    </p>
 
     <!-- HyperBot vs BTC vs S&P comparison table -->
     <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:20px;" class="fade-in fade-in-delay-1">
@@ -2217,15 +2221,20 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     var bots   = d.bots || [];
     var bench  = d.benchmarks || {};
 
-    // stat cards
-    setEl('live-pnl-pct', fmtSign(pnlPct));
-    setEl('live-pnl-usd', (pnlUsd >= 0 ? '+$' : '-$') + fmt(Math.abs(pnlUsd)) + ' realized · ' + (bots.length || 5) + ' live bots');
-    setEl('live-trade-count', String(trades));
-    setEl('live-trade-detail', 'across ' + (bots.length || 5) + ' live bots');
-    setEl('live-win-rate', fmt(wr, 1) + '%');
+    // Stat cards are now Option B (PF · WR · Sharpe · Trades · PnL) — filtered to
+    // DeltaBot + EFCBot only. These values are intentionally static and do NOT
+    // auto-refresh from /api/live_proof because the endpoint returns the all-bot
+    // aggregate, which would pollute the curated Option B numbers with losing
+    // bots (TrendBot, KronosBot, etc.). If/when a dedicated endpoint returns
+    // DeltaBot+EFCBot-only stats, wire these back in.
+    //
+    //   setEl('live-pnl-pct', ...);       // now shows +$14.98 (realized USD)
+    //   setEl('live-pnl-usd', ...);       // sub-line, static
+    //   setEl('live-trade-count', ...);   // 127
+    //   setEl('live-trade-detail', ...);  // sub-line, static
+    //   setEl('live-win-rate', ...);      // 65.4%
+    //   setEl('live-win-detail', ...);    // sub-line, static
 
-    var wins = Math.round(wr / 100 * trades);
-    setEl('live-win-detail', wins + 'W / ' + (trades - wins) + 'L combined');
 
     // comparison table — HyperBot
     setEl('live-table-pnl', fmtSign(pnlPct));
