@@ -1575,8 +1575,8 @@ ul { list-style: none; }
       <div class="stat-card" data-color="green" style="transition-delay:0s;">
         <div class="stat-card-bar" style="background:var(--accent-green);"></div>
         <div class="stat-label">Realized PnL % <span class="live-dot"></span></div>
-        <div id="live-pnl-pct" class="stat-value" style="color:var(--accent-green);">+9.24%</div>
-        <div id="live-pnl-usd" class="stat-sub">+$14.98 realized · live</div>
+        <div id="live-pnl-pct" class="stat-value" style="color:var(--accent-green);">+9.37%</div>
+        <div id="live-pnl-usd" class="stat-sub">+$14.99 realized · live</div>
       </div>
 
       <div class="stat-card" data-color="green" style="transition-delay:.07s;">
@@ -2182,7 +2182,12 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
 
 /* ------- Live PnL stats (fetches from stats.json every 60s) ------- */
 (function() {
-  var API = 'https://edgardextra-lang.github.io/crack-the-bot/stats.json';
+  // Primary: direct from the HyperBot cloud server (source of truth — what the
+  // dashboard landing page shows). Fallback to GitHub Pages stats.json if the
+  // tunnel is down or unreachable.
+  var API_PRIMARY  = 'https://shopzilla-dishes-happen-volunteers.trycloudflare.com/api/hyperforge/live-stats';
+  var API_FALLBACK = 'https://edgardextra-lang.github.io/crack-the-bot/stats.json';
+  var API = API_PRIMARY;
   var _prev = {};
 
   function fmt(n, decimals) {
@@ -2293,12 +2298,18 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
   }
 
   function fetchStats() {
-    fetch(API + '?t=' + Date.now(), { cache: 'no-store' })
-      .then(function(r) { return r.json(); })
+    fetch(API_PRIMARY + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('primary down'); return r.json(); })
       .then(applyStats)
       .catch(function() {
-        var upEl = document.getElementById('live-updated');
-        if (upEl) upEl.textContent = '';
+        // Fallback to GitHub Pages stats.json (may be stale; better than nothing).
+        fetch(API_FALLBACK + '?t=' + Date.now(), { cache: 'no-store' })
+          .then(function(r) { return r.json(); })
+          .then(applyStats)
+          .catch(function() {
+            var upEl = document.getElementById('live-updated');
+            if (upEl) upEl.textContent = '';
+          });
       });
   }
 
