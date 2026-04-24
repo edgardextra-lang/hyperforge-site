@@ -2252,7 +2252,8 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
       setEl('live-win-detail', 'across ' + trades + ' live trades');
     }
     if (d.sharpe_annualized != null) {
-      setEl('live-sharpe', fmtSign(d.sharpe_annualized));
+      var sh = Number(d.sharpe_annualized);
+      setEl('live-sharpe', (sh >= 0 ? '+' : '') + sh.toFixed(2));
     }
     if (trades != null) {
       setEl('live-trade-count', String(trades));
