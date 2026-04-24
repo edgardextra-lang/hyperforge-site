@@ -225,7 +225,7 @@ ul { list-style: none; }
 /* stat cards grid */
 .stat-cards-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 14px;
   margin-bottom: 32px;
 }
@@ -1506,8 +1506,8 @@ ul { list-style: none; }
   <div class="container">
     <div class="proof-grid">
       <div class="proof-item fade-in">
-        <div class="proof-number" id="proof-pnl">+8.71%</div>
-        <div class="proof-label">Live realized return · <span id="proof-bot-count">5</span> AI bots running</div>
+        <div class="proof-number" id="proof-pnl">+6.65%</div>
+        <div class="proof-label">Live realized return on Hyperliquid mainnet</div>
       </div>
       <div class="proof-item fade-in fade-in-delay-1">
         <div class="proof-number">0.035%</div>
@@ -1612,6 +1612,13 @@ ul { list-style: none; }
         <div class="stat-label">Expectancy / trade <span class="live-dot"></span></div>
         <div id="live-expectancy" class="stat-value" style="color:var(--accent-green);">+0.20%</div>
         <div id="live-expectancy-sub" class="stat-sub">19 bps edge per trade · after fees</div>
+      </div>
+
+      <div class="stat-card" data-color="rose" style="transition-delay:.42s;">
+        <div class="stat-card-bar" style="background:var(--accent-rose);"></div>
+        <div class="stat-label">Max Drawdown <span class="live-dot"></span></div>
+        <div id="live-max-dd" class="stat-value" style="color:var(--accent-rose);">-2.09%</div>
+        <div id="live-max-dd-sub" class="stat-sub">Combined peak-to-trough · 3 bots</div>
       </div>
 
     </div>
@@ -2233,16 +2240,33 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     // PF / Sharpe / Expectancy are computed metrics not yet in the endpoint —
     // they stay static until a dedicated endpoint exposes them.
 
-    // Live-refreshing card (backend already filters the right subset)
+    // All six live-proof stat cards now refresh from the filtered endpoint
     setEl('live-pnl-pct', fmtSign(pnlPct));
     setEl('live-pnl-usd', '+$' + fmt(Math.abs(pnlUsd)) + ' realized · live');
 
-    // Static cards — backend doesn't emit PF / Sharpe / Expectancy yet:
-    //   setEl('live-pf', ...);
-    //   setEl('live-sharpe', ...);
-    //   setEl('live-expectancy', ...);
-    //   setEl('live-trade-count', ...);  // 127 (not the all-bot count)
-    //   setEl('live-win-rate', ...);     // 65.4% (not the all-bot WR)
+    if (d.profit_factor != null) {
+      setEl('live-pf', Number(d.profit_factor).toFixed(2));
+    }
+    if (d.combined_win_rate != null) {
+      setEl('live-win-rate', Number(wr).toFixed(1) + '%');
+      setEl('live-win-detail', 'across ' + trades + ' live trades');
+    }
+    if (d.sharpe_annualized != null) {
+      setEl('live-sharpe', fmtSign(d.sharpe_annualized));
+    }
+    if (trades != null) {
+      setEl('live-trade-count', String(trades));
+    }
+    if (d.expectancy_pct != null) {
+      var ev = Number(d.expectancy_pct);
+      setEl('live-expectancy', (ev >= 0 ? '+' : '') + ev.toFixed(2) + '%');
+      var evEl = document.getElementById('live-expectancy');
+      if (evEl) evEl.style.color = ev >= 0 ? 'var(--accent-green)' : 'var(--accent-rose)';
+    }
+    if (d.max_dd_pct != null) {
+      var dd = Number(d.max_dd_pct);
+      setEl('live-max-dd', (dd > 0 ? '+' : '') + dd.toFixed(2) + '%');
+    }
 
 
     // comparison table — HyperBot
@@ -2250,8 +2274,8 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
 
     // proof bar
     setEl('proof-pnl', fmtSign(pnlPct));
-    var bcEl = document.getElementById('proof-bot-count');
-    if (bcEl) bcEl.textContent = bots.length || 5;
+    // bot-count span removed from proof bar per product decision — leave the JS
+    // no-op here so we don't break if the element ever comes back.
 
     // BTC benchmark
     if (bench.btc_return_pct != null) {
