@@ -1604,7 +1604,7 @@ ul { list-style: none; }
         <div class="stat-card-bar" style="background:#c084fc;"></div>
         <div class="stat-label">Trades run <span class="live-dot"></span></div>
         <div id="live-trade-count" class="stat-value" style="color:#c084fc;">127</div>
-        <div id="live-trade-detail" class="stat-sub">14.7 days live · since April 6, 2026</div>
+        <div id="live-trade-detail" class="stat-sub"><span id="live-days">18</span> days live · since April 6, 2026</div>
       </div>
 
       <div class="stat-card" data-color="slate" style="transition-delay:.35s;">
@@ -1624,7 +1624,7 @@ ul { list-style: none; }
     </div>
 
     <p style="max-width:780px;margin:16px auto 40px;text-align:center;color:var(--text-muted);font-size:12px;line-height:1.6;">
-      Live since April 6, 2026 · 127 trades · 14.7 days. Small-sample Sharpe is biased upward; expect regression toward ~3 as the trade count grows beyond 500. Past performance does not guarantee future results.
+      Live since April 6, 2026 · <span id="live-days-footnote">18</span> days · <span id="live-trades-footnote">137</span> trades. Small-sample Sharpe is biased upward; expect regression toward ~3 as the trade count grows beyond 500. Past performance does not guarantee future results.
     </p>
 
     <!-- HyperBot vs BTC vs S&P comparison table -->
@@ -1632,7 +1632,7 @@ ul { list-style: none; }
       <div style="padding:16px 20px; display:flex; align-items:flex-start; justify-content:space-between; gap:12px; border-bottom:1px solid var(--border); flex-wrap:wrap;">
         <div style="min-width:0;">
           <div style="font-size:15px;font-weight:800;color:var(--text-primary);">HyperBot vs Bitcoin vs S&amp;P 500</div>
-          <div style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);margin-top:3px;line-height:1.5;">Live: 127 trades · 14.7 days · Monte Carlo 1-year <br class="mobile-break">· 10,000 simulations · edge-decay model</div>
+          <div style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);margin-top:3px;line-height:1.5;">Live: <span id="live-trades-compare">137</span> trades · <span id="live-days-compare">18</span> days · Monte Carlo 1-year <br class="mobile-break">· 10,000 simulations · edge-decay model</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
           <span id="live-updated" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);"></span>
@@ -2257,7 +2257,22 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a) {
     }
     if (trades != null) {
       setEl('live-trade-count', String(trades));
+      setEl('live-trades-footnote', String(trades));
+      setEl('live-trades-compare', String(trades));
     }
+
+    // Days elapsed since live start (April 6, 2026 UTC)
+    try {
+      var startIso = (bench && bench.since_date) ? bench.since_date : '2026-04-06';
+      var startMs  = Date.parse(startIso + 'T00:00:00Z');
+      if (!isNaN(startMs)) {
+        var daysNum  = (Date.now() - startMs) / 86400000;
+        var daysDisp = daysNum >= 10 ? String(Math.floor(daysNum)) : daysNum.toFixed(1);
+        setEl('live-days', daysDisp);
+        setEl('live-days-footnote', daysDisp);
+        setEl('live-days-compare', daysDisp);
+      }
+    } catch (e) {}
     if (d.expectancy_pct != null) {
       var ev = Number(d.expectancy_pct);
       setEl('live-expectancy', (ev >= 0 ? '+' : '') + ev.toFixed(2) + '%');
