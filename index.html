@@ -279,10 +279,10 @@ h2.section-title em{ font-family:var(--serif); font-style:italic; font-weight:40
   position:relative;
   border:1px solid var(--line);
   background:linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(0,0,0,0.25) 100%);
-  width:100%; max-width:var(--w, 1100px);
-  padding:32px 36px 28px;
+  width:100%; max-width:var(--w, 1180px);
+  padding:36px 44px 32px;
   transition:border-color .3s ease, transform .3s ease;
-  display:grid; grid-template-columns:auto 1fr auto; gap:32px; align-items:center;
+  display:grid; grid-template-columns:auto 1fr auto; gap:40px; align-items:center;
 }
 .funnel-band:hover{ border-color:var(--line-strong);}
 .funnel-band.live{ border-color:var(--calm);}
@@ -290,53 +290,55 @@ h2.section-title em{ font-family:var(--serif); font-style:italic; font-weight:40
   content:""; position:absolute; left:0; right:0; top:-1px; height:2px; background:var(--calm); box-shadow:0 0 14px var(--calm-glow);
 }
 .funnel-band .step{
-  font-family:var(--mono); font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-3);
-  white-space:nowrap;
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-3);
+  white-space:nowrap; line-height:1.4;
 }
 .funnel-band .step b{ color:var(--ink); font-weight:600;}
 .funnel-band.live .step b{ color:var(--calm);}
 .funnel-band .body h4{
-  font-family:var(--sans); font-weight:800; font-size:clamp(22px, 2.4vw, 30px); letter-spacing:-.025em; line-height:1.05; margin-bottom:8px;
+  font-family:var(--sans); font-weight:800; font-size:clamp(24px, 2.6vw, 34px); letter-spacing:-.025em; line-height:1.05; margin-bottom:12px;
 }
 .funnel-band .body h4 em{ font-family:var(--serif); font-style:italic; font-weight:400; color:var(--ink-2);}
 .funnel-band.live .body h4 em{ color:var(--calm);}
-.funnel-band .body p{ font-size:13.5px; color:var(--ink-2); line-height:1.5; max-width:62ch;}
+.funnel-band .body p{ font-size:15px; color:var(--ink-2); line-height:1.6; max-width:64ch;}
 
 /* Survivor count + drop indicator */
 .funnel-band .count{ text-align:right; font-family:var(--mono);}
-.funnel-band .count .n{ font-size:clamp(22px, 2.2vw, 30px); font-weight:600; color:var(--ink); letter-spacing:-.02em; line-height:1;}
+.funnel-band .count .n{ font-size:clamp(26px, 2.6vw, 36px); font-weight:600; color:var(--ink); letter-spacing:-.02em; line-height:1;}
 .funnel-band.live .count .n{ color:var(--calm);}
-.funnel-band .count .l{ font-size:9.5px; color:var(--ink-3); letter-spacing:.18em; text-transform:uppercase; margin-top:6px;}
+.funnel-band .count .l{ font-size:10.5px; color:var(--ink-3); letter-spacing:.18em; text-transform:uppercase; margin-top:8px;}
 
 /* Gate chips inline */
 .funnel-band .gates{
-  grid-column: 2 / 3; display:flex; flex-wrap:wrap; gap:6px; margin-top:14px;
+  grid-column: 2 / 3; display:flex; flex-wrap:wrap; gap:8px; margin-top:18px;
 }
 .funnel-band .chip{
-  display:inline-flex; align-items:center; gap:7px; padding:5px 9px;
-  font-family:var(--mono); font-size:10.5px; letter-spacing:.04em;
-  background:rgba(255,255,255,0.025); border:1px solid var(--line); color:var(--ink-2);
+  display:inline-flex; align-items:center; gap:8px; padding:7px 12px;
+  font-family:var(--mono); font-size:12px; letter-spacing:.03em;
+  background:rgba(255,255,255,0.03); border:1px solid var(--line); color:var(--ink-2);
 }
 .funnel-band .chip::before{
-  content:""; width:7px; height:7px; border-radius:50%; background:var(--calm); box-shadow:0 0 6px var(--calm-glow);
+  content:""; width:8px; height:8px; border-radius:50%; background:var(--calm); box-shadow:0 0 6px var(--calm-glow);
 }
 .funnel-band.live .chip::before{ background:var(--gold); box-shadow:0 0 6px rgba(251,191,36,.40); animation:p 1.6s ease-out infinite;}
 .funnel-band .chip span.dim{ color:var(--ink-3);}
 
 /* Connector that draws the narrowing funnel walls between bands */
 .funnel-conn{
-  width:100%; max-width:1100px; height:48px; position:relative;
+  width:100%; max-width:1180px; height:42px; position:relative;
   pointer-events:none;
 }
 .funnel-conn svg{ display:block; width:100%; height:100%; overflow:visible;}
 .funnel-conn .wall{ stroke:var(--line-strong); stroke-width:1; fill:none;}
 
-/* Per-band widths set via inline --w; fall back to defaults below */
-.funnel-band:nth-of-type(1){ --w: 1100px;}
-.funnel-band:nth-of-type(2){ --w: 940px;}
-.funnel-band:nth-of-type(3){ --w: 780px;}
-.funnel-band:nth-of-type(4){ --w: 620px;}
-.funnel-band:nth-of-type(5){ --w: 460px;}
+/* Per-band widths set via inline --w; fall back to defaults below.
+   Gentler funnel: still narrows visibly but every band stays readable
+   (Defense / Stage 03 was 780 — now 1020). */
+.funnel-band:nth-of-type(1){ --w: 1180px;}
+.funnel-band:nth-of-type(2){ --w: 1100px;}
+.funnel-band:nth-of-type(3){ --w: 1020px;}
+.funnel-band:nth-of-type(4){ --w: 940px;}
+.funnel-band:nth-of-type(5){ --w: 860px;}
 
 .forge-foot{
   margin-top:48px; padding:22px 24px; border:1px solid var(--line); background:rgba(255,255,255,0.02);
@@ -660,9 +662,9 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
     </div>
 
     <div class="funnel-conn" aria-hidden="true">
-      <svg viewBox="0 0 1100 48" preserveAspectRatio="none">
-        <line class="wall" x1="0" y1="0" x2="80" y2="48"/>
-        <line class="wall" x1="1100" y1="0" x2="1020" y2="48"/>
+      <svg viewBox="0 0 1180 42" preserveAspectRatio="none">
+        <line class="wall" x1="0" y1="0" x2="40" y2="42"/>
+        <line class="wall" x1="1180" y1="0" x2="1140" y2="42"/>
       </svg>
     </div>
 
@@ -682,9 +684,9 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
     </div>
 
     <div class="funnel-conn" aria-hidden="true">
-      <svg viewBox="0 0 940 48" preserveAspectRatio="none">
-        <line class="wall" x1="0" y1="0" x2="80" y2="48"/>
-        <line class="wall" x1="940" y1="0" x2="860" y2="48"/>
+      <svg viewBox="0 0 1100 42" preserveAspectRatio="none">
+        <line class="wall" x1="0" y1="0" x2="40" y2="42"/>
+        <line class="wall" x1="1100" y1="0" x2="1060" y2="42"/>
       </svg>
     </div>
 
@@ -703,9 +705,9 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
     </div>
 
     <div class="funnel-conn" aria-hidden="true">
-      <svg viewBox="0 0 780 48" preserveAspectRatio="none">
-        <line class="wall" x1="0" y1="0" x2="80" y2="48"/>
-        <line class="wall" x1="780" y1="0" x2="700" y2="48"/>
+      <svg viewBox="0 0 1020 42" preserveAspectRatio="none">
+        <line class="wall" x1="0" y1="0" x2="40" y2="42"/>
+        <line class="wall" x1="1020" y1="0" x2="980" y2="42"/>
       </svg>
     </div>
 
@@ -724,9 +726,9 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
     </div>
 
     <div class="funnel-conn" aria-hidden="true">
-      <svg viewBox="0 0 620 48" preserveAspectRatio="none">
-        <line class="wall" x1="0" y1="0" x2="80" y2="48"/>
-        <line class="wall" x1="620" y1="0" x2="540" y2="48"/>
+      <svg viewBox="0 0 940 42" preserveAspectRatio="none">
+        <line class="wall" x1="0" y1="0" x2="40" y2="42"/>
+        <line class="wall" x1="940" y1="0" x2="900" y2="42"/>
       </svg>
     </div>
 
