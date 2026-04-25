@@ -6,6 +6,8 @@
 <title>HyperForge — You're not bad at trading. You're human.</title>
 <meta name="description" content="Crypto perps weren't designed for human reaction times. HyperForge runs the discipline you can't.">
 
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1130,6 +1132,17 @@ setInterval(pull, 60000);
 })();
 
 /* ─────────────────────────────────────────────
+   Shared waitlist constants (declared early so the seat-counter
+   IIFE below — which fires immediately — can reference them
+   without hitting the TDZ).
+   ───────────────────────────────────────────── */
+const WL_SUPABASE_URL = 'https://pugmrupmlxckmrlcuzby.supabase.co';
+const WL_SUPABASE_KEY = 'sb_publishable_pEhpLWsASpjHABotE1eYeg_YoS_H32C';
+const WL_EJS_PUBLIC   = 'jc1UmY3TfWj2x66qG';
+const WL_EJS_SERVICE  = 'service_hr2mfry';
+const WL_EJS_TEMPLATE = 'template_e75us7h';
+
+/* ─────────────────────────────────────────────
    Live seat counter — pulled from Supabase ctb_beta_emails
    (HyperForge call_sign rows). Only the real count is shown,
    and it only increments when a NEW signup actually lands.
@@ -1216,12 +1229,7 @@ function updateSeatUI(n, opts){
 /* ─── Real waitlist backend (matches the original site flow) ───
    1. POST to Supabase ctb_beta_emails (single canonical waitlist table)
    2. Best-effort EmailJS confirmation (HyperForge template)
-   The form-level submit handler keeps the UX local; failures surface as button text. */
-const WL_SUPABASE_URL = 'https://pugmrupmlxckmrlcuzby.supabase.co';
-const WL_SUPABASE_KEY = 'sb_publishable_pEhpLWsASpjHABotE1eYeg_YoS_H32C';
-const WL_EJS_PUBLIC   = 'jc1UmY3TfWj2x66qG';
-const WL_EJS_SERVICE  = 'service_hr2mfry';
-const WL_EJS_TEMPLATE = 'template_e75us7h';
+   Constants for this block are declared at the top of the script. */
 
 (function(){
   if (window.emailjs && typeof emailjs.init === 'function') {
