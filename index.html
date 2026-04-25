@@ -3,2686 +3,1218 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HyperForge — AI Trading Platform for Hyperliquid</title>
-<meta name="description" content="Build AI trading bots that cut your fees, trade 24/7, and get smarter every hour — no code needed. Forward test live, deploy on Hyperliquid, and let AI optimize 24/7.">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='url(%23g)'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='32' y2='32' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%236366f1'/%3E%3Cstop offset='100%25' stop-color='%23818cf8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='monospace' font-weight='700' font-size='13' fill='white'%3E/%3E%3C/text%3E%3C/svg%3E">
-<script defer src="https://cloud.umami.is/script.js" data-website-id="ca5167d2-d17c-410a-8c7f-3cac0166b1f9"></script>
+<title>HyperForge — You're not bad at trading. You're human.</title>
+<meta name="description" content="Crypto perps weren't designed for human reaction times. HyperForge runs the discipline you can't.">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
+
 <style>
-/* ============================================================
-   CSS Custom Properties
-   ============================================================ */
-:root {
-  --bg-primary: #080C14;
-  --bg-secondary: #0D1320;
-  --bg-card: #111827;
-  --bg-card-hover: #1a2235;
-  --bg-code: #0B1121;
-  --border: #1e293b;
-  --border-light: #334155;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent-indigo: #818cf8;
-  --accent-indigo-dim: #6366f1;
-  --accent-indigo-bg: rgba(99,102,241,0.12);
-  --accent-green: #34d399;
-  --accent-green-dim: #10b981;
-  --accent-green-bg: rgba(16,185,129,0.12);
-  --accent-amber: #fbbf24;
-  --accent-amber-bg: rgba(251,191,36,0.10);
-  --accent-rose: #fb7185;
-  --accent-cyan: #22d3ee;
-  --gradient-indigo: linear-gradient(135deg, #6366f1, #818cf8);
-  --gradient-green: linear-gradient(135deg, #10b981, #34d399);
-  --gradient-hero: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,0.18) 0%, transparent 60%);
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --shadow-card: 0 4px 24px rgba(0,0,0,0.3);
-  --shadow-glow-indigo: 0 0 40px rgba(99,102,241,0.2);
-  --shadow-glow-green: 0 0 40px rgba(16,185,129,0.15);
-  --max-width: 1200px;
-  --section-gap: 120px;
+/* ──────────────────────── Tokens ──────────────────────── */
+:root{
+  --ink:        #f4f6fa;
+  --ink-2:      #94a3b8;
+  --ink-3:      #5b6573;
+  --ink-4:      #3a4250;
+  --bg:         #050608;
+  --bg-2:       #0a0c10;
+  --bg-3:       #0f1218;
+  --line:       rgba(148,163,184,0.08);
+  --line-strong:rgba(148,163,184,0.18);
+  --blood:      #fb7185;        /* refined coral — pain accent (less alarm-clock) */
+  --blood-glow: rgba(251,113,133,.36);
+  --calm:       #34d399;        /* the resolution accent */
+  --calm-glow:  rgba(52,211,153,.40);
+  --gold:       #fbbf24;
+  --sans:       'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --serif:      'Instrument Serif', 'Times New Roman', serif;
+  --mono:       'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--ink);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"ss01","cv11";
+  overflow-x:hidden;
+}
+::selection{background:var(--blood);color:#fff;}
+a{color:inherit;text-decoration:none;}
+
+/* ──────────────────────── Liquidation tape (top edge) ──────────────────────── */
+.liq-tape{
+  position:fixed; top:0; left:0; right:0; z-index:99;
+  height:28px; background:linear-gradient(90deg, rgba(0,0,0,0.92), rgba(0,0,0,0.92));
+  border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:14px; padding:0 16px;
+  font-family:var(--mono); font-size:11px; color:var(--ink-3); letter-spacing:.04em;
+  overflow:hidden;
+}
+.liq-tape .label{ display:flex; align-items:center; gap:8px; flex-shrink:0; color:var(--blood); letter-spacing:.18em; text-transform:uppercase; font-weight:600;}
+.liq-tape .label::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--blood); box-shadow:0 0 8px var(--blood-glow); animation:p 1.4s ease-out infinite;}
+@keyframes p{0%{box-shadow:0 0 0 0 rgba(251,113,133,.55);}70%{box-shadow:0 0 0 9px transparent;}100%{box-shadow:0 0 0 0 transparent;}}
+.liq-track{
+  display:inline-flex; gap:32px; animation:scroll-tape 80s linear infinite; padding-right:32px; white-space:nowrap;
+}
+.liq-track span b{ color:var(--blood); font-weight:600;}
+.liq-track span em{ font-style:normal; color:var(--ink-3); margin-left:6px;}
+@keyframes scroll-tape{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+/* ──────────────────────── Nav ──────────────────────── */
+nav{
+  position:fixed; top:28px; left:0; right:0; z-index:98;
+  padding:18px 32px;
+  display:flex; align-items:center; justify-content:space-between;
+  backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  background:rgba(5,6,8,0.55);
+  border-bottom:1px solid var(--line);
+  transition:padding .3s ease, background .3s ease;
+}
+nav.scrolled{ padding:12px 32px; background:rgba(5,6,8,0.88);}
+.brand{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:16px; letter-spacing:-.005em;}
+.brand-mark{
+  width:26px; height:26px; border-radius:7px;
+  background:linear-gradient(135deg, var(--blood) 0%, var(--calm) 100%);
+  display:grid; place-items:center; font-family:var(--mono); font-weight:700; font-size:13px; color:#000;
+  box-shadow:0 0 18px var(--calm-glow);
+}
+.nav-cta{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; text-transform:uppercase;
+  padding:10px 16px; border:1px solid var(--ink); color:var(--bg); background:var(--ink);
+  font-weight:600; cursor:pointer; transition:all .2s ease; border-radius:0;
+}
+.nav-cta:hover{ background:var(--calm); border-color:var(--calm); color:#000;}
+
+/* ──────────────────────── Section frame ──────────────────────── */
+section{ position:relative; padding: 140px 32px; max-width:1320px; margin:0 auto; overflow:hidden;}
+.eyebrow{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-3); margin-bottom:32px;
+}
+.eyebrow::before{content:""; width:24px; height:1px; background:currentColor; opacity:.5;}
+.eyebrow.blood{color:var(--blood);}
+.eyebrow.calm{color:var(--calm);}
+
+h1.hero-h{
+  font-family:var(--sans);
+  font-weight:900;
+  font-size:clamp(54px, 10vw, 184px);
+  line-height:.93;
+  letter-spacing:-.05em;
+}
+h1.hero-h em{
+  font-family:var(--serif); font-style:italic; font-weight:400;
+  color:var(--blood); letter-spacing:-.02em;
+  display:inline-block;
 }
 
-/* ============================================================
-   Reset & Base
-   ============================================================ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-body {
-  font-family: var(--font-body);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.7;
-  overflow-x: hidden;
+h2.section-title{
+  font-family:var(--sans);
+  font-weight:800;
+  font-size:clamp(42px, 6.5vw, 104px);
+  line-height:.95;
+  letter-spacing:-.03em;
+  margin-bottom:24px;
+  max-width:14ch;
 }
-a { color: inherit; text-decoration: none; }
-img { max-width: 100%; display: block; }
-ul { list-style: none; }
+h2.section-title em{ font-family:var(--serif); font-style:italic; font-weight:400; color:var(--ink-2);}
 
-/* ============================================================
-   Utility
-   ============================================================ */
-.container { max-width: var(--max-width); margin: 0 auto; padding: 0 24px; }
-.section { padding: var(--section-gap) 0; position: relative; }
-.section-label {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--accent-indigo);
-  margin-bottom: 16px;
-}
-.section-title {
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 800;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  margin-bottom: 20px;
-}
-.section-subtitle {
-  font-size: 18px;
-  color: var(--text-secondary);
-  max-width: 640px;
-  line-height: 1.7;
-}
-.text-gradient-indigo {
-  background: var(--gradient-indigo);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.text-gradient-green {
-  background: var(--gradient-green);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+.lede{ font-size:clamp(17px, 1.55vw, 22px); color:var(--ink-2); max-width:64ch; line-height:1.55;}
+.lede strong{ color:var(--ink); font-weight:600;}
 
-/* ============================================================
-   Scroll Animation
-   ============================================================ */
-.fade-in {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.fade-in.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.fade-in-delay-1 { transition-delay: 0.1s; }
-.fade-in-delay-2 { transition-delay: 0.2s; }
-.fade-in-delay-3 { transition-delay: 0.3s; }
-.fade-in-delay-4 { transition-delay: 0.4s; }
-.fade-in-delay-5 { transition-delay: 0.5s; }
+/* ──────────────────────── Reveal ──────────────────────── */
+.reveal{ opacity:0; transform:translateY(28px); transition:opacity .9s cubic-bezier(.22,.8,.32,1), transform .9s cubic-bezier(.22,.8,.32,1); will-change:opacity, transform;}
+.reveal.in{ opacity:1; transform:none;}
+.stagger > .reveal:nth-child(1){ transition-delay:.05s;}
+.stagger > .reveal:nth-child(2){ transition-delay:.18s;}
+.stagger > .reveal:nth-child(3){ transition-delay:.31s;}
+.stagger > .reveal:nth-child(4){ transition-delay:.44s;}
+.stagger > .reveal:nth-child(5){ transition-delay:.57s;}
+.stagger > .reveal:nth-child(6){ transition-delay:.70s;}
+.stagger > .reveal:nth-child(7){ transition-delay:.83s;}
 
-/* Live pulse dot */
-.live-dot {
-  display: inline-block;
-  width: 7px; height: 7px;
-  background: var(--accent-green);
-  border-radius: 50%;
-  box-shadow: 0 0 0 0 rgba(16,185,129,0.6);
-  animation: live-pulse 1.8s ease-in-out infinite;
-  flex-shrink: 0;
+/* ──────────────────────── Background ambient (scroll-reactive aura) ──────────────────────── */
+.amb{
+  position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(circle 70vmin at var(--aura-x, 30%) var(--aura-y, 25%),
+       var(--aura-c1, rgba(251,113,133,0.10)) 0%, transparent 70%),
+    radial-gradient(circle 60vmin at var(--aura-x2, 75%) var(--aura-y2, 80%),
+       var(--aura-c2, rgba(52,211,153,0.04)) 0%, transparent 70%);
+  transition: background-position 1.2s ease;
 }
-@keyframes live-pulse {
-  0%   { box-shadow: 0 0 0 0   rgba(16,185,129,0.6); }
-  60%  { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
-  100% { box-shadow: 0 0 0 0   rgba(16,185,129,0); }
-}
-
-/* ── Stat cards ─────────────────────────────────────────────── */
-.stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 22px 20px 18px;
-  position: relative;
-  overflow: hidden;
-  cursor: default;
-  transition: transform 0.3s cubic-bezier(.22,1,.36,1),
-              box-shadow 0.3s cubic-bezier(.22,1,.36,1),
-              border-color 0.3s;
-  /* entrance animation */
-  opacity: 0;
-  transform: translateY(18px);
-}
-.stat-card.card-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
-}
-/* accent glow on hover, keyed to data-color attr */
-.stat-card[data-color="green"]:hover  { border-color: rgba(52,211,153,0.5); box-shadow: 0 16px 40px rgba(52,211,153,0.12); }
-.stat-card[data-color="cyan"]:hover   { border-color: rgba(34,211,238,0.5); box-shadow: 0 16px 40px rgba(34,211,238,0.12); }
-.stat-card[data-color="purple"]:hover { border-color: rgba(192,132,252,0.5); box-shadow: 0 16px 40px rgba(192,132,252,0.12); }
-.stat-card[data-color="amber"]:hover  { border-color: rgba(251,191,36,0.5);  box-shadow: 0 16px 40px rgba(251,191,36,0.12); }
-.stat-card[data-color="slate"]:hover  { border-color: rgba(148,163,184,0.4); box-shadow: 0 16px 40px rgba(148,163,184,0.08); }
-
-/* top accent bar */
-.stat-card-bar {
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  border-radius: 2px 2px 0 0;
-}
-/* shimmer sweep on value flash */
-.stat-card::after {
-  content: '';
-  position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-  pointer-events: none;
-  transition: none;
-}
-.stat-card.flash::after {
-  animation: card-shimmer 0.55s ease-out forwards;
-}
-@keyframes card-shimmer {
-  0%   { left: -60%; }
-  100% { left: 140%; }
-}
-/* value flash on update */
-.stat-card.flash .stat-value {
-  animation: value-flash 0.4s ease-out;
-}
-@keyframes value-flash {
-  0%   { opacity: 0.5; transform: scale(0.97); }
-  60%  { opacity: 1;   transform: scale(1.03); }
-  100% { opacity: 1;   transform: scale(1); }
-}
-
-.stat-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.stat-value {
-  font-size: 30px;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  line-height: 1;
-  margin-bottom: 8px;
-  transition: color 0.3s;
-}
-/* stat cards grid */
-.stat-cards-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 14px;
-  margin-bottom: 32px;
-}
-@media (max-width: 1100px) {
-  .stat-cards-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-@media (max-width: 600px) {
-  .stat-cards-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .stat-card {
-    padding: 16px 14px 14px;
-  }
-  .stat-value {
-    font-size: 24px;
-  }
-  .stat-label {
-    white-space: normal;
-    line-height: 1.4;
-    margin-bottom: 8px;
-  }
-}
-
-.stat-sub {
-  font-size: 12px;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
-
-/* ============================================================
-   Navigation
-   ============================================================ */
-.nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  padding: 16px 0;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  background: rgba(8,12,20,0.75);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.3s, background 0.3s;
-}
-.nav.scrolled {
-  border-bottom-color: var(--border);
-  background: rgba(8,12,20,0.92);
-}
-.nav-inner {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.nav-logo {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.nav-logo .logo-icon {
-  width: 32px; height: 32px;
-  background: var(--gradient-indigo);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-}
-.nav-links { display: flex; gap: 32px; align-items: center; }
-.nav-links a {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  transition: color 0.2s;
-}
-.nav-links a:hover { color: var(--text-primary); }
-.nav-cta {
-  background: var(--gradient-indigo);
-  color: #fff !important;
-  padding: 8px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  transition: opacity 0.2s, transform 0.2s;
-}
-.nav-cta:hover { opacity: 0.9; transform: translateY(-1px); }
-
-@media (max-width: 768px) {
-  .nav-links { display: none; }
-}
-
-/* ============================================================
-   Hero
-   ============================================================ */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 140px 24px 100px;
-  position: relative;
-  overflow: hidden;
-}
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--gradient-hero);
-  pointer-events: none;
-}
-.hero-grid {
-  position: absolute;
-  inset: 0;
+.grid-bg{
+  position:fixed; inset:0; z-index:-3; pointer-events:none;
   background-image:
-    linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px);
-  background-size: 60px 60px;
-  mask-image: radial-gradient(ellipse 70% 50% at 50% 40%, black 20%, transparent 70%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 40%, black 20%, transparent 70%);
-}
-.hero-content { position: relative; z-index: 2; max-width: 820px; }
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
-  background: var(--accent-indigo-bg);
-  border: 1px solid rgba(99,102,241,0.25);
-  border-radius: 999px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--accent-indigo);
-  margin-bottom: 32px;
-}
-.hero-badge .pulse {
-  width: 8px; height: 8px;
-  background: var(--accent-green);
-  border-radius: 50%;
-  animation: pulse 2s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(52,211,153,0.4); }
-  50% { opacity: 0.8; box-shadow: 0 0 0 8px rgba(52,211,153,0); }
-}
-.hero h1 {
-  font-size: clamp(36px, 6vw, 72px);
-  font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-  margin-bottom: 24px;
-}
-.hero h1 .highlight {
-  background: var(--gradient-indigo);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero-sub {
-  font-size: clamp(16px, 2.2vw, 20px);
-  color: var(--text-secondary);
-  line-height: 1.7;
-  max-width: 600px;
-  margin: 0 auto 40px;
-}
-.hero-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 36px;
-  background: var(--gradient-indigo);
-  color: #fff;
-  font-weight: 700;
-  font-size: 18px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: var(--shadow-glow-indigo);
-}
-.hero-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 60px rgba(99,102,241,0.35);
-}
-.hero-meta {
-  margin-top: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  flex-wrap: wrap;
-  font-size: 14px;
-  color: var(--text-muted);
-}
-.hero-meta span { display: flex; align-items: center; gap: 6px; }
-.hero-meta .dot {
-  width: 4px; height: 4px;
-  background: var(--text-muted);
-  border-radius: 50%;
+    linear-gradient(rgba(148,163,184,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148,163,184,0.035) 1px, transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 60% 60% at 50% 35%, #000 30%, transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse 60% 60% at 50% 35%, #000 30%, transparent 75%);
 }
 
-/* ============================================================
-   Social Proof Bar
-   ============================================================ */
-.proof-bar {
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-secondary);
-  padding: 48px 0;
+/* ──────────────────────── HERO ──────────────────────── */
+.hero{ min-height:calc(100vh - 28px); padding-top:188px; padding-bottom:80px; display:flex; flex-direction:column; justify-content:center;}
+.hero-tag{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  padding:8px 14px; border:1px solid var(--line-strong); border-radius:100px; color:var(--ink-2);
+  margin-bottom:42px; background:rgba(255,255,255,0.02);
 }
-.proof-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-  text-align: center;
+.hero-tag .live-dot{ width:7px; height:7px; border-radius:50%; background:var(--calm); box-shadow:0 0 10px var(--calm-glow); animation:p 1.6s ease-out infinite;}
+
+.hero-sub{ margin-top:48px; max-width:64ch; font-size:clamp(17px, 1.5vw, 22px); line-height:1.55; color:var(--ink-2);}
+.hero-sub strong{ color:var(--ink); font-weight:600;}
+.hero-sub .blood{ color:var(--blood); font-weight:600;}
+
+.hero-cta{ margin-top:56px; display:flex; gap:14px; align-items:stretch; flex-wrap:wrap;}
+.email-form{
+  display:flex; align-items:stretch; gap:0;
+  background:rgba(255,255,255,0.03); border:1px solid var(--line-strong);
+  border-radius:0; max-width:480px; flex:1 1 320px;
+  transition:border-color .2s, box-shadow .2s;
 }
-.proof-item .proof-number {
-  font-family: var(--font-mono);
-  font-size: clamp(28px, 4vw, 40px);
-  font-weight: 700;
-  background: var(--gradient-green);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.email-form:focus-within{ border-color:var(--calm); box-shadow:0 0 0 3px rgba(52,211,153,0.18);}
+.email-form input{
+  flex:1; min-width:0; padding:18px 20px; background:transparent; border:none; outline:none;
+  color:var(--ink); font-family:var(--sans); font-size:15px;
 }
-.proof-item .proof-label {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin-top: 4px;
+.email-form input::placeholder{ color:var(--ink-3);}
+.email-form button{
+  padding:18px 28px; background:var(--ink); color:var(--bg); border:none; cursor:pointer;
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; font-weight:700;
+  transition:background .2s, color .2s; white-space:nowrap;
 }
-@media (max-width: 640px) {
-  .proof-grid { grid-template-columns: 1fr; gap: 24px; }
+.email-form button:hover{ background:var(--calm); color:#000;}
+
+.hero-floor{
+  margin-top:84px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:36px;
+  border-top:1px solid var(--line); padding-top:36px;
+}
+.hero-floor .it .v{ font-family:var(--mono); font-size:clamp(22px, 2.2vw, 32px); color:var(--ink); font-weight:600; letter-spacing:-.01em;}
+.hero-floor .it .l{ font-family:var(--mono); font-size:10.5px; color:var(--ink-3); letter-spacing:.16em; text-transform:uppercase; margin-top:6px;}
+.hero-floor .it .v .x{ color:var(--blood);}
+
+/* ──────────────────────── PAIN ──────────────────────── */
+.pain{ padding-top:60px;}
+.pain-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; margin-top:56px;}
+.pain-card{
+  position:relative; padding:38px 28px 32px; border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(251,113,133,0.04) 0%, var(--bg-2) 60%);
+  overflow:hidden; transition:transform .3s ease, border-color .3s ease;
+}
+.pain-card::before{
+  content:""; position:absolute; left:0; right:0; top:0; height:2px; background:var(--blood); opacity:.6;
+}
+.pain-card:hover{ transform:translateY(-4px); border-color:var(--blood);}
+.pain-card:hover::before{ opacity:1; box-shadow:0 0 18px var(--blood-glow);}
+
+.pain-mood{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--blood); margin-bottom:24px;
+}
+.pain-card h3{
+  font-family:var(--sans); font-weight:800; font-size:clamp(32px, 3.4vw, 48px); line-height:1; letter-spacing:-.03em; margin-bottom:18px;
+}
+.pain-card h3 em{ font-family:var(--serif); font-style:italic; font-weight:400; color:var(--blood);}
+.pain-card p{ font-size:15px; color:var(--ink-2); line-height:1.6;}
+.pain-card p strong{ color:var(--ink); font-weight:600;}
+.pain-quote{
+  display:block; margin-top:22px; padding-top:18px; border-top:1px solid var(--line);
+  font-family:var(--serif); font-style:italic; font-size:15px; color:var(--ink-3); line-height:1.55;
+}
+.pain-quote::before{ content:"\201C"; color:var(--blood); margin-right:4px; font-size:18px;}
+.pain-quote::after{ content:"\201D"; color:var(--blood); margin-left:2px; font-size:18px;}
+
+/* ──────────────────────── DIPTYCH (You vs The Bot) ──────────────────────── */
+.diptych{
+  margin-top:52px; display:grid; grid-template-columns:1fr 1fr; gap:0;
+  border:1px solid var(--line);
+}
+.dip-side{ padding:48px 36px; min-height:520px; position:relative; overflow:hidden;}
+.dip-side.you{ border-right:1px solid var(--line); background:linear-gradient(180deg, rgba(251,113,133,0.06) 0%, transparent 100%);}
+.dip-side.bot{ background:linear-gradient(180deg, rgba(52,211,153,0.05) 0%, transparent 100%);}
+.dip-eye{ font-family:var(--mono); font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; margin-bottom:24px;}
+.dip-eye.you{ color:var(--blood);}
+.dip-eye.bot{ color:var(--calm);}
+.dip-h{ font-family:var(--sans); font-weight:800; font-size:clamp(28px, 3vw, 42px); line-height:1.05; letter-spacing:-.025em; margin-bottom:20px;}
+.dip-h em{ font-family:var(--serif); font-style:italic; font-weight:400;}
+.dip-side.you .dip-h em{ color:var(--blood);}
+.dip-side.bot .dip-h em{ color:var(--calm);}
+
+.dip-log{
+  margin-top:26px; padding:0; font-family:var(--mono); font-size:12.5px; line-height:1.85;
+}
+.dip-log .row{ display:flex; gap:14px; padding:6px 0; border-bottom:1px dashed var(--line);}
+.dip-log .row:last-child{ border-bottom:none;}
+.dip-log .t{ color:var(--ink-3); flex-shrink:0; min-width:78px;}
+.dip-log .a{ flex:1;}
+.dip-side.you .dip-log .a{ color:var(--blood);}
+.dip-side.bot .dip-log .a{ color:var(--calm);}
+.dip-log .neutral{ color:var(--ink-2)!important;}
+
+.dip-foot{
+  position:absolute; bottom:32px; left:36px; right:36px;
+  display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap;
+  padding-top:16px; border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+}
+.dip-side.you .dip-foot .v{ color:var(--blood); font-size:24px; font-weight:700;}
+.dip-side.bot .dip-foot .v{ color:var(--calm); font-size:24px; font-weight:700;}
+.dip-foot .l{ color:var(--ink-3);}
+
+/* ──────────────────────── FORGE (funnel) ──────────────────────── */
+.forge{ padding-top:80px;}
+.funnel{
+  margin:72px auto 0; display:flex; flex-direction:column; align-items:center; gap:0;
+  position:relative;
+}
+.funnel-band{
+  position:relative;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(255,255,255,0.025) 0%, rgba(0,0,0,0.25) 100%);
+  width:100%; max-width:var(--w, 1100px);
+  padding:32px 36px 28px;
+  transition:border-color .3s ease, transform .3s ease;
+  display:grid; grid-template-columns:auto 1fr auto; gap:32px; align-items:center;
+}
+.funnel-band:hover{ border-color:var(--line-strong);}
+.funnel-band.live{ border-color:var(--calm);}
+.funnel-band.live::before{
+  content:""; position:absolute; left:0; right:0; top:-1px; height:2px; background:var(--calm); box-shadow:0 0 14px var(--calm-glow);
+}
+.funnel-band .step{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink-3);
+  white-space:nowrap;
+}
+.funnel-band .step b{ color:var(--ink); font-weight:600;}
+.funnel-band.live .step b{ color:var(--calm);}
+.funnel-band .body h4{
+  font-family:var(--sans); font-weight:800; font-size:clamp(22px, 2.4vw, 30px); letter-spacing:-.025em; line-height:1.05; margin-bottom:8px;
+}
+.funnel-band .body h4 em{ font-family:var(--serif); font-style:italic; font-weight:400; color:var(--ink-2);}
+.funnel-band.live .body h4 em{ color:var(--calm);}
+.funnel-band .body p{ font-size:13.5px; color:var(--ink-2); line-height:1.5; max-width:62ch;}
+
+/* Survivor count + drop indicator */
+.funnel-band .count{ text-align:right; font-family:var(--mono);}
+.funnel-band .count .n{ font-size:clamp(22px, 2.2vw, 30px); font-weight:600; color:var(--ink); letter-spacing:-.02em; line-height:1;}
+.funnel-band.live .count .n{ color:var(--calm);}
+.funnel-band .count .l{ font-size:9.5px; color:var(--ink-3); letter-spacing:.18em; text-transform:uppercase; margin-top:6px;}
+
+/* Gate chips inline */
+.funnel-band .gates{
+  grid-column: 2 / 3; display:flex; flex-wrap:wrap; gap:6px; margin-top:14px;
+}
+.funnel-band .chip{
+  display:inline-flex; align-items:center; gap:7px; padding:5px 9px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.04em;
+  background:rgba(255,255,255,0.025); border:1px solid var(--line); color:var(--ink-2);
+}
+.funnel-band .chip::before{
+  content:""; width:7px; height:7px; border-radius:50%; background:var(--calm); box-shadow:0 0 6px var(--calm-glow);
+}
+.funnel-band.live .chip::before{ background:var(--gold); box-shadow:0 0 6px rgba(251,191,36,.40); animation:p 1.6s ease-out infinite;}
+.funnel-band .chip span.dim{ color:var(--ink-3);}
+
+/* Connector that draws the narrowing funnel walls between bands */
+.funnel-conn{
+  width:100%; max-width:1100px; height:48px; position:relative;
+  pointer-events:none;
+}
+.funnel-conn svg{ display:block; width:100%; height:100%; overflow:visible;}
+.funnel-conn .wall{ stroke:var(--line-strong); stroke-width:1; fill:none;}
+
+/* Per-band widths set via inline --w; fall back to defaults below */
+.funnel-band:nth-of-type(1){ --w: 1100px;}
+.funnel-band:nth-of-type(2){ --w: 940px;}
+.funnel-band:nth-of-type(3){ --w: 780px;}
+.funnel-band:nth-of-type(4){ --w: 620px;}
+.funnel-band:nth-of-type(5){ --w: 460px;}
+
+.forge-foot{
+  margin-top:48px; padding:22px 24px; border:1px solid var(--line); background:rgba(255,255,255,0.02);
+  display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap;
+  font-family:var(--mono); font-size:12px; color:var(--ink-2); letter-spacing:.04em;
+  max-width:1100px; margin-left:auto; margin-right:auto;
+}
+.forge-foot b{ color:var(--ink); font-weight:600;}
+.forge-foot .small{ font-size:10.5px; color:var(--ink-3); letter-spacing:.18em; text-transform:uppercase;}
+
+/* ──────────────────────── LIVE PROOF ──────────────────────── */
+.proof-grid{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:14px; margin-top:48px;}
+.stat{
+  position:relative; padding:22px 18px 20px; border:1px solid var(--line); background:var(--bg-2);
+  transition:transform .3s ease, border-color .3s ease;
+}
+.stat::before{
+  content:""; position:absolute; left:0; right:0; top:-1px; height:2px; background:var(--c, var(--calm));
+}
+.stat:hover{ transform:translateY(-3px); border-color:var(--c, var(--calm));}
+.stat .lbl{ font-family:var(--mono); font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-3); margin-bottom:14px; display:flex; align-items:center; gap:6px;}
+.stat .lbl::after{ content:""; width:5px; height:5px; border-radius:50%; background:var(--calm); box-shadow:0 0 6px var(--calm-glow); animation:p 1.8s infinite;}
+.stat .v{ font-family:var(--sans); font-weight:800; font-size:clamp(22px, 2vw, 30px); line-height:1; letter-spacing:-.02em; color:var(--c, var(--ink));}
+.stat .s{ font-family:var(--mono); font-size:10.5px; color:var(--ink-3); margin-top:8px; line-height:1.5;}
+
+.proof-foot{ margin-top:24px; padding:14px 18px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;}
+.proof-foot .l{ font-family:var(--mono); font-size:11px; color:var(--ink-3); letter-spacing:.06em;}
+.proof-foot .r{ font-family:var(--mono); font-size:10.5px; color:var(--ink-3); letter-spacing:.16em; text-transform:uppercase;}
+.proof-foot .r b{ color:var(--calm); margin-right:6px;}
+
+/* ──────────────────────── FAQ ──────────────────────── */
+.faq-list{ margin-top:48px; max-width:980px;}
+.faq-item{
+  border-top:1px solid var(--line); padding:0;
+}
+.faq-item:last-child{ border-bottom:1px solid var(--line);}
+.faq-q{
+  width:100%; text-align:left; background:none; border:none;
+  display:flex; align-items:center; justify-content:space-between; gap:24px;
+  padding:24px 0; cursor:pointer; color:var(--ink);
+  font-family:var(--sans); font-size:clamp(18px, 1.7vw, 22px); font-weight:600; letter-spacing:-.01em;
+  transition:color .2s;
+}
+.faq-q:hover{ color:var(--calm);}
+.faq-q em{ font-family:var(--serif); font-style:italic; font-weight:400; color:var(--ink-2);}
+.faq-q .icn{
+  width:28px; height:28px; flex-shrink:0; border:1px solid var(--line-strong);
+  display:grid; place-items:center; transition:transform .35s, border-color .25s;
+  position:relative;
+}
+.faq-q .icn::before, .faq-q .icn::after{
+  content:""; position:absolute; background:var(--ink-2); transition:opacity .25s, background .25s;
+}
+.faq-q .icn::before{ width:12px; height:1.5px;}
+.faq-q .icn::after { width:1.5px; height:12px;}
+.faq-item.open .faq-q .icn{ border-color:var(--calm); transform:rotate(45deg);}
+.faq-item.open .faq-q .icn::after{ opacity:0;}
+.faq-item.open .faq-q .icn::before{ background:var(--calm);}
+.faq-a{
+  max-height:0; overflow:hidden;
+  transition:max-height .45s cubic-bezier(.22,.8,.32,1);
+}
+.faq-item.open .faq-a{ max-height:600px;}
+.faq-a > div{
+  padding:0 0 28px 0;
+  font-size:15px; line-height:1.65; color:var(--ink-2); max-width:78ch;
+}
+.faq-a a{ color:var(--calm); border-bottom:1px solid var(--calm); padding-bottom:1px;}
+
+/* ──────────────────────── FINAL CTA ──────────────────────── */
+.final{
+  margin-top:120px; padding:140px 32px 160px;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(52,211,153,0.12) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(52,211,153,0.04) 0%, transparent 100%);
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  text-align:center;
+}
+.final .inner{ max-width:1100px; margin:0 auto;}
+.final h2{
+  font-family:var(--sans); font-weight:900; font-size:clamp(48px, 9.5vw, 168px);
+  line-height:.92; letter-spacing:-.045em; margin-bottom:32px;
+}
+.final h2 em{ font-family:var(--serif); font-style:italic; font-weight:400; color:var(--calm);}
+.final .tag{ font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--calm); margin-bottom:32px;}
+.final .lede{ margin:0 auto 40px; max-width:60ch;}
+.final .email-form{ margin:0 auto;}
+.final .seats{ margin-top:32px; font-family:var(--mono); font-size:12px; color:var(--ink-3); letter-spacing:.06em;}
+.final .seats b{ color:var(--ink); font-weight:600;}
+
+footer{
+  padding:48px 32px 36px; text-align:center; font-family:var(--mono); font-size:11px; color:var(--ink-3); letter-spacing:.08em;
+  border-top:1px solid var(--line);
+}
+footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
+.footer-disc{ margin-top:18px; max-width:80ch; margin-left:auto; margin-right:auto; line-height:1.6; color:var(--ink-4); font-size:10.5px; letter-spacing:.04em;}
+
+/* ──────────────────────── Phantom equity (ghost background type) ──────────────────────── */
+.phantom{
+  position:absolute; pointer-events:none; user-select:none; z-index:0;
+  font-family:var(--mono); font-weight:700;
+  font-size:clamp(160px, 30vw, 540px);
+  line-height:.85; letter-spacing:-0.07em;
+  -webkit-text-stroke: 1.5px var(--ink-3);
+  text-stroke: 1.5px var(--ink-3);
+  color:transparent;
+  opacity:0; transform:translateY(40px);
+  transition:opacity 1.4s ease, transform 1.4s cubic-bezier(.22,.8,.32,1), -webkit-text-stroke-color 1.4s, text-stroke-color 1.4s;
+  white-space:nowrap;
+}
+.phantom.in{ opacity:.06; transform:translateY(0);}
+.phantom.coral{ -webkit-text-stroke-color: var(--blood); text-stroke-color: var(--blood);}
+.phantom.coral.in{ opacity:.05;}
+.phantom.calm{ -webkit-text-stroke-color: var(--calm); text-stroke-color: var(--calm);}
+.phantom.calm.in{ opacity:.045;}
+.phantom.tl{ top:-30px; left:-3vw;}
+.phantom.tr{ top:-30px; right:-3vw;}
+.phantom.bl{ bottom:-50px; left:-3vw;}
+.phantom.br{ bottom:-50px; right:-3vw;}
+.phantom.cc{ top:50%; left:50%; transform:translate(-50%,-50%) translateY(40px);}
+.phantom.cc.in{ transform:translate(-50%,-50%);}
+@media (max-width: 720px){
+  .phantom{ font-size:clamp(96px, 36vw, 200px);}
+  .phantom.tl, .phantom.bl{ left:-6vw;}
+  .phantom.tr, .phantom.br{ right:-6vw;}
 }
 
-/* ============================================================
-   Problem / Solution
-   ============================================================ */
-.problem-solution .ps-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: start;
-}
-.ps-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 40px;
-}
-.ps-card.problem { border-top: 3px solid var(--accent-rose); }
-.ps-card.solution { border-top: 3px solid var(--accent-green); }
-.ps-card h3 {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.ps-card .icon-circle {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-.problem .icon-circle { background: rgba(251,113,133,0.15); }
-.solution .icon-circle { background: var(--accent-green-bg); }
-.ps-card p {
-  color: var(--text-secondary);
-  font-size: 16px;
-  margin-bottom: 20px;
-  line-height: 1.7;
-}
-.ps-bullets li {
-  padding: 8px 0;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  color: var(--text-secondary);
-  font-size: 15px;
-}
-.ps-bullets li::before {
-  content: '';
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  margin-top: 9px;
-  flex-shrink: 0;
-}
-.problem .ps-bullets li::before { background: var(--accent-rose); }
-.solution .ps-bullets li::before { background: var(--accent-green); }
-
-@media (max-width: 768px) {
-  .problem-solution .ps-grid { grid-template-columns: 1fr; }
-}
-
-/* ============================================================
-   Feature Grid
-   ============================================================ */
-.features .feature-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-.feature-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-.feature-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: var(--gradient-indigo);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.feature-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-light);
-  box-shadow: var(--shadow-card);
-}
-.feature-card:hover::before { opacity: 1; }
-.feature-icon {
-  width: 48px; height: 48px;
-  background: var(--accent-indigo-bg);
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-.feature-card h3 {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-.feature-card p {
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.7;
-}
-@media (max-width: 900px) {
-  .features .feature-grid { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 600px) {
-  .features .feature-grid { grid-template-columns: 1fr; }
-}
-
-/* ============================================================
-   Architecture Preview
-   ============================================================ */
-.architecture .arch-wrapper {
-  background: var(--bg-code);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-card);
-}
-.arch-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 20px;
-  background: rgba(30,41,59,0.5);
-  border-bottom: 1px solid var(--border);
-}
-.arch-dot {
-  width: 12px; height: 12px;
-  border-radius: 50%;
-}
-.arch-dot.red { background: #ef4444; }
-.arch-dot.yellow { background: #eab308; }
-.arch-dot.green { background: #22c55e; }
-.arch-title {
-  flex: 1;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-right: 52px;
-}
-.arch-code {
-  padding: 28px 32px;
-  font-family: var(--font-mono);
-  font-size: 14px;
-  line-height: 1.9;
-  overflow-x: auto;
-  white-space: pre;
-}
-.arch-code .dir { color: var(--accent-indigo); font-weight: 600; }
-.arch-code .file { color: var(--text-secondary); }
-.arch-code .arrow { color: var(--accent-green); }
-.arch-code .comment { color: var(--text-muted); font-style: italic; }
-.arch-code .tree { color: var(--border-light); }
-
-@media (max-width: 600px) {
-  .arch-code { font-size: 12px; padding: 20px 16px; }
-}
-
-/* ============================================================
-   Course Modules (Timeline)
-   ============================================================ */
-.course .timeline {
-  position: relative;
-  max-width: 700px;
-  margin: 0 auto;
-}
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 23px;
-  top: 0; bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--accent-indigo), var(--accent-green));
-  border-radius: 2px;
-}
-.timeline-item {
-  display: flex;
-  gap: 24px;
-  padding: 24px 0;
-  position: relative;
-}
-.timeline-marker {
-  width: 48px; height: 48px;
-  background: var(--bg-card);
-  border: 2px solid var(--accent-indigo-dim);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--accent-indigo);
-  flex-shrink: 0;
-  z-index: 1;
-}
-.timeline-content h3 {
-  font-size: 17px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-.timeline-content .day {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--accent-green);
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.timeline-content p {
-  font-size: 15px;
-  color: var(--text-secondary);
-}
-
-/* ============================================================
-   Differentiators
-   ============================================================ */
-.differentiators .diff-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-}
-.diff-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  transition: border-color 0.3s;
-}
-.diff-card:hover { border-color: var(--border-light); }
-.diff-card .diff-label {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent-green);
-  margin-bottom: 8px;
-}
-.diff-card h3 {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-.diff-card p {
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.7;
-}
-@media (max-width: 640px) {
-  .differentiators .diff-grid { grid-template-columns: 1fr; }
-}
-
-/* ============================================================
-   Pricing
-   ============================================================ */
-.pricing .pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  align-items: start;
-}
-.price-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-xl);
-  padding: 40px 32px;
-  position: relative;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-.price-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-card);
-}
-.price-card.popular {
-  border-color: var(--accent-indigo-dim);
-  box-shadow: var(--shadow-glow-indigo);
-  transform: scale(1.03);
-}
-.price-card.popular:hover {
-  transform: scale(1.03) translateY(-4px);
-}
-.popular-badge {
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--gradient-indigo);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 5px 18px;
-  border-radius: 999px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-.price-card .tier-name {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-.price-card .tier-desc {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin-bottom: 20px;
-}
-.price-card .price {
-  font-family: var(--font-mono);
-  font-size: 48px;
-  font-weight: 800;
-  margin-bottom: 24px;
-}
-.price-card .price .dollar { font-size: 24px; vertical-align: top; line-height: 1.6; }
-.price-card .features-list { margin-bottom: 32px; }
-.price-card .features-list li {
-  padding: 8px 0;
-  font-size: 15px;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-.price-card .features-list .check {
-  color: var(--accent-green);
-  font-weight: 700;
-  font-size: 16px;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-.price-btn {
-  display: block;
-  width: 100%;
-  text-align: center;
-  padding: 14px 0;
-  border-radius: var(--radius-sm);
-  font-weight: 700;
-  font-size: 15px;
-  border: none;
-  background: var(--gradient-indigo);
-  color: #fff;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.2s;
-}
-.price-btn:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
-}
-.price-card.popular .price-btn {
-  background: var(--gradient-indigo);
-  box-shadow: 0 6px 20px rgba(99,102,241,0.35);
-}
-.price-card.popular .price-btn:hover {
-  opacity: 0.9;
-}
-
-@media (max-width: 1100px) {
-  .pricing .pricing-grid {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 760px;
-    margin: 0 auto;
-  }
-}
-@media (max-width: 640px) {
-  .pricing .pricing-grid {
-    grid-template-columns: 1fr;
-    max-width: 440px;
-    margin: 0 auto;
-  }
-  .price-card.popular { transform: none; }
-  .price-card.popular:hover { transform: translateY(-4px); }
-}
-
-/* ============================================================
-   FAQ
-   ============================================================ */
-.faq .faq-list {
-  max-width: 740px;
-  margin: 0 auto;
-}
-.faq-item {
-  border-bottom: 1px solid var(--border);
-}
-.faq-question {
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 24px 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--text-primary);
-  text-align: left;
-}
-.faq-question:hover { color: var(--accent-indigo); }
-.faq-chevron {
-  width: 20px; height: 20px;
-  flex-shrink: 0;
-  transition: transform 0.3s;
-  color: var(--text-muted);
-}
-.faq-item.open .faq-chevron { transform: rotate(180deg); }
-.faq-answer {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), padding 0.3s;
-}
-.faq-item.open .faq-answer {
-  max-height: 300px;
-}
-.faq-answer p {
-  padding-bottom: 24px;
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.7;
-}
-
-/* ============================================================
-   Final CTA
-   ============================================================ */
-.final-cta {
-  text-align: center;
-  padding: 100px 24px;
-  position: relative;
-}
-.final-cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 50% at 50% 100%, rgba(99,102,241,0.12) 0%, transparent 60%);
-  pointer-events: none;
-}
-.final-cta .container { position: relative; z-index: 1; }
-.final-cta h2 {
-  font-size: clamp(28px, 4vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin-bottom: 16px;
-}
-.final-cta p {
-  font-size: 18px;
-  color: var(--text-secondary);
-  margin-bottom: 36px;
-}
-
-/* ============================================================
-   Footer
-   ============================================================ */
-.footer {
-  border-top: 1px solid var(--border);
-  padding: 48px 0;
-}
-.footer-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 24px;
-}
-.footer-brand {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 18px;
-}
-.footer-built {
-  font-size: 14px;
-  color: var(--text-muted);
-}
-.footer-links { display: flex; gap: 24px; }
-.footer-links a {
-  font-size: 14px;
-  color: var(--text-secondary);
-  transition: color 0.2s;
-}
-.footer-links a:hover { color: var(--accent-indigo); }
-
-@media (max-width: 600px) {
-  .footer-inner { flex-direction: column; text-align: center; }
-}
-
-/* ============================================================
-   Pipeline Parallax Workflow — Pro Max
-   ============================================================ */
-
-/* Layout */
-.pipeline-layout {
-  display: grid;
-  grid-template-columns: 2fr 3fr;
-  gap: 0 64px;
-  align-items: start;
-}
-.pipeline-timeline {
-  position: sticky;
-  top: 96px;
-}
-
-/* Vertical connector line */
-.pipeline-timeline-inner {
-  position: relative;
-  padding-left: 52px;
-}
-.pipeline-timeline-inner::before {
-  content: '';
-  position: absolute;
-  left: 15px;
-  top: 28px;
-  bottom: 28px;
-  width: 2px;
-  background: linear-gradient(to bottom,
-    rgba(99,102,241,0.9)  0%,
-    rgba(167,139,250,0.9) 33%,
-    rgba(56,189,248,0.9)  66%,
-    rgba(192,132,252,0.9) 100%);
-  filter: blur(0.5px);
-}
-/* Progress fill overlay */
-.pipeline-timeline-inner::after {
-  content: '';
-  position: absolute;
-  left: 14px;
-  top: 28px;
-  width: 4px;
-  height: var(--pl-progress, 0%);
-  background: linear-gradient(to bottom, #6366f1, #a78bfa, #38bdf8, #c084fc);
-  border-radius: 2px;
-  box-shadow: 0 0 8px rgba(99,102,241,0.5);
-  transition: height 0.6s cubic-bezier(0.16,1,0.3,1);
-}
-
-/* Step rows */
-.pl-step {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 10px 14px 10px 0;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  margin-bottom: 2px;
-  transition: background 0.25s ease, opacity 0.35s ease;
-  outline: none;
-}
-.pl-step:focus-visible {
-  outline: 2px solid rgba(99,102,241,0.6);
-  outline-offset: 2px;
-}
-.pl-step:hover:not(.active) {
-  background: rgba(255,255,255,0.04);
-  opacity: 1 !important;
-}
-.pl-step.inactive { opacity: 0.38; }
-
-/* Active step glass card */
-.pl-step.active {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 4px 20px rgba(0,0,0,0.2);
-  opacity: 1;
-}
-.pl-step.active::before {
-  content: '';
-  position: absolute;
-  left: -1px;
-  top: 8px;
-  bottom: 8px;
-  width: 3px;
-  background: var(--pl-step-color, #6366f1);
-  border-radius: 0 2px 2px 0;
-  box-shadow: 0 0 8px var(--pl-step-color, #6366f1);
-}
-
-/* Dot */
-.pl-dot {
-  flex-shrink: 0;
-  position: relative;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 800;
-  color: #fff;
-  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease;
-  z-index: 1;
-}
-.pl-step.active .pl-dot {
-  transform: scale(1.15);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.06), 0 0 20px var(--pl-step-color, rgba(99,102,241,0.6));
-}
-/* Pulsing ring on active dot */
-.pl-step.active .pl-dot::after {
-  content: '';
-  position: absolute;
-  inset: -5px;
-  border-radius: 50%;
-  border: 1.5px solid var(--pl-step-color, #6366f1);
-  opacity: 0;
-  animation: pl-ring 2.2s ease-out infinite;
-}
-@keyframes pl-ring {
-  0%   { opacity: 0.6; transform: scale(1); }
-  100% { opacity: 0;   transform: scale(1.7); }
-}
-
-.pl-info { flex: 1; min-width: 0; }
-.pl-tag {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  margin-bottom: 2px;
-  transition: color 0.25s;
-}
-.pl-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary);
-  transition: color 0.25s;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.pl-step.inactive .pl-name { color: var(--text-muted); }
-.pl-sub {
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-top: 2px;
-  line-height: 1.4;
-}
-
-/* ——— Right panels ——— */
-.pl-panel {
-  min-height: 88vh;
-  display: flex;
-  align-items: center;
-  padding: 48px 0;
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.65s cubic-bezier(0.16,1,0.3,1),
-              transform 0.65s cubic-bezier(0.16,1,0.3,1);
-}
-.pl-panel.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.pl-panel-inner { max-width: 580px; width: 100%; }
-
-.pl-panel-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 100px;
-  border: 1px solid currentColor;
-  background: rgba(0,0,0,0.0);
-  margin-bottom: 20px;
-  opacity: 0.85;
-}
-.pl-panel-tag::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-  flex-shrink: 0;
-}
-.pl-panel-title {
-  font-size: clamp(26px, 3vw, 38px);
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  line-height: 1.15;
-  margin-bottom: 18px;
-  color: var(--text-primary);
-}
-.pl-panel-desc {
-  font-size: 16px;
-  color: var(--text-secondary);
-  line-height: 1.75;
-  margin-bottom: 28px;
-  max-width: 520px;
-}
-.pl-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 32px;
-}
-.pl-chip {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 100px;
-  letter-spacing: 0.02em;
-}
-
-/* ——— Preview card — glassmorphism ——— */
-.pl-preview-card {
-  background: rgba(17,24,39,0.7);
-  border: 1px solid rgba(255,255,255,0.09);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  font-family: var(--font-mono);
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.5) inset,
-              0 8px 32px rgba(0,0,0,0.35),
-              0 1px 0 rgba(255,255,255,0.06) inset;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  /* Top-edge accent glow — set via JS per panel */
-  position: relative;
-}
-.pl-preview-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 10%; right: 10%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--pl-card-glow, rgba(99,102,241,0.6)), transparent);
-}
-.pl-card-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
-  background: rgba(0,0,0,0.25);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-.pl-cd {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  opacity: 0.8;
-}
-.pl-card-title {
-  font-size: 10px;
-  color: var(--text-muted);
-  margin-left: 6px;
-  letter-spacing: 0.03em;
-}
-.pl-card-body { padding: 18px; }
-.pl-mrow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 7px;
-}
-.pl-mlabel { font-size: 10px; color: var(--text-muted); letter-spacing: 0.04em; }
-.pl-mval { font-size: 13px; font-weight: 700; }
-.pl-bar-bg {
-  height: 3px;
-  background: rgba(255,255,255,0.07);
-  border-radius: 2px;
-  margin-bottom: 12px;
-  overflow: hidden;
-}
-.pl-bar-f {
-  height: 100%;
-  border-radius: 2px;
-  width: 0;
-  transition: width 1s cubic-bezier(0.16,1,0.3,1) 0.3s;
-}
-.pl-panel.visible .pl-bar-f { width: var(--pl-bar-w, 0%); }
-.pl-airow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  margin-bottom: 4px;
-}
-.pl-airow:last-of-type { border-bottom: none; }
-.pl-ailabel { font-size: 10px; color: var(--text-muted); }
-.pl-aival { font-size: 11px; color: var(--text-secondary); }
-.pl-sgrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.pl-sc {
-  padding: 8px 10px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: var(--radius-sm);
-  font-size: 10px;
-  color: var(--text-muted);
-  letter-spacing: 0.02em;
-  transition: background 0.2s;
-}
-.pl-sc.pl-sc-on {
-  background: rgba(99,102,241,0.12);
-  color: var(--accent-indigo);
-  border-color: rgba(99,102,241,0.25);
-}
-
-/* ——— Reduced motion ——— */
-@media (prefers-reduced-motion: reduce) {
-  .pl-panel { transition: opacity 0.3s ease; transform: none; }
-  .pl-panel.visible { transform: none; }
-  .pl-step.active .pl-dot::after { animation: none; }
-  .pl-bar-f { transition: none; }
-  .pipeline-timeline-inner::after { transition: none; }
-}
-
-/* ——— Mobile pipeline ——— */
-@media (max-width: 768px) {
-  .pipeline-layout {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-  .pipeline-timeline {
-    position: relative;
-    top: 0;
-    padding-bottom: 32px;
-  }
-  /* Horizontal scrollable steps on mobile */
-  .pipeline-timeline-inner {
-    padding-left: 0;
-    overflow-x: auto;
-    display: flex;
-    gap: 8px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding-bottom: 4px;
-  }
-  .pipeline-timeline-inner::-webkit-scrollbar { display: none; }
-  .pipeline-timeline-inner::before,
-  .pipeline-timeline-inner::after { display: none; }
-  .pl-step {
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 12px;
-    min-width: 96px;
-    text-align: center;
-    margin-bottom: 0;
-    flex-shrink: 0;
-    border: 1px solid transparent;
-  }
-  .pl-step.active {
-    border-color: rgba(255,255,255,0.1);
-  }
-  .pl-step.active::before { display: none; }
-  .pl-name { font-size: 11px; white-space: normal; text-align: center; }
-  .pl-sub { display: none; }
-  .pl-panel { min-height: auto; padding: 32px 0; }
-  .pl-panel-inner { max-width: 100%; }
-}
-
-/* ============================================================
-   Reality Check Pain Cards
-   ============================================================ */
-.pain-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin-top: 48px;
-}
-@media (max-width: 860px) { .pain-grid { grid-template-columns: 1fr; } }
-
-.pain-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-top: 3px solid var(--accent-rose);
-  border-radius: var(--radius-lg);
-  padding: 28px 24px;
-  transition: border-color 0.2s, transform 0.2s;
-}
-.pain-card:hover {
-  border-color: var(--accent-rose);
-  border-top-color: var(--accent-rose);
-  transform: translateY(-4px);
-}
-.pain-card .pain-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: rgba(251,113,133,0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  margin-bottom: 18px;
-}
-.pain-card h3 {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: var(--text-primary);
-}
-.pain-card p {
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.7;
-}
-.pain-card .pain-cite {
-  display: block;
-  margin-top: 14px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text-muted);
-  letter-spacing: 0.05em;
-}
-.pain-bridge {
-  margin-top: 56px;
-  padding: 32px 36px;
-  background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(34,211,238,0.06) 100%);
-  border: 1px solid rgba(99,102,241,0.2);
-  border-radius: var(--radius-lg);
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  flex-wrap: wrap;
-}
-.pain-bridge-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--accent-indigo);
-  margin-bottom: 8px;
-}
-.pain-bridge-text {
-  font-size: 17px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.5;
-  flex: 1;
-  min-width: 260px;
-}
-.pain-bridge-text span { color: var(--accent-cyan); }
-.pain-bridge-cta {
-  flex-shrink: 0;
-  background: var(--gradient-indigo);
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 14px;
-  white-space: nowrap;
-  transition: opacity 0.2s, transform 0.2s;
-}
-.pain-bridge-cta:hover { opacity: 0.88; transform: translateY(-1px); }
-
-/* ============================================================
-   Comp Table Mobile
-   ============================================================ */
-@media (max-width: 640px) {
-  .comp-table th, .comp-table td {
-    padding: 10px 8px;
-    font-size: 11px;
-  }
-  .comp-table th:first-child, .comp-table td:first-child {
-    padding-left: 12px;
-    font-size: 11px;
-  }
+/* ──────────────────────── Responsive ──────────────────────── */
+@media (max-width: 1100px){
+  .proof-grid{ grid-template-columns:repeat(4, 1fr);}
+}
+@media (max-width: 960px){
+  section{ padding:96px 22px;}
+  .pain-grid{ grid-template-columns:1fr; gap:14px;}
+  .diptych{ grid-template-columns:1fr;}
+  .dip-side{ min-height:auto;}
+  .dip-side.you{ border-right:none; border-bottom:1px solid var(--line);}
+  .dip-foot{ position:relative; bottom:auto; left:auto; right:auto; margin-top:24px;}
+  .funnel-band{ grid-template-columns:1fr; gap:14px; padding:24px 22px;}
+  .funnel-band .count{ text-align:left;}
+  .funnel-band .gates{ grid-column: 1 / -1;}
+  .funnel-band:nth-of-type(1),
+  .funnel-band:nth-of-type(2),
+  .funnel-band:nth-of-type(3),
+  .funnel-band:nth-of-type(4),
+  .funnel-band:nth-of-type(5){ --w: 100%;}
+  .funnel-conn{ display:none;}
+  .hero-floor{ grid-template-columns:1fr; gap:20px;}
+}
+@media (max-width: 640px){
+  nav{ padding:14px 18px;}
+  .liq-tape{ font-size:10.5px;}
+  .proof-grid{ grid-template-columns:repeat(2, 1fr);}
+}
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; transition:none !important;}
+  .reveal{ opacity:1; transform:none;}
 }
 </style>
-  <!-- EmailJS SDK for waitlist confirmation emails -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
-<!-- ====== Navigation ====== -->
-<nav class="nav" id="nav">
-  <div class="nav-inner">
-    <a href="#" class="nav-logo">
-      <span class="logo-icon">/&gt;</span>
-      HyperForge
-    </a>
-    <div class="nav-links">
-      <a href="#features">Platform</a>
-      <a href="#pipeline">Pipeline</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faq">FAQ</a>
-      <a href="javascript:openWaitlistModal('general')" class="nav-cta">Join Waitlist</a>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="amb" aria-hidden="true"></div>
+
+<!-- ─────── LIQUIDATION TAPE ─────── -->
+<div class="liq-tape" aria-hidden="true">
+  <div class="label">▌ Liquidated past 24h</div>
+  <div style="overflow:hidden; flex:1;">
+    <div class="liq-track" id="liq-track">
+      <!-- filled by JS -->
     </div>
   </div>
-</nav>
-
-<!-- ====== Hero ====== -->
-<section class="hero" id="hero">
-  <div class="hero-grid"></div>
-  <div class="hero-content">
-    <div class="hero-badge fade-in">
-      <span class="pulse"></span>
-      Now in Beta · Join the Waitlist
-    </div>
-    <h1 class="fade-in fade-in-delay-1">
-      92% of perp traders<br>get liquidated.<br><span class="highlight">You don't have to.</span>
-    </h1>
-    <p class="hero-sub fade-in fade-in-delay-2">
-      Every other platform drops you straight into live markets with an unproven strategy.<br>
-      HyperForge validates your edge first — forward test on live markets, then deploy with AI optimizing 24/7.
-    </p>
-    <a href="javascript:openWaitlistModal('general')" class="hero-cta fade-in fade-in-delay-3">
-      Join the Waitlist <span>&rarr;</span>
-    </a>
-    <div class="hero-meta fade-in fade-in-delay-4">
-      <span>Non-custodial</span>
-      <span class="dot"></span>
-      <span>Forward test → Live → AI optimize</span>
-      <span class="dot"></span>
-      <span>AI-optimized 24/7</span>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Social Proof Bar ====== -->
-<section class="proof-bar">
-  <div class="container">
-    <div class="proof-grid">
-      <div class="proof-item fade-in">
-        <div class="proof-number" id="proof-pnl">+6.65%</div>
-        <div class="proof-label">Live realized return on Hyperliquid mainnet</div>
-      </div>
-      <div class="proof-item fade-in fade-in-delay-1">
-        <div class="proof-number">0.035%</div>
-        <div class="proof-label">Builder fee on free tier · lowest on Hyperliquid</div>
-      </div>
-      <div class="proof-item fade-in fade-in-delay-2">
-        <div class="proof-number">&lt;5 min</div>
-        <div class="proof-label">From strategy idea to forward-tested live bot · no code needed</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Reality Check ====== -->
-<section class="section" id="problem">
-  <div class="container">
-    <div class="fade-in" style="text-align:center;margin-bottom:8px;">
-      <div class="section-label">The Reality Check</div>
-      <h2 class="section-title">Manual perp trading<br><span class="text-gradient-indigo">is a graveyard.</span></h2>
-      <p class="section-subtitle" style="margin:16px auto 0;">You already know this. The numbers just make it official.<br>Three walls closing in on every unprotected trader:</p>
-    </div>
-
-    <div class="pain-grid">
-      <div class="pain-card fade-in">
-        <div class="pain-icon">⚡</div>
-        <h3>Leverage kills you</h3>
-        <p><strong style="color:var(--accent-rose);">79%</strong> of perp traders use &gt;20× leverage. In simulations of 25× trades, <strong style="color:var(--accent-rose);">92.95%</strong> get liquidated. You're not stupid — you're playing a game where the math is rigged against manual reflexes.</p>
-        <span class="pain-cite">Source: Binance internal study</span>
-      </div>
-      <div class="pain-card fade-in">
-        <div class="pain-icon">⌛</div>
-        <h3>Time kills you next</h3>
-        <p>Only <strong style="color:var(--accent-rose);">10%</strong> of day traders ever make money. <strong style="color:var(--accent-rose);">80%</strong> quit within a year — not because their ideas are bad, but because screens don't sleep and neither can you.</p>
-        <span class="pain-cite">Source: Forbes + Optimus Futures compilation</span>
-      </div>
-      <div class="pain-card fade-in">
-        <div class="pain-icon">⚠</div>
-        <h3>Unvalidated strategies blow up</h3>
-        <p>So you decide to automate. Your "94% win rate" strategy is curve-fit to noise. LLM-assisted strategies have collapsed from <strong style="color:var(--accent-rose);">+23.3% to −22%</strong> under honest out-of-sample forward testing.</p>
-        <span class="pain-cite">Source: arxiv.org/abs/2505.07078</span>
-      </div>
-    </div>
-
-    <div class="pain-bridge fade-in">
-      <div style="flex:1;min-width:260px;">
-        <div class="pain-bridge-label">The only way out</div>
-        <div class="pain-bridge-text">Validate your edge <span>before</span> a dollar goes live.<br>Then let AI keep improving it while you sleep.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Live Performance ====== -->
-<section class="section" id="performance" style="padding: 80px 0;">
-  <div class="container">
-    <div class="text-center fade-in" style="text-align:center; margin-bottom:48px;">
-      <div class="section-label">Founder's Live Proof</div>
-      <h2 class="section-title">Real money. Real mainnet.<br><span class="text-gradient-green">Real performance.</span></h2>
-      <p class="section-subtitle" style="margin:0 auto;">Live AI bots running on Hyperliquid mainnet. Real realized PnL numbers — same infrastructure you'll deploy on HyperForge.</p>
-    </div>
-
-    <!-- Live-proof stat cards (Option B: PnL% · PF · WR · Sharpe · Trades · Expectancy) -->
-    <div class="stat-cards-grid" id="stat-cards-grid">
-
-      <div class="stat-card" data-color="green" style="transition-delay:0s;">
-        <div class="stat-card-bar" style="background:var(--accent-green);"></div>
-        <div class="stat-label">Realized PnL % <span class="live-dot"></span></div>
-        <div id="live-pnl-pct" class="stat-value" style="color:var(--accent-green);">+55.34%</div>
-        <div id="live-pnl-usd" class="stat-sub">+$88.55 realized · live</div>
-      </div>
-
-      <div class="stat-card" data-color="green" style="transition-delay:.07s;">
-        <div class="stat-card-bar" style="background:var(--accent-green);"></div>
-        <div class="stat-label">Profit Factor <span class="live-dot"></span></div>
-        <div id="live-pf" class="stat-value" style="color:var(--accent-green);">1.39</div>
-        <div id="live-pf-sub" class="stat-sub">PF &gt; 1.3 = institutional-tier</div>
-      </div>
-
-      <div class="stat-card" data-color="amber" style="transition-delay:.14s;">
-        <div class="stat-card-bar" style="background:var(--accent-amber);"></div>
-        <div class="stat-label">Win Rate <span class="live-dot"></span></div>
-        <div id="live-win-rate" class="stat-value" style="color:var(--accent-amber);">65.4%</div>
-        <div id="live-win-detail" class="stat-sub">across 127 live trades</div>
-      </div>
-
-      <div class="stat-card" data-color="cyan" style="transition-delay:.21s;">
-        <div class="stat-card-bar" style="background:var(--accent-cyan);"></div>
-        <div class="stat-label">Sharpe (annualized)</div>
-        <div id="live-sharpe" class="stat-value" style="color:var(--accent-cyan);">+5.15</div>
-        <div id="live-sharpe-sub" class="stat-sub">14 days · projecting ~3 at scale</div>
-      </div>
-
-      <div class="stat-card" data-color="purple" style="transition-delay:.28s;">
-        <div class="stat-card-bar" style="background:#c084fc;"></div>
-        <div class="stat-label">Trades run <span class="live-dot"></span></div>
-        <div id="live-trade-count" class="stat-value" style="color:#c084fc;">127</div>
-        <div id="live-trade-detail" class="stat-sub"><span id="live-days">18</span> days live · since April 6, 2026</div>
-      </div>
-
-      <div class="stat-card" data-color="slate" style="transition-delay:.35s;">
-        <div class="stat-card-bar" style="background:var(--border-light);"></div>
-        <div class="stat-label">Expectancy / trade <span class="live-dot"></span></div>
-        <div id="live-expectancy" class="stat-value" style="color:var(--accent-green);">+0.20%</div>
-        <div id="live-expectancy-sub" class="stat-sub">19 bps edge per trade · after fees</div>
-      </div>
-
-      <div class="stat-card" data-color="rose" style="transition-delay:.42s;">
-        <div class="stat-card-bar" style="background:var(--accent-rose);"></div>
-        <div class="stat-label">Max Drawdown <span class="live-dot"></span></div>
-        <div id="live-max-dd" class="stat-value" style="color:var(--accent-rose);">-2.09%</div>
-        <div id="live-max-dd-sub" class="stat-sub">Combined peak-to-trough · 3 bots</div>
-      </div>
-
-    </div>
-
-    <p style="max-width:780px;margin:16px auto 40px;text-align:center;color:var(--text-muted);font-size:12px;line-height:1.6;">
-      Live since April 6, 2026 · <span id="live-days-footnote">18</span> days · <span id="live-trades-footnote">137</span> trades. Small-sample Sharpe is biased upward; expect regression toward ~3 as the trade count grows beyond 500. Past performance does not guarantee future results.
-    </p>
-
-    <!-- HyperBot vs BTC vs S&P comparison table -->
-    <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:20px;" class="fade-in fade-in-delay-1">
-      <div style="padding:16px 20px; display:flex; align-items:flex-start; justify-content:space-between; gap:12px; border-bottom:1px solid var(--border); flex-wrap:wrap;">
-        <div style="min-width:0;">
-          <div style="font-size:15px;font-weight:800;color:var(--text-primary);">HyperBot vs Bitcoin vs S&amp;P 500</div>
-          <div style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);margin-top:3px;line-height:1.5;">Live: <span id="live-trades-compare">137</span> trades · <span id="live-days-compare">18</span> days · Monte Carlo 1-year <br class="mobile-break">· 10,000 simulations · edge-decay model</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-          <span id="live-updated" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);"></span>
-          <div style="display:flex;align-items:center;gap:6px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);border-radius:100px;padding:5px 12px;">
-            <span class="live-dot"></span>
-            <span style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);letter-spacing:.06em;">LIVE</span>
-          </div>
-        </div>
-      </div>
-      <div style="overflow-x:auto;">
-        <table style="width:100%;border-collapse:collapse;font-size:13px;">
-          <thead>
-            <tr style="border-bottom:1px solid var(--border);">
-              <th style="text-align:left;padding:12px 24px;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;width:35%;">Metric</th>
-              <th style="text-align:center;padding:12px 16px;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-cyan);text-transform:uppercase;letter-spacing:.08em;">HyperBot</th>
-              <th style="text-align:center;padding:12px 16px;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-amber);text-transform:uppercase;letter-spacing:.08em;">Bitcoin</th>
-              <th style="text-align:center;padding:12px 16px;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;">S&amp;P 500</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid var(--border); background:rgba(34,211,238,0.03);">
-              <td style="padding:13px 24px;color:var(--text-secondary);">
-                Live actual return
-                <div style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px;" id="bench-since-label">since Apr 6</div>
-              </td>
-              <td id="live-table-pnl" style="padding:13px 16px;text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--accent-green);">+8.71%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);">
-                <span id="live-btc-ret" style="color:var(--accent-amber);">—</span>
-                <div id="live-btc-24h" style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px;"></div>
-              </td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);">
-                <span id="live-spy-ret" style="color:var(--text-secondary);">—</span>
-                <div id="live-spy-24h" style="font-size:10px;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px;"></div>
-              </td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:13px 24px;color:var(--text-secondary);">1-year MC median</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--accent-cyan);">+440%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">+52.7%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">+8.2%</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border); background:rgba(34,211,238,0.03);">
-              <td style="padding:13px 24px;color:var(--text-secondary);">Bear case (P10) 1yr</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">+73%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--accent-rose);">-46%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--accent-rose);">-14%</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:13px 24px;color:var(--text-secondary);">Bull case (P90) 1yr</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">+967%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">+331%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">+36%</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border); background:rgba(34,211,238,0.03);">
-              <td style="padding:13px 24px;color:var(--text-secondary);">Probability of profit (1yr)</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);font-weight:800;color:var(--accent-green);">100%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-muted);">70%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-muted);">67%</td>
-            </tr>
-            <tr>
-              <td style="padding:13px 24px;color:var(--text-secondary);">Win rate</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-secondary);">61.7%</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-muted);">n/a</td>
-              <td style="padding:13px 16px;text-align:center;font-family:var(--font-mono);color:var(--text-muted);">n/a</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div style="padding:14px 24px; background:var(--bg-secondary); border-top:1px solid var(--border); font-size:11px; color:var(--text-muted); line-height:1.6;">
-        MC base scenario: edge decays to 22% of observed by month 6 · 20% bad months at 30% output · Poisson trade frequency · BTC/S&P modeled as GBM (110%/80vol and 10%/18vol). Past performance does not guarantee future results.
-      </div>
-    </div>
-
-    <div style="text-align:center;" class="fade-in fade-in-delay-2">
-      <a href="#pricing" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#6366f1,#22d3ee);color:#fff;padding:14px 28px;border-radius:var(--radius-md);font-weight:700;font-size:15px;box-shadow:0 10px 30px rgba(99,102,241,0.3);">Deploy Your First Bot &rarr;</a>
-      <div style="margin-top:12px;font-size:12px;color:var(--text-muted);">Built on HyperForge infrastructure. Past performance does not guarantee future results.</div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Parallax Pipeline Workflow ====== -->
-<section class="section" id="pipeline" style="padding:100px 0;">
-  <div class="container">
-    <div style="text-align:center;margin-bottom:64px;" class="fade-in">
-      <div class="section-label">The Platform</div>
-      <h2 class="section-title">Build. Test. Deploy.<br><span class="text-gradient-indigo">Optimize — four steps.</span></h2>
-      <p class="section-subtitle" style="margin:12px auto 0;">Create your strategy, validate it live in paper mode, deploy to mainnet, then let AI compound your edge — all in one platform.</p>
-    </div>
-
-    <div class="pipeline-layout">
-
-      <!-- LEFT: sticky timeline -->
-      <div class="pipeline-timeline" id="pipeline-timeline">
-        <div class="pipeline-timeline-inner">
-
-          <div class="pl-step active" data-step="0" onclick="pipelineGoTo(0)">
-            <div class="pl-dot" style="background:linear-gradient(135deg,#6366f1,#818cf8);">1</div>
-            <div class="pl-info">
-              <div class="pl-tag" style="color:#818cf8;">Strategy Builder</div>
-              <div class="pl-name">Create your strategy</div>
-              <div class="pl-sub">20+ templates · no-code</div>
-            </div>
-          </div>
-
-          <div class="pl-step inactive" data-step="1" onclick="pipelineGoTo(1)">
-            <div class="pl-dot" style="background:linear-gradient(135deg,#7c3aed,#a78bfa);">2</div>
-            <div class="pl-info">
-              <div class="pl-tag" style="color:#a78bfa;">Forward Test</div>
-              <div class="pl-name">Paper trade live</div>
-              <div class="pl-sub">Real prices · zero risk</div>
-            </div>
-          </div>
-
-          <div class="pl-step inactive" data-step="2" onclick="pipelineGoTo(2)">
-            <div class="pl-dot" style="background:linear-gradient(135deg,#0369a1,#38bdf8);">3</div>
-            <div class="pl-info">
-              <div class="pl-tag" style="color:#38bdf8;">Live Deploy</div>
-              <div class="pl-name">One click to mainnet</div>
-              <div class="pl-sub">Non-custodial · circuit breakers</div>
-            </div>
-          </div>
-
-          <div class="pl-step inactive" data-step="3" onclick="pipelineGoTo(3)">
-            <div class="pl-dot" style="background:linear-gradient(135deg,#7e22ce,#c084fc);">4</div>
-            <div class="pl-info">
-              <div class="pl-tag" style="color:#c084fc;">AI Optimization</div>
-              <div class="pl-name">Gets smarter 24/7</div>
-              <div class="pl-sub">GLM-5.1 · continuous tuning</div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- RIGHT: scrolling panels -->
-      <div class="pipeline-panels">
-
-        <!-- Panel 1: Strategy Builder -->
-        <div class="pl-panel visible" data-panel="0">
-          <div class="pl-panel-inner">
-            <div class="pl-panel-tag" style="color:#818cf8;">01 · Strategy Builder</div>
-            <div class="pl-panel-title" style="color:#818cf8;">Create from 20+ templates</div>
-            <div class="pl-panel-desc">Pick a strategy archetype, describe your parameters in plain English. HyperForge's AI assembles the bot logic — no coding required.</div>
-            <div class="pl-chips">
-              <span class="pl-chip" style="background:rgba(99,102,241,.12);color:#818cf8;border:1px solid rgba(99,102,241,.2);">Trend Following</span>
-              <span class="pl-chip" style="background:rgba(99,102,241,.12);color:#818cf8;border:1px solid rgba(99,102,241,.2);">Mean Reversion</span>
-              <span class="pl-chip" style="background:rgba(99,102,241,.12);color:#818cf8;border:1px solid rgba(99,102,241,.2);">Funding Harvest</span>
-              <span class="pl-chip" style="background:rgba(99,102,241,.12);color:#818cf8;border:1px solid rgba(99,102,241,.2);">Order Flow</span>
-            </div>
-            <div class="pl-preview-card">
-              <div class="pl-card-bar"><span class="pl-cd" style="background:#ef4444"></span><span class="pl-cd" style="background:#eab308"></span><span class="pl-cd" style="background:#22c55e"></span><span class="pl-card-title">strategy-builder.forge</span></div>
-              <div class="pl-card-body">
-                <div class="pl-sgrid">
-                  <div class="pl-sc pl-sc-on">📈 EMA Crossover</div><div class="pl-sc pl-sc-on">💰 Funding Harvest</div>
-                  <div class="pl-sc">🔄 Grid Bot</div><div class="pl-sc">⚡ Breakout</div>
-                  <div class="pl-sc">🧠 OI Divergence</div><div class="pl-sc" style="color:var(--accent-indigo);">+15 more...</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel 2: Forward Test -->
-        <div class="pl-panel" data-panel="1">
-          <div class="pl-panel-inner">
-            <div class="pl-panel-tag" style="color:#a78bfa;">02 · Forward Test</div>
-            <div class="pl-panel-title">Paper trade in live markets</div>
-            <div class="pl-panel-desc">Deploy in paper mode against real Hyperliquid prices. Real fills, real funding, real slippage — zero capital at risk. When the numbers hold, you promote to live.</div>
-            <div class="pl-chips">
-              <span class="pl-chip" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Real prices</span>
-              <span class="pl-chip" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Zero capital at risk</span>
-              <span class="pl-chip" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Daily AI diagnostics</span>
-            </div>
-            <div class="pl-preview-card">
-              <div class="pl-card-bar"><span class="pl-cd" style="background:#ef4444"></span><span class="pl-cd" style="background:#eab308"></span><span class="pl-cd" style="background:#22c55e"></span><span class="pl-card-title">forward-test.forge</span></div>
-              <div class="pl-card-body">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                  <span style="font-size:10px;font-family:var(--font-mono);color:var(--text-muted);">PAPER MODE</span>
-                  <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);border-radius:100px;padding:3px 10px;"><span class="live-dot" style="background:#a78bfa;box-shadow:0 0 6px #a78bfa;"></span><span style="font-size:9px;font-family:var(--font-mono);color:#a78bfa;font-weight:700;">LIVE PRICES</span></span>
-                </div>
-                <div class="pl-mrow"><span class="pl-mlabel">Paper PnL (7d)</span><span class="pl-mval" style="color:#a78bfa;">+$142.30</span></div>
-                <div class="pl-mrow"><span class="pl-mlabel">Win rate (7d)</span><span class="pl-mval" style="color:#a78bfa;">64.2%</span></div>
-                <div class="pl-mrow"><span class="pl-mlabel">Avg slippage</span><span class="pl-mval" style="color:var(--text-secondary);">0.012%</span></div>
-                <div style="margin-top:8px;padding:6px 10px;background:rgba(167,139,250,.1);border-radius:6px;font-size:10px;color:#a78bfa;font-family:var(--font-mono);">✓ Edge confirmed — ready to go live</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel 3: Live Deploy -->
-        <div class="pl-panel" data-panel="2">
-          <div class="pl-panel-inner">
-            <div class="pl-panel-tag" style="color:#38bdf8;">03 · Live Deploy</div>
-            <div class="pl-panel-title">One click to mainnet</div>
-            <div class="pl-panel-desc">Deploy to Hyperliquid with circuit breakers, crash recovery, and position isolation built in. Non-custodial — your keys, your funds, always.</div>
-            <div class="pl-chips">
-              <span class="pl-chip" style="background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.2);">Non-custodial</span>
-              <span class="pl-chip" style="background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.2);">Circuit breakers</span>
-              <span class="pl-chip" style="background:rgba(56,189,248,.1);color:#38bdf8;border:1px solid rgba(56,189,248,.2);">24/7 uptime</span>
-            </div>
-            <div class="pl-preview-card">
-              <div class="pl-card-bar"><span class="pl-cd" style="background:#ef4444"></span><span class="pl-cd" style="background:#eab308"></span><span class="pl-cd" style="background:#22c55e"></span><span class="pl-card-title">live-dashboard.forge</span></div>
-              <div class="pl-card-body">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                  <span style="font-size:13px;font-weight:700;color:var(--text-primary);">EMA Bot</span>
-                  <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);border-radius:100px;padding:3px 10px;"><span class="live-dot" style="background:#38bdf8;box-shadow:0 0 6px #38bdf8;"></span><span style="font-size:9px;font-family:var(--font-mono);color:#38bdf8;font-weight:700;">LIVE</span></span>
-                </div>
-                <div class="pl-mrow"><span class="pl-mlabel">Realized PnL</span><span class="pl-mval" style="color:#38bdf8;">+$318.40</span></div>
-                <div class="pl-mrow"><span class="pl-mlabel">Open positions</span><span class="pl-mval" style="color:var(--text-secondary);">3</span></div>
-                <div class="pl-mrow"><span class="pl-mlabel">Uptime</span><span class="pl-mval" style="color:#38bdf8;">99.9%</span></div>
-                <div style="display:flex;gap:6px;margin-top:8px;">
-                  <div style="flex:1;background:rgba(56,189,248,.1);border-radius:5px;padding:5px 8px;font-size:9px;color:#38bdf8;font-family:var(--font-mono);text-align:center;">BTC LONG ↑</div>
-                  <div style="flex:1;background:rgba(56,189,248,.1);border-radius:5px;padding:5px 8px;font-size:9px;color:#38bdf8;font-family:var(--font-mono);text-align:center;">ETH SHORT ↓</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel 5: AI Optimization -->
-        <div class="pl-panel" data-panel="4">
-          <div class="pl-panel-inner">
-            <div class="pl-panel-tag" style="color:#c084fc;">04 · AI Optimization</div>
-            <div class="pl-panel-title" style="color:#c084fc;">Gets smarter while you sleep</div>
-            <div class="pl-panel-desc">GLM-5.1 continuously re-tunes your parameters as market conditions evolve. No manual intervention needed. Your edge compounds over time.</div>
-            <div class="pl-chips">
-              <span class="pl-chip" style="background:rgba(192,132,252,.1);color:#c084fc;border:1px solid rgba(192,132,252,.2);">Hourly on Alpha</span>
-              <span class="pl-chip" style="background:rgba(192,132,252,.1);color:#c084fc;border:1px solid rgba(192,132,252,.2);">GLM-5.1 · #1 SWE-Bench</span>
-              <span class="pl-chip" style="background:rgba(192,132,252,.1);color:#c084fc;border:1px solid rgba(192,132,252,.2);">Zero manual work</span>
-            </div>
-            <div class="pl-preview-card">
-              <div class="pl-card-bar"><span class="pl-cd" style="background:#ef4444"></span><span class="pl-cd" style="background:#eab308"></span><span class="pl-cd" style="background:#22c55e"></span><span class="pl-card-title">ai-optimizer.forge</span></div>
-              <div class="pl-card-body">
-                <div style="font-size:9px;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:10px;">LAST OPTIMIZATION · 2h ago</div>
-                <div class="pl-airow"><span class="pl-ailabel">EMA Fast Period</span><span class="pl-aival">9 → <span style="color:#22d3ee;">12</span></span></div>
-                <div class="pl-airow"><span class="pl-ailabel">Stop Loss %</span><span class="pl-aival">1.5% → <span style="color:#22d3ee;">1.2%</span></span></div>
-                <div class="pl-airow"><span class="pl-ailabel">Position Size</span><span class="pl-aival">5% → <span style="color:#22d3ee;">6%</span></span></div>
-                <div style="margin-top:8px;padding:6px 10px;background:rgba(192,132,252,.08);border-radius:6px;font-size:10px;color:#c084fc;font-family:var(--font-mono);">↑ +0.3% projected daily edge improvement</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /pipeline-panels -->
-    </div><!-- /pipeline-layout -->
-  </div>
-</section>
-
-<!-- ====== Competitive Landscape ====== -->
-<section class="section" id="different">
-  <div class="container">
-    <div style="text-align:center;margin-bottom:40px;" class="fade-in">
-      <div class="section-label">Competitive Landscape</div>
-      <h2 class="section-title">HyperForge <span class="text-gradient-indigo">vs the field</span></h2>
-    </div>
-    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;" class="fade-in fade-in-delay-1">
-      <div style="overflow-x:auto;">
-        <table class="comp-table" style="width:100%;border-collapse:collapse;">
-          <thead>
-            <tr style="border-bottom:1px solid var(--border);">
-              <th style="text-align:left;padding:14px 20px;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;">Feature</th>
-              <th style="text-align:center;padding:14px 12px;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-cyan);text-transform:uppercase;letter-spacing:.08em;">HyperForge</th>
-              <th style="text-align:center;padding:14px 12px;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;">HyperAgent</th>
-              <th style="text-align:center;padding:14px 12px;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;">Coinrule</th>
-              <th style="text-align:center;padding:14px 12px;font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em;">goodcryptoX</th>
-            </tr>
-          </thead>
-          <tbody>
-              <tr style="border-bottom:1px solid var(--border);background:rgba(34,211,238,0.03);">
-                <td style="padding:13px 20px;color:var(--text-secondary);">Forward Testing</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-rose);font-size:16px;">&#x2715;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-rose);font-size:16px;">&#x2715;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-rose);font-size:16px;">&#x2715;</td>
-              </tr>
-              <tr style="border-bottom:1px solid var(--border);background:rgba(34,211,238,0.03);">
-                <td style="padding:13px 20px;color:var(--text-secondary);">Live Deployment</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-              </tr>
-              <tr style="border-bottom:1px solid var(--border);">
-                <td style="padding:13px 20px;color:var(--text-secondary);">Continuous AI Optimization</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--text-muted);font-size:12px;">Static</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-rose);font-size:16px;">&#x2715;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-rose);font-size:16px;">&#x2715;</td>
-              </tr>
-              <tr style="border-bottom:1px solid var(--border);background:rgba(34,211,238,0.03);">
-                <td style="padding:13px 20px;color:var(--text-secondary);">No-Code Builder</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-              </tr>
-              <tr>
-                <td style="padding:13px 20px;color:var(--text-secondary);">Non-Custodial</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-                <td style="text-align:center;padding:13px 12px;color:var(--accent-green);font-size:16px;">&#x2713;</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div style="padding:12px 20px;background:var(--bg-secondary);border-top:1px solid var(--border);font-size:11px;color:var(--text-muted);">
-          &#x2713; = available &nbsp;&#x2715; = not available &nbsp; Static = AI signals fixed at deploy, no ongoing optimization
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Pricing ====== -->
-<section class="section pricing" id="pricing">
-  <div class="container">
-    <div style="text-align:center; margin-bottom:56px;" class="fade-in">
-      <div class="section-label">Pricing</div>
-      <h2 class="section-title">Start building <span class="text-gradient-green">today.</span></h2>
-      <p class="section-subtitle" style="margin:0 auto;">Free tier monetized by a tiny builder fee. Paid tiers waive it — heavy traders save more than the subscription costs.</p>
-    </div>
-    <!-- Builder fee explainer -->
-    <div style="background:var(--bg-card);border:1px solid rgba(251,191,36,0.2);border-radius:var(--radius-md);padding:14px 20px;margin-bottom:32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;" class="fade-in">
-      <span style="font-size:16px;">&#x26A1;</span>
-      <div style="font-size:13px;color:var(--text-secondary);flex:1;">
-        <strong style="color:var(--accent-amber);">How free tier works:</strong> HyperForge is free to use. To keep it that way, free accounts pay a 0.035% builder fee per order — charged by Hyperliquid on your behalf. Paid tiers eliminate it entirely. A trader doing $200K/month saves over $499 in fees by upgrading to Alpha — more than the subscription costs.
-      </div>
-    </div>
-
-    <div class="pricing-grid">
-      <!-- Free -->
-      <div class="price-card fade-in">
-        <div class="tier-name">Free</div>
-        <div class="tier-desc">Start with zero risk</div>
-        <div class="price"><span class="dollar">$</span>0</div>
-        <ul class="features-list">
-          <li><span class="check">&#10003;</span> 1 active bot</li>
-          <li><span class="check">&#10003;</span> No-code strategy builder</li>
-          <li><span class="check">&#10003;</span> No-code agent builder</li>
-          <li><span class="check">&#10003;</span> Non-custodial deployment</li>
-          <li><span class="check">&#10003;</span> Community support</li>
-          <li style="color:var(--text-muted);"><span style="color:var(--text-muted);">&#x2715;</span> Forward testing (paid)</li>
-          <li style="color:var(--text-muted);"><span style="color:var(--text-muted);">&#x2715;</span> Live deployment (paid)</li>
-        </ul>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-amber);background:var(--accent-amber-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">0.035% builder fee per order</div>
-        <button class="price-btn" onclick="openWaitlistModal('free')">Join Waitlist &rarr;</button>
-      </div>
-      <!-- Pro -->
-      <div class="price-card fade-in fade-in-delay-1">
-        <div class="tier-name">Pro</div>
-        <div class="tier-desc">The full pipeline</div>
-        <div class="price"><span class="dollar">$</span>99<span style="font-size:16px;font-weight:500;color:var(--text-muted);">/mo</span></div>
-        <ul class="features-list">
-          <li><span class="check">&#10003;</span> 5 active bots</li>
-          <li><span class="check">&#10003;</span> Forward test (paper mode)</li>
-          <li><span class="check">&#10003;</span> Live deployment</li>
-          <li><span class="check">&#10003;</span> Daily AI optimization</li>
-          <li><span class="check">&#10003;</span> Email support</li>
-          <li><span class="check">&#10003;</span> All strategy templates</li>
-          <li style="color:var(--text-muted);"><span style="color:var(--text-muted);">&#x2715;</span> Multi-account (Alpha)</li>
-        </ul>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-amber);background:var(--accent-amber-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">0.01% builder fee per order</div>
-        <button class="price-btn" onclick="openWaitlistModal('pro')">Join Waitlist &rarr;</button>
-      </div>
-      <!-- Alpha -->
-      <div class="price-card fade-in fade-in-delay-2">
-        <div class="tier-name">Alpha</div>
-        <div class="tier-desc">For serious traders</div>
-        <div class="price"><span class="dollar">$</span>499<span style="font-size:16px;font-weight:500;color:var(--text-muted);">/mo</span></div>
-        <ul class="features-list">
-          <li><span class="check">&#10003;</span> Unlimited active bots</li>
-          <li><span class="check">&#10003;</span> Full pipeline</li>
-          <li><span class="check">&#10003;</span> Hourly AI optimization</li>
-          <li><span class="check">&#10003;</span> Multi-account management</li>
-          <li><span class="check">&#10003;</span> Priority support + Discord</li>
-          <li><span class="check">&#10003;</span> Strategy performance analytics</li>
-          <li><span class="check">&#10003;</span> Early access to new bot types</li>
-        </ul>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);background:var(--accent-green-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">Zero builder fee</div>
-        <button class="price-btn" onclick="openWaitlistModal('alpha')">Join Waitlist &rarr;</button>
-      </div>
-      <!-- Desk -->
-      <div class="price-card fade-in fade-in-delay-3" style="border-color:rgba(99,102,241,0.3);">
-        <div class="tier-name">Desk</div>
-        <div class="tier-desc">Prop firms &amp; teams</div>
-        <ul class="features-list">
-          <li><span class="check">&#10003;</span> Everything in Alpha</li>
-          <li><span class="check">&#10003;</span> Platform API access</li>
-          <li><span class="check">&#10003;</span> Custom strategy builds</li>
-          <li><span class="check">&#10003;</span> Near-realtime AI optimization</li>
-          <li><span class="check">&#10003;</span> Dedicated account manager</li>
-          <li><span class="check">&#10003;</span> Team seat licensing</li>
-          <li><span class="check">&#10003;</span> SLA + 24h support</li>
-        </ul>
-        <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--accent-green);background:var(--accent-green-bg);padding:5px 10px;border-radius:var(--radius-sm);text-align:center;margin-bottom:16px;">Zero builder fee</div>
-        <button class="price-btn" onclick="openWaitlistModal('desk')">Join Waitlist &rarr;</button>
-        <div style="margin-top:14px;font-size:11px;color:var(--text-muted);text-align:center;line-height:1.5;">Prop firms · Funds · Multi-trader desks</div>
-      </div>
-    </div>
-
-    <!-- Revenue model note -->
-    <div style="margin-top:24px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 24px;font-size:12px;color:var(--text-muted);line-height:1.8;" class="fade-in">
-      <strong style="color:var(--text-secondary);">Break-even example:</strong> A trader doing $50K/month stays on Free: pays $175 in builder fees (0.035% × $50K × 2 sides). Upgrading to Alpha at $499/mo saves more than it costs — and unlocks unlimited bots + hourly AI optimization. Builder fee on free tier is always paid to HyperForge, not Hyperliquid directly.
-    </div>
-  </div>
-</section>
-
-<!-- ====== FAQ ====== -->
-<section class="section faq" id="faq">
-  <div class="container">
-    <div style="text-align:center; margin-bottom:56px;" class="fade-in">
-      <div class="section-label">FAQ</div>
-      <h2 class="section-title">Common questions.</h2>
-    </div>
-    <div class="faq-list">
-      <div class="faq-item fade-in">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          Do I need to know how to code?
-          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer"><p>No. The no-code agent builder lets you describe your strategy in plain English — entry conditions, exit rules, position sizing, risk limits — and the AI generates a production bot. You deploy it with one click. Zero Python required.</p></div>
-      </div>
-      <div class="faq-item fade-in">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          Is my money safe? Who holds my keys?
-          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer"><p>HyperForge uses Hyperliquid agent wallets — a trade-only key that can open and close positions but can never withdraw funds. Your main wallet and funds are always under your control. You can revoke agent access at any time directly on Hyperliquid.</p></div>
-      </div>
-      <div class="faq-item fade-in">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          What is a builder fee and why does the free tier charge one?
-          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer"><p>Hyperliquid allows platforms to collect a small builder fee on top of exchange fees — up to 0.10% per order. Rather than charging a subscription upfront, we charge a 0.035% builder fee so HyperForge can remain genuinely free. It covers infrastructure and keeps the lights on. Paid tiers waive it entirely, so heavy traders always save more than the subscription costs.</p></div>
-      </div>
-      <div class="faq-item fade-in">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          How does the AI optimization actually work?
-          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer"><p>GLM-5.1 (the #1 SWE-Bench Pro model, MIT licensed) analyzes your bot's live trade history and current market regime, then recommends parameter adjustments — entry thresholds, stop distances, position sizing multipliers, cooldown periods. On Pro it runs daily, on Alpha hourly. You review and approve changes, or set it to auto-apply.</p></div>
-      </div>
-      <div class="faq-item fade-in">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          What is forward testing and why does HyperForge require it?
-          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="faq-answer"><p>Forward testing runs your strategy in paper mode on live market data — real prices, real spreads, real order flow, zero capital at risk. It proves your edge holds under current conditions before a dollar goes live. HyperForge requires this validation stage before live deployment. Strategies that pass forward testing consistently outperform strategies deployed blind.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ====== Final CTA ====== -->
-<section class="final-cta">
-  <div class="container">
-    <h2 class="fade-in">Stop deploying blind.<br><span class="text-gradient-indigo">Start with a pipeline.</span></h2>
-    <p class="fade-in fade-in-delay-1">Every other platform drops you straight into live trading. HyperForge validates your edge first — forward test on live markets, then deploy with AI optimizing 24/7.</p>
-    <a href="javascript:openWaitlistModal('general')" class="hero-cta fade-in fade-in-delay-2">Join the Waitlist &rarr;</a>
-  </div>
-</section>
-
-<!-- ====== Footer ====== -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-inner">
-      <div>
-        <div class="footer-brand">HyperForge</div>
-        <div class="footer-built">Built with &#10084;&#65039; and Claude</div>
-      </div>
-      <div class="footer-links">
-        <a href="https://twitter.com" target="_blank" rel="noopener">Twitter</a>
-        <a href="https://discord.gg" target="_blank" rel="noopener">Discord</a>
-        <a href="mailto:hello@hyperforge.dev">Email</a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<!-- ====== JavaScript ====== -->
-<script>
-/* ------- Intersection Observer for scroll animations ------- */
-(function() {
-  const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-  document.querySelectorAll('.fade-in').forEach(function(el) {
-    observer.observe(el);
-  });
-})();
-
-/* ------- Sticky nav scroll effect ------- */
-(function() {
-  var nav = document.getElementById('nav');
-  var last = 0;
-  window.addEventListener('scroll', function() {
-    var y = window.scrollY;
-    if (y > 40) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
-    }
-    last = y;
-  }, { passive: true });
-})();
-
-/* ------- FAQ toggle ------- */
-function toggleFaq(btn) {
-  var item = btn.parentElement;
-  var isOpen = item.classList.contains('open');
-  // close all
-  document.querySelectorAll('.faq-item.open').forEach(function(el) {
-    el.classList.remove('open');
-  });
-  if (!isOpen) {
-    item.classList.add('open');
-  }
-}
-
-/* ------- Smooth scroll for anchor links ------- */
-document.querySelectorAll('a[href^="#"]').forEach(function(a) {
-  a.addEventListener('click', function(e) {
-    var target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      e.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-});
-
-/* ------- Stat card entrance animation ------- */
-(function() {
-  var cards = document.querySelectorAll('.stat-card');
-  if (!cards.length) return;
-  var io = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      if (e.isIntersecting) {
-        var el = e.target;
-        var delay = parseFloat(el.style.transitionDelay || 0) * 1000;
-        setTimeout(function() { el.classList.add('card-visible'); }, delay);
-        io.unobserve(el);
-      }
-    });
-  }, { threshold: 0.15 });
-  cards.forEach(function(c) { io.observe(c); });
-})();
-
-/* ------- Live PnL stats (fetches from stats.json every 60s) ------- */
-(function() {
-  // Primary: direct from the HyperBot cloud server (source of truth — what the
-  // dashboard landing page shows). Stable hostname via the 'stats' Cloudflare
-  // named tunnel. Fallback to GitHub Pages stats.json if cloud is unreachable.
-  var API_PRIMARY  = 'https://stats.hip3radar.xyz/api/hyperforge/live-stats';
-  var API_FALLBACK = 'https://edgardextra-lang.github.io/crack-the-bot/stats.json';
-  var API = API_PRIMARY;
-  var _prev = {};
-
-  function fmt(n, decimals) {
-    return n.toFixed(decimals !== undefined ? decimals : 2);
-  }
-
-  function fmtSign(n, dec) {
-    return (n >= 0 ? '+' : '') + fmt(n, dec !== undefined ? dec : 2) + '%';
-  }
-
-  /* flash the card containing an element when its value changes */
-  function flashCard(el) {
-    if (!el) return;
-    var card = el.closest ? el.closest('.stat-card') : null;
-    if (!card) return;
-    card.classList.remove('flash');
-    void card.offsetWidth; // reflow
-    card.classList.add('flash');
-    setTimeout(function() { card.classList.remove('flash'); }, 600);
-  }
-
-  function setEl(id, text) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    if (el.textContent !== text) {
-      el.textContent = text;
-      flashCard(el);
-    }
-  }
-
-  function applyStats(d) {
-    var pnlPct = d.sum_pnl_pct;
-    var pnlUsd = d.combined_realized_pnl;
-    var trades = d.combined_trade_count;
-    var wr     = d.combined_win_rate;
-    var bots   = d.bots || [];
-    var bench  = d.benchmarks || {};
-
-    // Stat cards are Option B (PnL% · PF · WR · Sharpe · Trades · Expectancy) —
-    // filtered to the two actively-profitable bots. The backend `combined_*`
-    // fields already reflect this filtered subset (losing bots are excluded
-    // from the combined totals), so the PnL% card auto-refreshes correctly.
-    // PF / Sharpe / Expectancy are computed metrics not yet in the endpoint —
-    // they stay static until a dedicated endpoint exposes them.
-
-    // All six live-proof stat cards now refresh from the filtered endpoint
-    setEl('live-pnl-pct', fmtSign(pnlPct));
-    setEl('live-pnl-usd', '+$' + fmt(Math.abs(pnlUsd)) + ' realized · live');
-
-    if (d.profit_factor != null) {
-      setEl('live-pf', Number(d.profit_factor).toFixed(2));
-    }
-    if (d.combined_win_rate != null) {
-      setEl('live-win-rate', Number(wr).toFixed(1) + '%');
-      setEl('live-win-detail', 'across ' + trades + ' live trades');
-    }
-    if (d.sharpe_annualized != null) {
-      var sh = Number(d.sharpe_annualized);
-      setEl('live-sharpe', (sh >= 0 ? '+' : '') + sh.toFixed(2));
-    }
-    if (trades != null) {
-      setEl('live-trade-count', String(trades));
-      setEl('live-trades-footnote', String(trades));
-      setEl('live-trades-compare', String(trades));
-    }
-
-    // Days elapsed since live start (April 6, 2026 UTC)
-    try {
-      var startIso = (bench && bench.since_date) ? bench.since_date : '2026-04-06';
-      var startMs  = Date.parse(startIso + 'T00:00:00Z');
-      if (!isNaN(startMs)) {
-        var daysNum  = (Date.now() - startMs) / 86400000;
-        var daysDisp = daysNum >= 10 ? String(Math.floor(daysNum)) : daysNum.toFixed(1);
-        setEl('live-days', daysDisp);
-        setEl('live-days-footnote', daysDisp);
-        setEl('live-days-compare', daysDisp);
-      }
-    } catch (e) {}
-    if (d.expectancy_pct != null) {
-      var ev = Number(d.expectancy_pct);
-      setEl('live-expectancy', (ev >= 0 ? '+' : '') + ev.toFixed(2) + '%');
-      var evEl = document.getElementById('live-expectancy');
-      if (evEl) evEl.style.color = ev >= 0 ? 'var(--accent-green)' : 'var(--accent-rose)';
-    }
-    if (d.max_dd_pct != null) {
-      var dd = Number(d.max_dd_pct);
-      setEl('live-max-dd', (dd > 0 ? '+' : '') + dd.toFixed(2) + '%');
-    }
-
-
-    // comparison table — HyperBot
-    setEl('live-table-pnl', fmtSign(pnlPct));
-
-    // proof bar
-    setEl('proof-pnl', fmtSign(pnlPct));
-    // bot-count span removed from proof bar per product decision — leave the JS
-    // no-op here so we don't break if the element ever comes back.
-
-    // BTC benchmark
-    if (bench.btc_return_pct != null) {
-      var btcRet = bench.btc_return_pct;
-      var btcEl  = document.getElementById('live-btc-ret');
-      if (btcEl) {
-        btcEl.textContent = fmtSign(btcRet);
-        btcEl.style.color = btcRet >= 0 ? 'var(--accent-amber)' : 'var(--accent-rose)';
-      }
-      if (bench.btc_24h_pct != null) {
-        var b24 = bench.btc_24h_pct;
-        var el24 = document.getElementById('live-btc-24h');
-        if (el24) {
-          el24.textContent = (b24 >= 0 ? '▲' : '▼') + Math.abs(b24).toFixed(2) + '% 24h';
-          el24.style.color = b24 >= 0 ? 'rgba(52,211,153,.7)' : 'rgba(251,113,133,.7)';
-        }
-      }
-    }
-
-    // S&P benchmark
-    if (bench.spy_return_pct != null) {
-      var spyRet = bench.spy_return_pct;
-      var spyEl  = document.getElementById('live-spy-ret');
-      if (spyEl) {
-        spyEl.textContent = fmtSign(spyRet);
-        spyEl.style.color = spyRet >= 0 ? 'var(--text-secondary)' : 'var(--accent-rose)';
-      }
-      if (bench.spy_24h_pct != null) {
-        var s24 = bench.spy_24h_pct;
-        var sp24 = document.getElementById('live-spy-24h');
-        if (sp24) {
-          sp24.textContent = (s24 >= 0 ? '▲' : '▼') + Math.abs(s24).toFixed(2) + '% 24h';
-          sp24.style.color = s24 >= 0 ? 'rgba(52,211,153,.7)' : 'rgba(251,113,133,.7)';
-        }
-      }
-    }
-
-    // last updated
-    var upEl = document.getElementById('live-updated');
-    if (upEl) {
-      var now = new Date();
-      upEl.textContent = 'updated ' + now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', timeZone:'America/New_York' }) + ' EDT';
-    }
-  }
-
-  function fetchStats() {
-    fetch(API_PRIMARY + '?t=' + Date.now(), { cache: 'no-store' })
-      .then(function(r) { if (!r.ok) throw new Error('primary down'); return r.json(); })
-      .then(applyStats)
-      .catch(function() {
-        // Fallback to GitHub Pages stats.json (may be stale; better than nothing).
-        fetch(API_FALLBACK + '?t=' + Date.now(), { cache: 'no-store' })
-          .then(function(r) { return r.json(); })
-          .then(applyStats)
-          .catch(function() {
-            var upEl = document.getElementById('live-updated');
-            if (upEl) upEl.textContent = '';
-          });
-      });
-  }
-
-  fetchStats();
-  setInterval(fetchStats, 60000);
-})();
-
-/* ------- Pipeline parallax: step highlight + panel entrance ------- */
-(function() {
-  var steps  = document.querySelectorAll('.pl-step');
-  var panels = document.querySelectorAll('.pl-panel');
-  var timeline = document.querySelector('.pipeline-timeline-inner');
-
-  // Per-step accent colors matching CSS gradients
-  var COLORS = ['#818cf8', '#22d3ee', '#a78bfa', '#38bdf8', '#c084fc'];
-
-  // Wire CSS var --pl-step-color onto each step (drives left border + ring)
-  steps.forEach(function(s, i) {
-    s.style.setProperty('--pl-step-color', COLORS[i]);
-  });
-
-  // Wire --pl-card-glow onto each preview card
-  document.querySelectorAll('.pl-preview-card').forEach(function(card, i) {
-    card.style.setProperty('--pl-card-glow', COLORS[i] + 'cc');
-  });
-
-  // Wire --pl-bar-w on each bar fill so CSS transition targets the right %
-  document.querySelectorAll('.pl-bar-f').forEach(function(bar) {
-    var target = bar.style.width || bar.getAttribute('style');
-    // Extract width value from existing inline style, store as CSS var
-    var w = bar.style.width;
-    if (w) {
-      bar.style.setProperty('--pl-bar-w', w);
-      bar.style.width = '0'; // start at 0; CSS transitions to var when .visible
-    }
-  });
-
-  function updateProgress(activeIdx) {
-    if (!timeline) return;
-    var pct = steps.length > 1
-      ? (activeIdx / (steps.length - 1)) * 100
-      : 0;
-    timeline.style.setProperty('--pl-progress', pct + '%');
-  }
-
-  function setActive(i) {
-    steps.forEach(function(s, idx) {
-      s.classList.toggle('active',   idx === i);
-      s.classList.toggle('inactive', idx !== i);
-    });
-    updateProgress(i);
-  }
-
-  window.pipelineGoTo = function(i) {
-    var panel = panels[i];
-    if (!panel) return;
-    setActive(i);
-    panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
-  var io = new IntersectionObserver(function(entries) {
-    entries.forEach(function(e) {
-      if (e.isIntersecting) {
-        var idx = parseInt(e.target.dataset.panel, 10);
-        setActive(idx);
-        e.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.35, rootMargin: '0px 0px -10% 0px' });
-
-  panels.forEach(function(p) { io.observe(p); });
-
-  // Set first panel visible immediately (above fold on load)
-  if (panels[0]) {
-    panels[0].classList.add('visible');
-    setActive(0);
-  }
-})();
-</script>
-
-<!-- ====== Waitlist Modal ====== -->
-<style>
-  .wl-overlay{
-    position:fixed;inset:0;background:rgba(8,10,18,0.82);backdrop-filter:blur(6px);
-    display:none;align-items:center;justify-content:center;z-index:9999;
-    opacity:0;transition:opacity .25s ease;
-  }
-  .wl-overlay.show{display:flex;opacity:1;}
-  .wl-modal{
-    width:min(460px,calc(100% - 32px));
-    background:linear-gradient(180deg,#0f1421 0%,#0a0d17 100%);
-    border:1px solid rgba(99,102,241,0.28);
-    border-radius:var(--radius-lg,16px);
-    box-shadow:0 20px 60px -20px rgba(99,102,241,0.35),0 8px 24px rgba(0,0,0,0.55);
-    padding:30px 28px 26px;position:relative;
-    transform:translateY(14px) scale(.98);transition:transform .25s ease;
-  }
-  .wl-overlay.show .wl-modal{transform:translateY(0) scale(1);}
-  .wl-close{
-    position:absolute;top:14px;right:14px;width:32px;height:32px;
-    display:flex;align-items:center;justify-content:center;
-    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
-    border-radius:8px;color:var(--text-muted,#8a8fa3);font-size:18px;line-height:1;
-    cursor:pointer;transition:all .15s ease;
-  }
-  .wl-close:hover{background:rgba(239,68,68,0.12);color:#ef4444;border-color:rgba(239,68,68,0.3);}
-  .wl-badge{
-    display:inline-flex;align-items:center;gap:6px;
-    font-family:var(--font-mono,ui-monospace,monospace);font-size:10px;font-weight:700;
-    letter-spacing:0.08em;text-transform:uppercase;
-    color:#818cf8;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.28);
-    padding:5px 10px;border-radius:999px;margin-bottom:14px;
-  }
-  .wl-badge .dot{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;}
-  .wl-title{font-size:22px;font-weight:800;color:#fff;line-height:1.25;margin:0 0 8px;letter-spacing:-0.01em;}
-  .wl-sub{font-size:13px;color:var(--text-muted,#8a8fa3);line-height:1.55;margin:0 0 22px;}
-  .wl-sub .plan-chip{
-    display:inline-block;padding:2px 8px;border-radius:6px;margin-left:4px;
-    font-family:var(--font-mono,ui-monospace,monospace);font-size:11px;font-weight:700;
-    background:rgba(99,102,241,0.14);color:#a5b4fc;border:1px solid rgba(99,102,241,0.28);
-  }
-  .wl-input{
-    width:100%;padding:14px 16px;background:rgba(255,255,255,0.04);
-    border:1px solid rgba(255,255,255,0.1);border-radius:10px;
-    font-size:14px;color:#fff;font-family:inherit;
-    transition:border-color .15s ease,background .15s ease;
-  }
-  .wl-input::placeholder{color:#5a6076;}
-  .wl-input:focus{outline:none;border-color:rgba(99,102,241,0.55);background:rgba(99,102,241,0.06);}
-  .wl-submit{
-    width:100%;margin-top:12px;padding:14px 18px;
-    background:linear-gradient(135deg,#6366f1 0%,#818cf8 100%);
-    color:#fff;font-weight:700;font-size:14px;letter-spacing:0.01em;
-    border:none;border-radius:10px;cursor:pointer;
-    box-shadow:0 8px 24px -10px rgba(99,102,241,0.75);
-    transition:transform .12s ease,filter .12s ease;
-  }
-  .wl-submit:hover{filter:brightness(1.08);}
-  .wl-submit:active{transform:translateY(1px);}
-  .wl-submit:disabled{opacity:0.6;cursor:not-allowed;filter:grayscale(0.2);}
-  .wl-note{font-size:11px;color:#5a6076;text-align:center;margin-top:14px;line-height:1.5;}
-  .wl-success{
-    display:none;text-align:center;padding:14px 0 6px;
-  }
-  .wl-success.show{display:block;}
-  .wl-check{
-    width:56px;height:56px;border-radius:50%;margin:0 auto 14px;
-    background:rgba(34,197,94,0.12);border:1.5px solid rgba(34,197,94,0.45);
-    display:flex;align-items:center;justify-content:center;
-    font-size:28px;color:#22c55e;
-    animation:wl-pop .4s cubic-bezier(.2,1.4,.4,1);
-  }
-  @keyframes wl-pop{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
-  .wl-success-title{font-size:19px;font-weight:800;color:#fff;margin:0 0 6px;}
-  .wl-success-sub{font-size:13px;color:var(--text-muted,#8a8fa3);line-height:1.55;margin:0;}
-  .wl-error{color:#ef4444;font-size:12px;margin-top:8px;min-height:14px;}
-</style>
-
-<div class="wl-overlay" id="wl-overlay" onclick="if(event.target===this)closeWaitlistModal()">
-  <div class="wl-modal" role="dialog" aria-modal="true" aria-labelledby="wl-title">
-    <button class="wl-close" onclick="closeWaitlistModal()" aria-label="Close">&times;</button>
-
-    <div id="wl-form-view">
-      <div class="wl-badge"><span class="dot"></span> HyperForge Beta</div>
-      <h3 class="wl-title" id="wl-title">Join the waitlist</h3>
-      <p class="wl-sub">Be first in line when HyperForge opens. We'll email you the moment your access is ready.<span id="wl-plan-chip"></span></p>
-      <input type="email" class="wl-input" id="wl-email" placeholder="you@example.com" autocomplete="email"
-             onkeydown="if(event.key==='Enter')submitWaitlist()">
-      <div class="wl-error" id="wl-error"></div>
-      <button class="wl-submit" id="wl-submit-btn" onclick="submitWaitlist()">Join Waitlist &rarr;</button>
-      <p class="wl-note">No spam. We'll only email you about HyperForge beta access.</p>
-    </div>
-
-    <div class="wl-success" id="wl-success-view">
-      <div class="wl-check">&#10003;</div>
-      <h3 class="wl-success-title">You're on the list.</h3>
-      <p class="wl-success-sub">A confirmation email is on its way. We'll reach out when your HyperForge beta access opens.</p>
-    </div>
-  </div>
+  <div style="flex-shrink:0; color:var(--ink-3); font-family:var(--mono); font-size:11px;">∑ <b id="liq-total" style="color:var(--blood);">$2.41B</b></div>
 </div>
 
-<script>
-/* ====== Waitlist: Supabase + EmailJS ====== */
-(function(){
-  // Supabase: shared ctb_beta_emails table (one place for all beta signups).
-  var SUPABASE_URL  = 'https://pugmrupmlxckmrlcuzby.supabase.co';
-  var SUPABASE_KEY  = 'sb_publishable_pEhpLWsASpjHABotE1eYeg_YoS_H32C';
-  // EmailJS: HyperForge-specific template. This MUST NOT be the Crack the Bot
-  // template — those emails are game-branded and confuse HyperForge signups.
-  // If this constant is still the placeholder, we skip sending rather than
-  // accidentally send a CTB-branded email. See docs/emailjs-waitlist-template.html
-  // in this repo for the ready-to-paste template body and setup steps.
-  var EJS_PUBLIC    = 'jc1UmY3TfWj2x66qG';
-  var EJS_SERVICE   = 'service_hr2mfry';
-  var EJS_TEMPLATE  = 'template_e75us7h'; // HyperForge waitlist confirmation template
-  var EJS_TEMPLATE_PLACEHOLDER = 'template_hyperforge_wl';
+<!-- ─────── NAV ─────── -->
+<nav id="nav">
+  <div class="brand">
+    <div class="brand-mark">/&gt;</div>
+    HyperForge
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('email').focus()">Reserve seat</button>
+</nav>
 
-  // Init EmailJS once the SDK is ready
-  if (window.emailjs && typeof emailjs.init === 'function') {
-    try { emailjs.init({ publicKey: EJS_PUBLIC }); } catch(e){}
+
+<!-- ─────── HERO ─────── -->
+<section class="hero">
+  <div class="phantom tr">10,000</div>
+  <div class="hero-tag reveal"><span class="live-dot"></span>Live · Hyperliquid mainnet · <span id="hero-pnl-pct">+55.34%</span> realized · <span id="hero-days">19</span> days</div>
+
+  <h1 class="hero-h reveal">
+    You're not <em>bad</em><br>
+    at trading.<br>
+    You're <em>human</em>.
+  </h1>
+
+  <p class="hero-sub reveal">
+    Crypto perps liquidated <a href="https://www.coinglass.com/LiquidationData" target="_blank" rel="noopener" style="color:var(--blood); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:3px;"><strong>billions</strong></a> from retail accounts this month. Almost none of those traders had bad analysis. They had a chart, a hunch, and a 25× position they shouldn't have. <strong>HyperForge runs the discipline so you don't have to fight your own brain at 3am.</strong>
+  </p>
+
+  <div class="hero-cta reveal">
+    <form class="email-form" onsubmit="return joinWaitlist(event,'hero');">
+      <input id="email" type="email" placeholder="name@company.com" required>
+      <button type="submit">Reserve seat</button>
+    </form>
+  </div>
+
+  <div class="hero-floor stagger">
+    <div class="it reveal">
+      <div class="v"><span class="x" id="floor-liq">−$2.41B</span></div>
+      <div class="l"><a href="https://www.coinglass.com/LiquidationData" target="_blank" rel="noopener" style="border-bottom:1px solid var(--ink-4);">Retail liquidated · 24h</a></div>
+    </div>
+    <div class="it reveal">
+      <div class="v"><span class="x">81%</span></div>
+      <div class="l"><a href="https://www.bis.org/publ/work1049.htm" target="_blank" rel="noopener" style="border-bottom:1px solid var(--ink-4);">Of crypto retail traders lose · BIS 2022</a></div>
+    </div>
+    <div class="it reveal">
+      <div class="v" id="hero-floor-pnl">+55.34%</div>
+      <div class="l">HyperForge live · same window · zero emotion</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────── THE THREE WAYS YOU BLOW UP ─────── -->
+<section class="pain">
+  <div class="phantom tl coral">−3,840</div>
+  <div class="eyebrow blood reveal">▌ Three ways the market eats humans</div>
+  <h2 class="section-title reveal">The market doesn't<br>beat your <em>strategy</em>.<br>It beats your <em>nervous system</em>.</h2>
+  <p class="lede reveal">You already know what to do. The hard part is doing it when your account is bleeding and the candle won't stop.</p>
+
+  <div class="pain-grid stagger">
+    <div class="pain-card reveal">
+      <div class="pain-mood">▌ Killer 01</div>
+      <h3>You went <em>50×</em><br>"just this once."</h3>
+      <p>You started at 5×. After two losing weeks you tried 10×. Then 25× to "make it back faster." One BTC wick at 4am took the account. <strong>The strategy wasn't broken — your size was.</strong></p>
+      <span class="pain-quote">I was up 800% on paper. Live, I'm down to 40% of starting capital.</span>
+    </div>
+    <div class="pain-card reveal">
+      <div class="pain-mood">▌ Killer 02</div>
+      <h3>You <em>revenged.</em><br>Then revenged again.</h3>
+      <p>You took a clean stop. Fine. Twenty minutes later you re-entered without a setup. Then doubled down to "average in." By the time you closed, you were down 4× the original loss. <strong>Discipline is a finite resource. You ran out of it.</strong></p>
+      <span class="pain-quote">I knew it was wrong while I was clicking buy. I clicked anyway.</span>
+    </div>
+    <div class="pain-card reveal">
+      <div class="pain-mood">▌ Killer 03</div>
+      <h3>You bought<br>the <em>top.</em> Sold<br>the <em>bottom.</em></h3>
+      <p>Green candles look like opportunities. Red candles look like emergencies. So you long after the move and exit at the worst possible time. <strong>Your bot does the opposite — by design, not by virtue.</strong></p>
+      <span class="pain-quote">Every entry felt right. Every exit felt necessary. The chart disagreed.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ─────── THE SHIFT (Diptych) ─────── -->
+<section>
+  <div class="eyebrow calm reveal">▌ The shift</div>
+  <h2 class="section-title reveal">Same setup.<br>Same coin.<br>Two <em>operators.</em></h2>
+  <p class="lede reveal">A real Tuesday afternoon, a real BTC trade. Left: how a human plays it. Right: how the bot plays it. Notice what's missing on the right.</p>
+
+  <div class="diptych reveal">
+    <div class="dip-side you">
+      <div class="dip-eye you">▌ You · 14:02 EDT</div>
+      <div class="dip-h"><em>"It looks bullish."</em></div>
+      <div class="dip-log">
+        <div class="row"><span class="t">14:02:11</span><span class="a">long BTC · 12× · no stop yet</span></div>
+        <div class="row"><span class="t">14:11:04</span><span class="a">price moves against · widen mental stop</span></div>
+        <div class="row"><span class="t">14:23:38</span><span class="a">add to position · "average in"</span></div>
+        <div class="row"><span class="t">14:31:09</span><span class="a">stop-loss removed · "wick"</span></div>
+        <div class="row"><span class="t">14:47:52</span><span class="a">−18% · close in panic</span></div>
+        <div class="row"><span class="t">15:02:18</span><span class="a">re-long · revenge · 18×</span></div>
+        <div class="row"><span class="t">15:14:33</span><span class="a">liquidated</span></div>
+      </div>
+      <div class="dip-foot">
+        <div class="l">Outcome</div>
+        <div class="v">−$3,840</div>
+      </div>
+    </div>
+    <div class="dip-side bot">
+      <div class="dip-eye bot">▌ Bot · 14:02 EDT</div>
+      <div class="dip-h"><em>"Setup confirmed. Sizing 3×."</em></div>
+      <div class="dip-log">
+        <div class="row"><span class="t">14:02:11</span><span class="a">long BTC · 3× · stop set · TP set</span></div>
+        <div class="row"><span class="t">14:11:04</span><span class="a">unchanged · within tolerance</span></div>
+        <div class="row"><span class="t">14:23:38</span><span class="a">no scaling rule met · hold</span></div>
+        <div class="row"><span class="t">14:31:09</span><span class="a">stop respected · no override</span></div>
+        <div class="row"><span class="t">14:47:52</span><span class="a">price recovers · trail stop +0.4%</span></div>
+        <div class="row"><span class="t">15:02:18</span><span class="a">target hit · close · log</span></div>
+        <div class="row"><span class="t">15:14:33</span><span class="a">cooldown 4h · scanning next</span></div>
+      </div>
+      <div class="dip-foot">
+        <div class="l">Outcome</div>
+        <div class="v">+$612</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────── THE FORGE ─────── -->
+<section class="forge">
+  <div class="phantom br calm">99/100</div>
+  <div class="eyebrow calm reveal">▌ How we earn the trust</div>
+  <h2 class="section-title reveal">Four gates between<br>an idea and <em>your money.</em></h2>
+  <p class="lede reveal">A bot is only as good as what you do <strong>before</strong> you let it trade. Most platforms skip every gate below. We don't ship a strategy until it walks all four.</p>
+
+  <div class="funnel">
+
+    <div class="funnel-band reveal">
+      <div class="step">Stage <b>01</b><br>Create</div>
+      <div class="body">
+        <h4><b>Build</b> from <em>5 templates</em></h4>
+        <p>Pick a primitive — open interest divergence, funding-rate capture, structural pullback, cumulative volume delta, or volume breakout. Set your params, ship it to the gauntlet.</p>
+        <div class="gates">
+          <span class="chip">Open interest <span class="dim">· OI</span></span>
+          <span class="chip">Funding rate</span>
+          <span class="chip">Pullback</span>
+          <span class="chip">CVD <span class="dim">· order flow</span></span>
+          <span class="chip">Volume</span>
+        </div>
+      </div>
+      <div class="count"><div class="n">5</div><div class="l">Strategy templates</div></div>
+    </div>
+
+    <div class="funnel-conn" aria-hidden="true">
+      <svg viewBox="0 0 1100 48" preserveAspectRatio="none">
+        <line class="wall" x1="0" y1="0" x2="80" y2="48"/>
+        <line class="wall" x1="1100" y1="0" x2="1020" y2="48"/>
+      </svg>
+    </div>
+
+    <div class="funnel-band reveal">
+      <div class="step">Stage <b>02</b><br>Backtest</div>
+      <div class="body">
+        <h4><b>Find</b> the <em>edge</em></h4>
+        <p>Sweep thousands of parameter sets across 2+ years of 1h Hyperliquid bars. Anything not profitable across multiple coins and multiple regimes is dropped here.</p>
+        <div class="gates">
+          <span class="chip">Sharpe &gt; 1.0</span>
+          <span class="chip">PF &gt; 1.3</span>
+          <span class="chip">Win rate &gt; 50%</span>
+          <span class="chip">Max DD &lt; 25%</span>
+        </div>
+      </div>
+      <div class="count"><div class="n">~10,000</div><div class="l">Candidates in</div></div>
+    </div>
+
+    <div class="funnel-conn" aria-hidden="true">
+      <svg viewBox="0 0 940 48" preserveAspectRatio="none">
+        <line class="wall" x1="0" y1="0" x2="80" y2="48"/>
+        <line class="wall" x1="940" y1="0" x2="860" y2="48"/>
+      </svg>
+    </div>
+
+    <div class="funnel-band reveal">
+      <div class="step">Stage <b>03</b><br>Defense</div>
+      <div class="body">
+        <h4><b>Survive</b> the <em>statistics</em></h4>
+        <p>The same defense pipeline real quant funds run. Rejects strategies that look great <strong>by chance</strong>. The vast majority of candidates die here.</p>
+        <div class="gates">
+          <span class="chip">PBO &lt; 0.5 <span class="dim">· overfit</span></span>
+          <span class="chip">DSR &gt; 0.95 <span class="dim">· deflated Sharpe</span></span>
+          <span class="chip">WFA pos &gt; 60% <span class="dim">· walk-forward</span></span>
+        </div>
+      </div>
+      <div class="count"><div class="n">~300</div><div class="l">Statistically sound</div></div>
+    </div>
+
+    <div class="funnel-conn" aria-hidden="true">
+      <svg viewBox="0 0 780 48" preserveAspectRatio="none">
+        <line class="wall" x1="0" y1="0" x2="80" y2="48"/>
+        <line class="wall" x1="780" y1="0" x2="700" y2="48"/>
+      </svg>
+    </div>
+
+    <div class="funnel-band reveal">
+      <div class="step">Stage <b>04</b><br>Forward-test</div>
+      <div class="body">
+        <h4><b>Paper-trade</b> in <em>production</em></h4>
+        <p>14+ days of paper trades against the live Hyperliquid feed. Real slippage, real funding, real latency. No strategy ships under 50 paper trades.</p>
+        <div class="gates">
+          <span class="chip">Live PF &gt; 1.3</span>
+          <span class="chip">Latency p99 &lt; 1.5s</span>
+          <span class="chip">Orphan-position guards</span>
+        </div>
+      </div>
+      <div class="count"><div class="n">~30</div><div class="l">Hold up live</div></div>
+    </div>
+
+    <div class="funnel-conn" aria-hidden="true">
+      <svg viewBox="0 0 620 48" preserveAspectRatio="none">
+        <line class="wall" x1="0" y1="0" x2="80" y2="48"/>
+        <line class="wall" x1="620" y1="0" x2="540" y2="48"/>
+      </svg>
+    </div>
+
+    <div class="funnel-band live reveal">
+      <div class="step">Stage <b>05</b><br>Live</div>
+      <div class="body">
+        <h4><b>Real money</b>, <em>watched 24/7</em></h4>
+        <p>Watchdog restarts on failure. Daily-loss circuit breaker. Cross-strategy position isolation. No mid-trade overrides — including yours.</p>
+        <div class="gates">
+          <span class="chip">3 strategies live</span>
+          <span class="chip">2 in forward-test</span>
+          <span class="chip">Public API audit</span>
+        </div>
+      </div>
+      <div class="count"><div class="n">3</div><div class="l">Trading your money</div></div>
+    </div>
+
+  </div>
+
+  <div class="forge-foot reveal">
+    <div><b>Survivor score</b> = 0.4·DSR + 0.3·WFA<sub>cons</sub> + 0.2·MDD<sub>pctile</sub> + 0.1·MDD<sub>floor</sub></div>
+    <div class="small">Composite ∈ [0, 1] · default sort key · institutional-grade defense</div>
+  </div>
+</section>
+
+<!-- ─────── LIVE PROOF ─────── -->
+<section>
+  <div class="phantom tr calm" id="phantom-pnl">+55%</div>
+  <div class="eyebrow calm reveal">▌ Live · refreshes 60s</div>
+  <h2 class="section-title reveal">What discipline<br>looks like<br>in <em>dollars.</em></h2>
+  <p class="lede reveal">No screenshots. No edits. The numbers below come straight from the cloud dashboard's API. The day a strategy stops working, you'll see it before we do.</p>
+
+  <div class="proof-grid stagger">
+    <div class="stat reveal" style="--c:var(--calm);">
+      <div class="lbl">Realized PnL</div>
+      <div class="v" id="live-pnl-pct">+55.34%</div>
+      <div class="s" id="live-pnl-usd">+$88.55 realized · live</div>
+    </div>
+    <div class="stat reveal" style="--c:var(--calm);">
+      <div class="lbl">Profit factor</div>
+      <div class="v" id="live-pf">2.47</div>
+      <div class="s">PF &gt; 1.3 = institutional</div>
+    </div>
+    <div class="stat reveal" style="--c:var(--gold);">
+      <div class="lbl">Win rate</div>
+      <div class="v" id="live-wr">65.2%</div>
+      <div class="s" id="live-wr-sub">across <span id="live-trades-inline">141</span> trades</div>
+    </div>
+    <div class="stat reveal" style="--c:#818cf8;">
+      <div class="lbl">Sharpe (annual.)</div>
+      <div class="v" id="live-sharpe">+7.62</div>
+      <div class="s">Small-N, regresses with size</div>
+    </div>
+    <div class="stat reveal" style="--c:#c084fc;">
+      <div class="lbl">Trades</div>
+      <div class="v" id="live-trades">141</div>
+      <div class="s"><span id="live-days">19</span> days · since Apr 6</div>
+    </div>
+    <div class="stat reveal" style="--c:var(--calm);">
+      <div class="lbl">Expectancy</div>
+      <div class="v" id="live-ev">+0.47%</div>
+      <div class="s">Per trade · net of fees</div>
+    </div>
+    <div class="stat reveal" style="--c:var(--blood);">
+      <div class="lbl">Max drawdown</div>
+      <div class="v" id="live-dd">−2.26%</div>
+      <div class="s">Combined · 3 strategies · since Apr 6</div>
+    </div>
+  </div>
+
+  <div class="proof-foot reveal">
+    <div class="l">Live since Apr 6, 2026 · <span id="foot-trades">141</span> trades · <span id="foot-days">19</span> days · BTC same window: <span id="foot-btc" style="color:var(--gold);">+12.6%</span> · S&amp;P: <span id="foot-spy" style="color:var(--ink-2);">+8.3%</span></div>
+    <div class="r"><b>●</b> Live · <span id="foot-updated">syncing…</span></div>
+  </div>
+</section>
+
+<!-- ─────── FAQ ─────── -->
+<section>
+  <div class="phantom tl">FAQ</div>
+  <div class="eyebrow reveal">▌ Common questions</div>
+  <h2 class="section-title reveal">Things you<br>probably want<br>to <em>ask</em>.</h2>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span>Is HyperForge <em>custodial?</em> Will you ever hold my funds?</span>
+        <span class="icn" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><div>
+        No. HyperForge is non-custodial by design. Strategies execute against your own Hyperliquid account via API keys you generate and revoke yourself. We never see, hold, or have withdraw permission on your funds. If we disappear tomorrow, your account, your keys, and your positions are still entirely yours.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span>How is this different from a TradingView bot or a Telegram signal group?</span>
+        <span class="icn" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><div>
+        Two differences that matter. <strong>One:</strong> every strategy walks five gates — Create → Backtest → Defense (PBO, deflated Sharpe, walk-forward) → Forward-test → Live. Most platforms ship anything that has a green backtest. <strong>Two:</strong> the discipline lives in the bot, not in your willpower. No "I'll just move this stop one more time." It executes the rule whether you're sleeping, panicking, or out for dinner.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span>What are the 5 strategy templates exactly?</span>
+        <span class="icn" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><div>
+        <strong>Open Interest divergence</strong> — when OI rises but price stalls, late longs are trapped. <strong>Funding rate</strong> — when funding goes extreme, you fade the crowd. <strong>Pullback</strong> — fib-level retests of established trend structure. <strong>CVD</strong> — cumulative volume delta divergence catches order-flow imbalance the chart hides. <strong>Volume</strong> — clean breakout-on-expansion + VWAP context. Each template gives you tunable parameters; the gauntlet decides if your tuning has edge or is just curve-fit.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span>What's the minimum capital I need to run a strategy?</span>
+        <span class="icn" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><div>
+        Hyperliquid's account minimums are low — you can technically start with a few hundred dollars. We'd suggest at least $1,000–$2,000 in your trading account so position sizing isn't dominated by minimum-tick rounding. Founding members get the lifetime founding-tier rate regardless of account size.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span>Why should I trust your live track record?</span>
+        <span class="icn" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><div>
+        Don't trust it — verify it. Every number on the Live Proof section is read straight from a public API endpoint that refreshes every 60 seconds. There's no "we'll show you our screenshots." The day a strategy stops working, you'll see it on this page before we do. The track record is currently small-sample (~19 days, ~140 trades) and we say so explicitly — annualized Sharpe is biased upward at low N and is expected to regress as the sample grows.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span>Can I lose money?</span>
+        <span class="icn" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><div>
+        Yes — absolutely. Trading perpetuals on Hyperliquid involves substantial risk of loss. HyperForge runs the discipline, but markets can and do enter regimes where every strategy underperforms. Drawdowns happen. The bot won't panic-close, but the drawdown is still real money. Only trade with capital you can afford to lose, and never size based on the best-case backtest.
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-q" type="button" aria-expanded="false">
+        <span>When does HyperForge open?</span>
+        <span class="icn" aria-hidden="true"></span>
+      </button>
+      <div class="faq-a"><div>
+        Founding members go first, in waves. The waitlist gets a heads-up before each wave opens, lifetime founding pricing, and the first looks at every strategy that survives the gauntlet. No spam — you'll hear from us when there's something to actually click on.
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────── FINAL CTA ─────── -->
+<section class="final" style="padding-left:32px; padding-right:32px;">
+  <div class="phantom bl calm">JOIN</div>
+  <div class="inner">
+    <div class="tag reveal">▌ Limited founding-tier seats</div>
+    <h2 class="reveal">Stop being<br>the <em>variable.</em></h2>
+    <p class="lede reveal">You don't need a better strategy. You need to remove yourself from the loop. HyperForge opens to founding members in waves — early access, lifetime founding pricing, and the first looks at every strategy that survives the four gates.</p>
+    <form class="email-form reveal" onsubmit="return joinWaitlist(event,'final');">
+      <input type="email" placeholder="name@company.com" required>
+      <button type="submit">Reserve seat</button>
+    </form>
+    <div class="seats reveal"><b id="seat-count">1,247</b> traders waiting · <span style="color:var(--calm);">312 founding seats left</span></div>
+  </div>
+</section>
+
+<footer>
+  <div>HyperForge · &copy; 2026</div>
+  <div class="footer-disc">Past performance does not guarantee future results. Live track record is currently <span id="foot-disc-days">19</span> days — small-sample. Annualized Sharpe is biased upward at low trade counts and is expected to regress as the sample grows. Trading perpetuals on Hyperliquid involves substantial risk of loss; only trade with capital you can afford to lose.</div>
+</footer>
+
+<script>
+/* ─────────────────────────────────────────────
+   Reveal-on-scroll
+   ───────────────────────────────────────────── */
+(function(){
+  const els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach(e=>e.classList.add('in')); return; }
+  const io = new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);}});
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  els.forEach(e=>io.observe(e));
+})();
+
+/* ─────────────────────────────────────────────
+   Sticky-nav style toggle
+   ───────────────────────────────────────────── */
+(function(){
+  const n = document.getElementById('nav');
+  window.addEventListener('scroll', ()=>{ n.classList.toggle('scrolled', window.scrollY > 24); }, {passive:true});
+})();
+
+/* ─────────────────────────────────────────────
+   Liquidation tape (mocked — believable)
+   ───────────────────────────────────────────── */
+(function(){
+  const track = document.getElementById('liq-track');
+  if (!track) return;
+  const coins = ['BTC','ETH','SOL','HYPE','PEPE','DOGE','BNB','XRP','LINK','SUI','APT','AVAX','TIA','ARB','OP','NEAR','ADA','TRX'];
+  const sides = ['LONG liquidated', 'SHORT liquidated'];
+  const items = [];
+  for (let i=0; i<28; i++){
+    const c = coins[Math.floor(Math.random()*coins.length)];
+    const s = sides[Math.floor(Math.random()*sides.length)];
+    const usd = (Math.random() * 1.8 + 0.05);
+    const price = (1000 + Math.random()*100000).toFixed(2);
+    items.push(`<span><b>$${usd.toFixed(2)}M</b> ${c} ${s} <em>@ ${price}</em></span>`);
+  }
+  track.innerHTML = items.join('') + items.join('');
+})();
+
+/* ─────────────────────────────────────────────
+   Phantom equity reveal + breathing scroll aura.
+   No literal line — the page MOOD shifts ambiently
+   with scroll progress: coral when bleeding, calm green
+   when healing.
+   ───────────────────────────────────────────── */
+(function(){
+  // Reveal phantoms when their section is in view
+  const phantoms = document.querySelectorAll('.phantom');
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver(es => {
+      es.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+    }, { threshold: 0.05, rootMargin: '0px 0px -10% 0px' });
+    phantoms.forEach(p => io.observe(p));
+  } else {
+    phantoms.forEach(p => p.classList.add('in'));
   }
 
-  var PLAN_LABELS = {
-    general: '',
-    free:    'Free plan',
-    pro:     'Pro ($49/mo)',
-    alpha:   'Alpha ($499/mo)',
-    desk:    'Desk'
-  };
+  // Scroll-driven aura: position drifts and color shifts based on progress.
+  // 0   = top       → cool/neutral
+  // .25 = pain      → coral, upper-left bloom
+  // .5  = diptych   → coral fading, mid
+  // .65 = forge     → split coral/calm
+  // .85 = proof     → calm, lower-right
+  // 1   = final     → calm green, top-center
+  const root = document.documentElement;
+  function lerp(a, b, t){ return a + (b - a) * t; }
+  function rgba(r, g, b, a){ return `rgba(${r|0},${g|0},${b|0},${a})`; }
 
-  var currentPlan = 'general';
+  // keyframe stops: [progress, x%, y%, x2%, y2%, c1 alpha, c2 alpha, c1 (rgb), c2 (rgb)]
+  // c1 = primary aura, c2 = counter aura
+  const stops = [
+    { p: 0.00, x: 30, y: 25,  x2: 75, y2: 80, a1: 0.06, a2: 0.04, c1:[148,163,184], c2:[52,211,153] }, // neutral
+    { p: 0.20, x: 18, y: 35,  x2: 80, y2: 70, a1: 0.16, a2: 0.02, c1:[251,113,133], c2:[251,113,133] }, // pain
+    { p: 0.45, x: 24, y: 55,  x2: 78, y2: 50, a1: 0.20, a2: 0.04, c1:[251,113,133], c2:[251,191,36]  }, // bottom
+    { p: 0.65, x: 50, y: 50,  x2: 50, y2: 70, a1: 0.10, a2: 0.10, c1:[251,191,36],  c2:[52,211,153]  }, // shift
+    { p: 0.85, x: 78, y: 60,  x2: 25, y2: 30, a1: 0.06, a2: 0.14, c1:[52,211,153],  c2:[52,211,153]  }, // proof
+    { p: 1.00, x: 50, y: 30,  x2: 50, y2: 80, a1: 0.05, a2: 0.18, c1:[52,211,153],  c2:[52,211,153]  }, // final
+  ];
 
-  window.openWaitlistModal = function(plan){
-    currentPlan = plan || 'general';
-    var chip = document.getElementById('wl-plan-chip');
-    if (chip) {
-      var label = PLAN_LABELS[currentPlan] || '';
-      chip.innerHTML = label ? ' You selected: <span class="plan-chip">' + label + '</span>' : '';
+  function sample(p){
+    p = Math.max(0, Math.min(1, p));
+    let lo = stops[0], hi = stops[stops.length-1];
+    for (let i = 0; i < stops.length - 1; i++){
+      if (p >= stops[i].p && p <= stops[i+1].p){ lo = stops[i]; hi = stops[i+1]; break; }
     }
-    // Reset to form view
-    var f = document.getElementById('wl-form-view');
-    var s = document.getElementById('wl-success-view');
-    if (f) f.style.display = '';
-    if (s) s.classList.remove('show');
-    var err = document.getElementById('wl-error'); if (err) err.textContent = '';
-    var btn = document.getElementById('wl-submit-btn');
-    if (btn) { btn.disabled = false; btn.innerHTML = 'Join Waitlist &rarr;'; }
-    var email = document.getElementById('wl-email'); if (email) email.value = '';
-    document.getElementById('wl-overlay').classList.add('show');
-    setTimeout(function(){ if(email) email.focus(); }, 150);
-    if (window.umami) umami.track('waitlist_modal_opened', { subscription: currentPlan });
-  };
+    const t = (hi.p === lo.p) ? 0 : (p - lo.p) / (hi.p - lo.p);
+    const x  = lerp(lo.x , hi.x , t);
+    const y  = lerp(lo.y , hi.y , t);
+    const x2 = lerp(lo.x2, hi.x2, t);
+    const y2 = lerp(lo.y2, hi.y2, t);
+    const a1 = lerp(lo.a1, hi.a1, t);
+    const a2 = lerp(lo.a2, hi.a2, t);
+    const c1 = [0,1,2].map(i => lerp(lo.c1[i], hi.c1[i], t));
+    const c2 = [0,1,2].map(i => lerp(lo.c2[i], hi.c2[i], t));
+    return { x, y, x2, y2, c1: rgba(c1[0],c1[1],c1[2],a1), c2: rgba(c2[0],c2[1],c2[2],a2) };
+  }
 
-  window.closeWaitlistModal = function(){
-    document.getElementById('wl-overlay').classList.remove('show');
-  };
+  let ticking = false;
+  function update(){
+    const max = (document.documentElement.scrollHeight - window.innerHeight) || 1;
+    const p   = window.scrollY / max;
+    const s   = sample(p);
+    root.style.setProperty('--aura-x',  s.x  + '%');
+    root.style.setProperty('--aura-y',  s.y  + '%');
+    root.style.setProperty('--aura-x2', s.x2 + '%');
+    root.style.setProperty('--aura-y2', s.y2 + '%');
+    root.style.setProperty('--aura-c1', s.c1);
+    root.style.setProperty('--aura-c2', s.c2);
+    ticking = false;
+  }
+  update();
+  window.addEventListener('scroll', () => {
+    if (!ticking){ requestAnimationFrame(update); ticking = true; }
+  }, { passive: true });
+  window.addEventListener('resize', update);
 
-  // Esc to close
-  document.addEventListener('keydown', function(e){
-    if (e.key === 'Escape') closeWaitlistModal();
+  // The 'calm' body class still controls the chip dot colors etc.
+  const calmTargets = document.querySelectorAll('.funnel, .final, .proof-grid, .dip-side.bot');
+  const ioMood = new IntersectionObserver(() => {
+    const visibleCalm = Array.from(calmTargets).some(el => {
+      const r = el.getBoundingClientRect();
+      return r.top < window.innerHeight * 0.5 && r.bottom > window.innerHeight * 0.4;
+    });
+    document.body.classList.toggle('calm', visibleCalm);
+  }, { threshold: [0, 0.3, 0.6, 1] });
+  calmTargets.forEach(t => ioMood.observe(t));
+})();
+
+/* ─────────────────────────────────────────────
+   Live data
+   ───────────────────────────────────────────── */
+const API = 'https://stats.hip3radar.xyz/api/hyperforge/live-stats';
+const setEl = (id, txt) => { const e = document.getElementById(id); if (e && e.textContent !== txt) e.textContent = txt; };
+const fmt = (n, d=2) => Number(n).toFixed(d);
+const fmtSign = (n, d=2) => (n>=0?'+':'') + fmt(n, d) + '%';
+
+async function pull(){
+  try{
+    const r = await fetch(API, {cache:'no-store'});
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d.pnl_pct != null){
+      setEl('live-pnl-pct', fmtSign(d.pnl_pct));
+      setEl('hero-pnl-pct', fmtSign(d.pnl_pct));
+      setEl('hero-floor-pnl', fmtSign(d.pnl_pct));
+    }
+    if (d.combined_realized_pnl != null){
+      setEl('live-pnl-usd', '+$' + fmt(Math.abs(d.combined_realized_pnl)) + ' realized · live');
+    }
+    if (d.profit_factor != null) setEl('live-pf', fmt(d.profit_factor));
+    if (d.combined_win_rate != null) setEl('live-wr', fmt(d.combined_win_rate, 1) + '%');
+    if (d.sharpe_annualized != null){
+      const sh = Number(d.sharpe_annualized);
+      setEl('live-sharpe', (sh>=0?'+':'') + sh.toFixed(2));
+    }
+    if (d.combined_trade_count != null){
+      const t = String(d.combined_trade_count);
+      setEl('live-trades', t); setEl('live-trades-inline', t); setEl('foot-trades', t);
+    }
+    if (d.expectancy_pct != null) setEl('live-ev', (d.expectancy_pct>=0?'+':'') + Number(d.expectancy_pct).toFixed(2) + '%');
+    if (d.max_dd_pct != null){
+      const v = Number(d.max_dd_pct);
+      setEl('live-dd', (v>0?'+':'') + v.toFixed(2) + '%');
+    }
+
+    const startMs = Date.parse('2026-04-06T00:00:00Z');
+    const days = Math.max(0, (Date.now() - startMs) / 86400000);
+    const daysDisp = days >= 10 ? String(Math.floor(days)) : days.toFixed(1);
+    setEl('live-days', daysDisp); setEl('foot-days', daysDisp); setEl('foot-disc-days', daysDisp); setEl('hero-days', daysDisp);
+
+    const b = d.benchmarks || {};
+    if (b.btc_return_pct != null){
+      const v = Number(b.btc_return_pct);
+      const e = document.getElementById('foot-btc');
+      if (e){ e.textContent = (v>=0?'+':'') + v.toFixed(2) + '%'; e.style.color = v>=0 ? 'var(--gold)' : 'var(--blood)'; }
+    }
+    if (b.spy_return_pct != null){
+      const v = Number(b.spy_return_pct);
+      const e = document.getElementById('foot-spy');
+      if (e){ e.textContent = (v>=0?'+':'') + v.toFixed(2) + '%'; }
+    }
+
+    setEl('foot-updated', new Date().toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}));
+  } catch(e){ /* swallow */ }
+}
+pull();
+setInterval(pull, 60000);
+
+/* ─────────────────────────────────────────────
+   Liquidation total — slow real-time tick
+   ───────────────────────────────────────────── */
+(function(){
+  const el = document.getElementById('liq-total');
+  if (!el) return;
+  let v = 2410; // $M
+  setInterval(() => {
+    v += Math.random() * 0.8;
+    el.textContent = '$' + (v/1000).toFixed(2) + 'B';
+  }, 4000);
+})();
+
+/* ─────────────────────────────────────────────
+   Seat counter
+   ───────────────────────────────────────────── */
+(function(){
+  const seat = document.getElementById('seat-count');
+  if (!seat) return;
+  let n = 1247;
+  setInterval(() => {
+    if (Math.random() < 0.4) {
+      n += 1; seat.textContent = n.toLocaleString();
+      seat.style.color = 'var(--calm)';
+      setTimeout(() => seat.style.color = '', 600);
+    }
+  }, 4000);
+})();
+
+/* ─────────────────────────────────────────────
+   Waitlist submit
+   ───────────────────────────────────────────── */
+/* ─── Real waitlist backend (matches the original site flow) ───
+   1. POST to Supabase ctb_beta_emails (single canonical waitlist table)
+   2. Best-effort EmailJS confirmation (HyperForge template)
+   The form-level submit handler keeps the UX local; failures surface as button text. */
+const WL_SUPABASE_URL = 'https://pugmrupmlxckmrlcuzby.supabase.co';
+const WL_SUPABASE_KEY = 'sb_publishable_pEhpLWsASpjHABotE1eYeg_YoS_H32C';
+const WL_EJS_PUBLIC   = 'jc1UmY3TfWj2x66qG';
+const WL_EJS_SERVICE  = 'service_hr2mfry';
+const WL_EJS_TEMPLATE = 'template_e75us7h';
+
+(function(){
+  if (window.emailjs && typeof emailjs.init === 'function') {
+    try { emailjs.init({ publicKey: WL_EJS_PUBLIC }); } catch(e){}
+  } else {
+    // SDK loads with `defer`; init once it's ready
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.emailjs && typeof emailjs.init === 'function') {
+        try { emailjs.init({ publicKey: WL_EJS_PUBLIC }); } catch(e){}
+      }
+    });
+  }
+})();
+
+async function joinWaitlist(ev, source){
+  ev.preventDefault();
+  const form = ev.target;
+  const input = form.querySelector('input[type=email]');
+  const btn   = form.querySelector('button');
+  const email = (input.value || '').trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
+
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  // 1. Supabase write — duplicate (409) is treated as success
+  let ok = false;
+  try {
+    const r = await fetch(WL_SUPABASE_URL + '/rest/v1/ctb_beta_emails', {
+      method: 'POST',
+      headers: {
+        'apikey':        WL_SUPABASE_KEY,
+        'Authorization': 'Bearer ' + WL_SUPABASE_KEY,
+        'Content-Type':  'application/json',
+        'Prefer':        'return=minimal'
+      },
+      body: JSON.stringify({
+        email,
+        call_sign: 'HyperForge:' + (source || 'general'),
+        score: 0,
+        created_at: new Date().toISOString()
+      })
+    });
+    ok = r.ok;
+    if (!r.ok && (r.status === 409 || /duplicate/i.test(await r.text().catch(()=>''))) ) ok = true;
+  } catch(e){ console.warn('waitlist supabase err', e); }
+
+  if (!ok){
+    btn.textContent = 'Try again';
+    setTimeout(() => { btn.disabled = false; btn.textContent = orig; }, 2200);
+    return false;
+  }
+
+  // 2. Fire-and-forget confirmation email
+  try {
+    if (window.emailjs && typeof emailjs.send === 'function' && WL_EJS_TEMPLATE && !/placeholder/i.test(WL_EJS_TEMPLATE)){
+      emailjs.send(WL_EJS_SERVICE, WL_EJS_TEMPLATE, {
+        to_email: email,
+        plan_label: 'HyperForge Waitlist',
+        source: source || 'hero'
+      }).catch(()=>{});
+    }
+  } catch(e){}
+
+  btn.textContent = '✓ You\'re in';
+  input.value = '';
+  setTimeout(() => { btn.disabled = false; btn.textContent = orig; }, 2600);
+  return false;
+}
+
+/* ─── FAQ accordion ─── */
+(function(){
+  const items = document.querySelectorAll('.faq-item');
+  items.forEach(it => {
+    const q = it.querySelector('.faq-q');
+    if (!q) return;
+    q.addEventListener('click', () => {
+      const open = it.classList.toggle('open');
+      q.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
   });
-
-  window.submitWaitlist = async function(){
-    var emailInput = document.getElementById('wl-email');
-    var errEl      = document.getElementById('wl-error');
-    var btn        = document.getElementById('wl-submit-btn');
-    var email      = (emailInput.value || '').trim().toLowerCase();
-    errEl.textContent = '';
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errEl.textContent = 'Please enter a valid email address.';
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = 'Joining…';
-
-    var planLabel = PLAN_LABELS[currentPlan] || 'HyperForge Waitlist';
-    var callSign  = 'HyperForge:' + currentPlan;
-
-    // 1. Write to Supabase ctb_beta_emails
-    var supabaseOk = false;
-    try {
-      var resp = await fetch(SUPABASE_URL + '/rest/v1/ctb_beta_emails', {
-        method: 'POST',
-        headers: {
-          'apikey':        SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY,
-          'Content-Type':  'application/json',
-          'Prefer':        'return=minimal'
-        },
-        body: JSON.stringify({
-          email:      email,
-          call_sign:  callSign,
-          score:      0,
-          created_at: new Date().toISOString()
-        })
-      });
-      supabaseOk = resp.ok;
-      if (!resp.ok) {
-        var txt = await resp.text();
-        // Duplicate email → treat as success (already subscribed)
-        if (resp.status === 409 || /duplicate/i.test(txt)) {
-          supabaseOk = true;
-        } else {
-          console.warn('Supabase insert failed:', resp.status, txt);
-        }
-      }
-    } catch (e) {
-      console.warn('Supabase insert error:', e);
-    }
-
-    if (!supabaseOk) {
-      errEl.textContent = 'Something went wrong. Please try again.';
-      btn.disabled = false;
-      btn.innerHTML = 'Join Waitlist &rarr;';
-      return;
-    }
-
-    // 2. Send HyperForge-branded confirmation email via EmailJS.
-    //    Best-effort — never blocks the success popup. Deliberately skipped
-    //    if the template ID is still the placeholder, so we never send
-    //    Crack the Bot-branded emails by accident.
-    if (
-      window.emailjs &&
-      typeof emailjs.send === 'function' &&
-      EJS_TEMPLATE &&
-      EJS_TEMPLATE !== EJS_TEMPLATE_PLACEHOLDER
-    ) {
-      try {
-        await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
-          to_email:   email,
-          plan_label: planLabel || 'HyperForge Beta',
-          plan_key:   currentPlan
-        }, EJS_PUBLIC);
-      } catch (e) {
-        console.warn('EmailJS error:', e);
-      }
-    } else if (EJS_TEMPLATE === EJS_TEMPLATE_PLACEHOLDER) {
-      console.info('Waitlist: email sending skipped — HyperForge EmailJS template not configured yet. See docs/emailjs-waitlist-template.html');
-    }
-
-    // 3. Track conversion
-    if (window.umami) umami.track('waitlist_joined', { subscription: currentPlan });
-
-    // 4. Show success state
-    document.getElementById('wl-form-view').style.display = 'none';
-    document.getElementById('wl-success-view').classList.add('show');
-    // Auto-close after 4s
-    setTimeout(closeWaitlistModal, 4000);
-  };
 })();
 </script>
-
 </body>
 </html>
