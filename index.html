@@ -895,7 +895,7 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
       <input type="email" placeholder="name@company.com" required>
       <button type="submit">Reserve seat</button>
     </form>
-    <div class="seats reveal"><b id="seat-count">1,247</b> traders waiting · <span style="color:var(--calm);">312 founding seats left</span></div>
+    <div class="seats reveal"><b id="seat-count">…</b> traders waiting · <span id="seats-left" style="color:var(--calm);">loading founding seats…</span></div>
   </div>
 </section>
 
@@ -1107,19 +1107,62 @@ setInterval(pull, 60000);
 })();
 
 /* ─────────────────────────────────────────────
-   Seat counter
+   Live seat counter — pulled from Supabase ctb_beta_emails
+   (HyperForge call_sign rows). Only the real count is shown,
+   and it only increments when a NEW signup actually lands.
    ───────────────────────────────────────────── */
-(function(){
+const FOUNDING_CAP = 1500;
+
+async function fetchSeatCount(){
+  try {
+    const r = await fetch(
+      WL_SUPABASE_URL + '/rest/v1/ctb_beta_emails?select=*&call_sign=ilike.HyperForge%3A%25',
+      { method: 'HEAD', headers: {
+          'apikey':        WL_SUPABASE_KEY,
+          'Authorization': 'Bearer ' + WL_SUPABASE_KEY,
+          'Prefer':        'count=exact',
+          'Range-Unit':    'items',
+          'Range':         '0-0'
+      }}
+    );
+    const cr = r.headers.get('content-range') || '';
+    const m = cr.match(/\/(\d+)$/);
+    if (m) return parseInt(m[1], 10);
+  } catch(e){ console.warn('seat count fetch failed', e); }
+  return null;
+}
+
+function updateSeatUI(n, opts){
+  if (n == null) return;
   const seat = document.getElementById('seat-count');
-  if (!seat) return;
-  let n = 1247;
-  setInterval(() => {
-    if (Math.random() < 0.4) {
-      n += 1; seat.textContent = n.toLocaleString();
+  const left = document.getElementById('seats-left');
+  if (seat){
+    seat.textContent = n.toLocaleString();
+    if (opts && opts.flash){
       seat.style.color = 'var(--calm)';
-      setTimeout(() => seat.style.color = '', 600);
+      setTimeout(() => { seat.style.color = ''; }, 600);
     }
-  }, 4000);
+  }
+  if (left){
+    const remaining = Math.max(0, FOUNDING_CAP - n);
+    if (remaining > 0){
+      left.textContent = remaining.toLocaleString() + ' founding seats left';
+      left.style.color = 'var(--calm)';
+    } else {
+      left.textContent = 'Founding tier closed · general waitlist open';
+      left.style.color = 'var(--ink-3)';
+    }
+  }
+}
+
+(async function initSeats(){
+  const n = await fetchSeatCount();
+  if (n != null) updateSeatUI(n);
+  else {
+    // Couldn't read Supabase → quietly hide the line rather than show a fake number
+    const wrap = document.querySelector('.final .seats');
+    if (wrap) wrap.style.display = 'none';
+  }
 })();
 
 /* ─────────────────────────────────────────────
@@ -1160,8 +1203,10 @@ async function joinWaitlist(ev, source){
   btn.disabled = true;
   btn.textContent = 'Saving…';
 
-  // 1. Supabase write — duplicate (409) is treated as success
+  // 1. Supabase write — track whether it was a NEW row vs a duplicate.
+  //    Only a new row should bump the public seat counter.
   let ok = false;
+  let isNew = false;
   try {
     const r = await fetch(WL_SUPABASE_URL + '/rest/v1/ctb_beta_emails', {
       method: 'POST',
@@ -1178,8 +1223,18 @@ async function joinWaitlist(ev, source){
         created_at: new Date().toISOString()
       })
     });
-    ok = r.ok;
-    if (!r.ok && (r.status === 409 || /duplicate/i.test(await r.text().catch(()=>''))) ) ok = true;
+    if (r.status === 201){
+      ok = true;
+      isNew = true;
+    } else if (r.status === 409){
+      ok = true;             // already on the list — treat as success silently
+    } else if (r.ok){
+      ok = true;
+      isNew = true;          // 200/202 — fallback to new
+    } else {
+      const txt = await r.text().catch(()=>'');
+      if (/duplicate/i.test(txt)) ok = true;     // dup race
+    }
   } catch(e){ console.warn('waitlist supabase err', e); }
 
   if (!ok){
@@ -1198,6 +1253,13 @@ async function joinWaitlist(ev, source){
       }).catch(()=>{});
     }
   } catch(e){}
+
+  // 3. If it was a brand-new signup, bump the live seat counter.
+  if (isNew){
+    const seat = document.getElementById('seat-count');
+    const cur  = seat ? parseInt((seat.textContent || '0').replace(/,/g, ''), 10) || 0 : 0;
+    updateSeatUI(cur + 1, { flash: true });
+  }
 
   btn.textContent = '✓ You\'re in';
   input.value = '';
