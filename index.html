@@ -178,7 +178,7 @@ h2.section-title em{ font-family:var(--serif); font-style:italic; font-weight:40
 .email-form{
   display:flex; align-items:stretch; gap:0;
   background:rgba(255,255,255,0.03); border:1px solid var(--line-strong);
-  border-radius:0; max-width:480px; flex:1 1 320px;
+  border-radius:0; max-width:480px; flex:1 1 260px; min-width:0; width:100%;
   transition:border-color .2s, box-shadow .2s;
 }
 .email-form:focus-within{ border-color:var(--calm); box-shadow:0 0 0 3px rgba(52,211,153,0.18);}
@@ -490,8 +490,31 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
 }
 @media (max-width: 640px){
   nav{ padding:14px 18px;}
-  .liq-tape{ font-size:10.5px;}
+  .liq-tape{ font-size:10.5px; gap:10px; padding:0 12px;}
   .proof-grid{ grid-template-columns:repeat(2, 1fr);}
+  h2.section-title{ max-width:none;}
+  .hero-h{ letter-spacing:-.04em;}
+  .hero-cta{ margin-top:36px;}
+  section{ padding:80px 20px;}
+  .hero{ padding-top:160px; padding-bottom:48px;}
+  .pain-card h3{ font-size:clamp(26px, 7vw, 36px);}
+  .funnel{ margin-top:48px;}
+  .funnel-band .body p{ font-size:14px;}
+  .forge-foot{ font-size:11px; padding:16px 18px;}
+  .final{ padding:90px 20px 110px;}
+  .final h2{ letter-spacing:-.04em;}
+}
+@media (max-width: 520px){
+  .liq-tape .label{ display:none;}
+  .liq-tape > div:last-child{ display:none;}  /* trailing ∑ total */
+  .nav-cta{ padding:9px 12px; font-size:10.5px;}
+  .brand-tag{ display:none;}
+}
+@media (max-width: 380px){
+  .hero-tag{ font-size:10px; padding:7px 11px;}
+  .email-form input{ padding:14px 14px;}
+  .email-form button{ padding:14px 16px; font-size:11px;}
+  .stat .v{ font-size:20px;}
 }
 @media (prefers-reduced-motion: reduce){
   *{ animation:none !important; transition:none !important;}
