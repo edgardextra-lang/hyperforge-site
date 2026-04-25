@@ -1137,6 +1137,28 @@ setInterval(pull, 60000);
 const FOUNDING_CAP = 1500;
 
 async function fetchSeatCount(){
+  // Primary path: an RPC that returns just the integer count.
+  // The anon key cannot SELECT * on ctb_beta_emails (RLS), so we read
+  // the count via a SECURITY DEFINER function that only exposes the
+  // aggregate — no email addresses.
+  try {
+    const r = await fetch(WL_SUPABASE_URL + '/rest/v1/rpc/hyperforge_waitlist_count', {
+      method: 'POST',
+      headers: {
+        'apikey':        WL_SUPABASE_KEY,
+        'Authorization': 'Bearer ' + WL_SUPABASE_KEY,
+        'Content-Type':  'application/json'
+      },
+      body: '{}'
+    });
+    if (r.ok){
+      const n = await r.json();
+      if (typeof n === 'number') return n;
+      if (n && typeof n.count === 'number') return n.count;
+    }
+  } catch(e){ console.warn('rpc count failed', e); }
+
+  // Fallback: HEAD with count=exact. Only works if RLS allows anon SELECT.
   try {
     const r = await fetch(
       WL_SUPABASE_URL + '/rest/v1/ctb_beta_emails?select=*&call_sign=ilike.HyperForge%3A%25',
@@ -1151,7 +1173,7 @@ async function fetchSeatCount(){
     const cr = r.headers.get('content-range') || '';
     const m = cr.match(/\/(\d+)$/);
     if (m) return parseInt(m[1], 10);
-  } catch(e){ console.warn('seat count fetch failed', e); }
+  } catch(e){ console.warn('head count fallback failed', e); }
   return null;
 }
 
