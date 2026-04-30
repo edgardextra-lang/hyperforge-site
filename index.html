@@ -600,8 +600,8 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
   <div class="proof-grid stagger">
     <div class="stat reveal" style="--c:var(--calm);">
       <div class="lbl">Realized PnL</div>
-      <div class="v" id="live-pnl-pct">+55.34%</div>
-      <div class="s" id="live-pnl-usd">+$88.55 realized · live</div>
+      <div class="v" id="live-pnl-pct">+55.88%</div>
+      <div class="s" id="live-pnl-usd">live · refreshes 60s</div>
     </div>
     <div class="stat reveal" style="--c:var(--calm);">
       <div class="lbl">Profit factor</div>
@@ -1080,9 +1080,7 @@ async function pull(){
       setEl('hero-pnl-pct', fmtSign(d.pnl_pct));
       setEl('hero-floor-pnl', fmtSign(d.pnl_pct));
     }
-    if (d.combined_realized_pnl != null){
-      setEl('live-pnl-usd', '+$' + fmt(Math.abs(d.combined_realized_pnl)) + ' realized · live');
-    }
+    // PnL $ amount intentionally hidden on the public site — only show the %.
     if (d.profit_factor != null) setEl('live-pf', fmt(d.profit_factor));
     if (d.combined_win_rate != null) setEl('live-wr', fmt(d.combined_win_rate, 1) + '%');
     if (d.sharpe_annualized != null){
