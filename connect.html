@@ -373,11 +373,17 @@ async function connect(){
     );
     resp = await r.json();
     if (!r.ok || !resp.ok){
-      const detail = resp && (resp.error || JSON.stringify(resp.hl_response).slice(0, 240)) || `HTTP ${r.status}`;
-      showBanner('err',
-        `❌ Hyperliquid rejected the authorization.<br><code>${detail}</code><br>` +
-        `Get a fresh link from the bot (<code>/connect</code>) and try once more.`
-      );
+      // Server now categorizes errors and provides a `human` field with HTML guidance.
+      const human   = resp && resp.human;
+      const raw     = resp && (typeof resp.hl_response === 'string'
+                                ? resp.hl_response
+                                : JSON.stringify(resp.hl_response || resp).slice(0, 240));
+      const errCode = (resp && resp.error) || `HTTP ${r.status}`;
+
+      let body = `<b>${errCode === 'needs_deposit' ? '🪙 Deposit required' : '❌ Authorization rejected'}</b><br>`;
+      if (human) body += `${human}<br><br>`;
+      body += `<code>${raw || errCode}</code>`;
+      showBanner('err', body);
       resetBtn();
       return;
     }
