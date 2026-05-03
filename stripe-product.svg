@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0c10"/>
+      <stop offset="100%" stop-color="#050608"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#34d399" stop-opacity=".22"/>
+      <stop offset="50%" stop-color="#fb7185" stop-opacity=".10"/>
+      <stop offset="100%" stop-color="#050608" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="markShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14"/>
+      <feOffset dx="0" dy="6" result="off"/>
+      <feFlood flood-color="#34d399" flood-opacity=".35"/>
+      <feComposite in2="off" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- Subtle grid -->
+  <g stroke="#94a3b8" stroke-width="1" opacity="0.05">
+    <path d="M0 128 H1024 M0 256 H1024 M0 384 H1024 M0 512 H1024 M0 640 H1024 M0 768 H1024 M0 896 H1024"/>
+    <path d="M128 0 V1024 M256 0 V1024 M384 0 V1024 M512 0 V1024 M640 0 V1024 M768 0 V1024 M896 0 V1024"/>
+  </g>
+
+  <!-- Ambient glow -->
+  <rect width="1024" height="1024" fill="url(#glow)"/>
+
+  <!-- Brand mark — large rounded square with /> -->
+  <g filter="url(#markShadow)" transform="translate(312 184)">
+    <rect width="400" height="400" rx="96" fill="url(#brand)"/>
+    <g fill="none" stroke="#0a0c10" stroke-width="36" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="115" y1="280" x2="190" y2="120"/>
+      <polyline points="220,135 305,200 220,265"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="512" y="700" text-anchor="middle"
+        font-family="Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif"
+        font-weight="800" font-size="92" letter-spacing="-3" fill="#f4f6fa">
+    HyperForge
+  </text>
+  <text x="512" y="772" text-anchor="middle"
+        font-family="Instrument Serif, 'Times New Roman', serif"
+        font-style="italic" font-weight="400" font-size="62" fill="#94a3b8">
+    Bot
+  </text>
+
+  <!-- Subline pill -->
+  <g transform="translate(512 850)">
+    <rect x="-260" y="-22" width="520" height="44" rx="22"
+          fill="rgba(52,211,153,0.10)" stroke="rgba(52,211,153,0.32)" stroke-width="1.5"/>
+    <circle cx="-220" cy="0" r="6" fill="#34d399">
+      <animate attributeName="opacity" values="1;.3;1" dur="1.6s" repeatCount="indefinite"/>
+    </circle>
+    <text x="0" y="6" text-anchor="middle"
+          font-family="JetBrains Mono, ui-monospace, Menlo, monospace"
+          font-weight="600" font-size="20" letter-spacing="3" fill="#34d399">
+      COPY · TRADE · HYPERLIQUID
+    </text>
+  </g>
+
+  <!-- Footer — hairline + caption -->
+  <line x1="160" y1="940" x2="864" y2="940" stroke="#94a3b8" stroke-opacity=".12" stroke-width="1"/>
+  <text x="512" y="980" text-anchor="middle"
+        font-family="JetBrains Mono, ui-monospace, Menlo, monospace"
+        font-size="22" letter-spacing="4" fill="#5b6573">
+    NON-CUSTODIAL · TELEGRAM · LIVE-MIRRORED
+  </text>
+</svg>

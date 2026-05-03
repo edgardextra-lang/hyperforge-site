@@ -373,6 +373,149 @@ h2.section-title em{ font-family:var(--serif); font-style:italic; font-weight:40
 .proof-foot .r{ font-family:var(--mono); font-size:12px; color:var(--ink-3); letter-spacing:.16em; text-transform:uppercase;}
 .proof-foot .r b{ color:var(--calm); margin-right:6px;}
 
+/* ──────────────────────── Telegram bot offer ──────────────────────── */
+.tg{ position:relative; padding-top:120px;}
+.tg-grid{
+  display:grid; grid-template-columns:1.05fr .95fr; gap:64px; align-items:center;
+  margin-top:56px;
+}
+.tg-copy h3{
+  font-family:var(--sans); font-weight:800;
+  font-size:clamp(28px, 3vw, 42px); line-height:1.05; letter-spacing:-.025em;
+  margin:0 0 16px 0;
+}
+.tg-copy h3 em{ font-family:var(--serif); font-style:italic; font-weight:400; color:var(--calm);}
+.tg-copy p.lede{ margin-bottom:32px; max-width:54ch;}
+.tg-features{
+  display:flex; flex-direction:column; gap:14px; margin:0 0 36px 0;
+}
+.tg-features li{
+  list-style:none; display:flex; gap:16px; align-items:flex-start;
+  padding:0 0 0 0;
+}
+.tg-features li .num{
+  font-family:var(--mono); font-size:11px; color:var(--ink-3); letter-spacing:.18em;
+  width:28px; flex-shrink:0; padding-top:3px;
+}
+.tg-features li .body{ flex:1; min-width:0;}
+.tg-features li .body strong{
+  display:block; font-size:15.5px; font-weight:600; color:var(--ink); letter-spacing:-.005em; margin-bottom:3px;
+}
+.tg-features li .body span{
+  display:block; font-size:13.5px; color:var(--ink-2); line-height:1.5;
+}
+.tg-metrics{
+  display:flex; flex-wrap:wrap; gap:8px; margin:0 0 40px 0;
+  padding:18px 20px; border:1px solid var(--line); background:rgba(255,255,255,0.025);
+}
+.tg-metrics .label{
+  font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-3); width:100%; margin-bottom:8px;
+}
+.tg-metrics .chip{
+  display:inline-flex; align-items:center; padding:6px 11px;
+  font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--ink-2);
+  background:rgba(255,255,255,0.02); border:1px solid var(--line);
+}
+.tg-cta{
+  display:inline-flex; align-items:center; gap:14px; padding:18px 28px;
+  background:var(--ink); color:var(--bg); border:none; cursor:pointer;
+  font-family:var(--mono); font-size:13px; letter-spacing:.06em; text-transform:uppercase; font-weight:700;
+  transition:background .2s, color .2s, transform .2s; text-decoration:none;
+}
+.tg-cta:hover{ background:var(--calm); color:#000; transform:translateY(-2px);}
+.tg-cta .price{
+  font-family:var(--mono); font-size:11.5px; color:var(--ink-3); letter-spacing:.04em;
+  border-left:1px solid var(--line-strong); padding-left:14px;
+}
+.tg-cta:hover .price{ color:rgba(0,0,0,.55); border-color:rgba(0,0,0,.25);}
+
+/* Phone illustration */
+.tg-phone{
+  position:relative; aspect-ratio: 9 / 18; max-width:340px; margin:0 auto;
+  border-radius:38px; padding:14px;
+  background:linear-gradient(180deg, #1a1d24 0%, #0d1015 100%);
+  border:1px solid var(--line-strong);
+  box-shadow: 0 30px 60px -20px rgba(52,211,153,0.25), 0 8px 24px rgba(0,0,0,.6),
+              inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+.tg-phone::before{
+  content:""; position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  width:56px; height:6px; background:#000; border-radius:0 0 8px 8px;
+}
+.tg-screen{
+  width:100%; height:100%; border-radius:26px; overflow:hidden;
+  background:linear-gradient(180deg, #050608 0%, #0a0d12 100%);
+  display:flex; flex-direction:column;
+  position:relative;
+}
+.tg-statusbar{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:10px 22px 6px; font-family:var(--mono); font-size:10px; color:var(--ink-2);
+}
+.tg-statusbar .dots span{
+  display:inline-block; width:4px; height:4px; border-radius:50%;
+  background:var(--ink-2); margin-left:3px;
+}
+.tg-tgheader{
+  padding:10px 14px 12px; display:flex; align-items:center; gap:10px;
+  border-bottom:1px solid rgba(148,163,184,.06);
+}
+.tg-tgheader .av{
+  width:32px; height:32px; border-radius:50%;
+  background:linear-gradient(135deg, var(--blood), var(--calm));
+  display:grid; place-items:center;
+  font-family:var(--mono); font-weight:700; font-size:13px; color:#000;
+}
+.tg-tgheader .nm{ flex:1; min-width:0;}
+.tg-tgheader .nm b{ display:block; font-size:13px; color:var(--ink); font-weight:600;}
+.tg-tgheader .nm span{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.04em; color:var(--calm);
+  display:flex; align-items:center; gap:5px;
+}
+.tg-tgheader .nm span::before{
+  content:""; width:5px; height:5px; border-radius:50%; background:var(--calm);
+  box-shadow:0 0 6px var(--calm-glow); animation:p 1.6s ease-out infinite;
+}
+.tg-msgs{
+  flex:1; overflow:hidden; padding:14px 12px 8px; display:flex; flex-direction:column; gap:10px;
+}
+.tg-msg{
+  max-width:78%; padding:9px 12px; font-family:var(--mono); font-size:11px; line-height:1.45;
+  border-radius:14px; word-wrap:break-word;
+}
+.tg-msg.bot{
+  align-self:flex-start; background:rgba(148,163,184,0.08); color:var(--ink-2);
+  border-bottom-left-radius:4px;
+}
+.tg-msg.bot b{ color:var(--ink); font-weight:600; display:block; margin-bottom:2px; font-size:10.5px;}
+.tg-msg.bot .pos-line{ color:var(--calm);}
+.tg-msg.bot .neg-line{ color:var(--blood);}
+.tg-msg.user{
+  align-self:flex-end; background:linear-gradient(135deg, rgba(52,211,153,0.18), rgba(52,211,153,0.10));
+  color:var(--ink); border:1px solid rgba(52,211,153,0.22);
+  border-bottom-right-radius:4px;
+}
+.tg-msg .ts{ display:block; margin-top:4px; font-size:9px; color:var(--ink-3); letter-spacing:.04em;}
+.tg-input{
+  margin:6px 12px 14px; padding:9px 14px;
+  background:rgba(148,163,184,0.06); border:1px solid var(--line);
+  border-radius:18px; display:flex; justify-content:space-between; align-items:center;
+  font-family:var(--mono); font-size:11px; color:var(--ink-3);
+}
+.tg-input::after{
+  content:"➤"; color:var(--calm); font-size:13px;
+}
+
+/* Stripe blurb */
+.tg-trust{
+  margin-top:24px; padding:14px 18px; border:1px solid var(--line);
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+  font-family:var(--mono); font-size:11px; color:var(--ink-3); letter-spacing:.04em;
+}
+.tg-trust b{ color:var(--ink); font-weight:600;}
+.tg-trust .sep{ color:var(--ink-4);}
+
 /* ──────────────────────── FAQ ──────────────────────── */
 .faq-list{ margin-top:48px; max-width:980px;}
 .faq-item{
@@ -476,6 +619,8 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
 }
 @media (max-width: 960px){
   section{ padding:96px 22px;}
+  .tg-grid{ grid-template-columns:1fr; gap:48px;}
+  .tg-phone{ max-width:300px;}
   .pain-grid{ grid-template-columns:1fr; gap:14px;}
   .diptych{ grid-template-columns:1fr;}
   .dip-side{ min-height:auto;}
@@ -638,6 +783,117 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
   <div class="proof-foot reveal">
     <div class="l">Live since Apr 6, 2026 · <span id="foot-trades">141</span> trades · <span id="foot-days">19</span> days · BTC same window: <span id="foot-btc" style="color:var(--gold);">+12.6%</span> · S&amp;P: <span id="foot-spy" style="color:var(--ink-2);">+8.3%</span></div>
     <div class="r"><b>●</b> Live · <span id="foot-updated">syncing…</span></div>
+  </div>
+</section>
+
+<!-- ─────── TELEGRAM BOT OFFER ─────── -->
+<section class="tg">
+  <div class="phantom tr calm">COPY</div>
+  <div class="eyebrow calm reveal">▌ Don't want to build it yourself</div>
+  <h2 class="section-title reveal">Skip the build.<br>Copy the bot<br><em>directly.</em></h2>
+  <p class="lede reveal">A non-custodial Telegram bot that mirrors every trade my live bots take, into your own Hyperliquid wallet. You stay in full control of your funds. Cancel anytime.</p>
+
+  <div class="tg-grid">
+    <div class="tg-copy reveal">
+      <h3>Four steps. <em>Five minutes.</em></h3>
+
+      <ul class="tg-features">
+        <li>
+          <span class="num">01</span>
+          <span class="body">
+            <strong>Connect your Hyperliquid wallet</strong>
+            <span>OAuth-style sign-in via Telegram. No seed phrase ever leaves your device. We never see your private key.</span>
+          </span>
+        </li>
+        <li>
+          <span class="num">02</span>
+          <span class="body">
+            <strong>Generate a trade-only API key</strong>
+            <span>The bot creates a Hyperliquid agent wallet with permission to trade only — never to withdraw or transfer. Your funds stay yours.</span>
+          </span>
+        </li>
+        <li>
+          <span class="num">03</span>
+          <span class="body">
+            <strong>Start copy-trading</strong>
+            <span>Every trade my live bots take is mirrored into your account in seconds — same coin, same direction, sized proportional to your capital.</span>
+          </span>
+        </li>
+        <li>
+          <span class="num">04</span>
+          <span class="body">
+            <strong>Watch your dashboard</strong>
+            <span>Live performance metrics inside Telegram. Cancel any time — revoking the API key stops the bot instantly.</span>
+          </span>
+        </li>
+      </ul>
+
+      <div class="tg-metrics">
+        <div class="label">▌ Dashboard metrics &mdash; live, same as ours</div>
+        <span class="chip">Unrealized PnL $ &amp; %</span>
+        <span class="chip">Realized PnL $ &amp; %</span>
+        <span class="chip">Profit factor</span>
+        <span class="chip">Win rate</span>
+        <span class="chip">Sharpe</span>
+        <span class="chip"># trades</span>
+        <span class="chip">Expectancy / trade</span>
+        <span class="chip">Max drawdown</span>
+      </div>
+
+      <a href="#" id="copy-trade-cta" class="tg-cta" onclick="return startCopyCheckout(event);">
+        Install Telegram Bot
+        <span class="price">Copy-trade access</span>
+      </a>
+
+      <div class="tg-trust">
+        <span><b>Non-custodial</b> · your wallet, your keys</span>
+        <span class="sep">·</span>
+        <span><b>Trade-only API</b> · no withdraw permission</span>
+        <span class="sep">·</span>
+        <span><b>Cancel anytime</b> · revoke the key, bot stops</span>
+      </div>
+    </div>
+
+    <div class="tg-illustration reveal" aria-hidden="true">
+      <div class="tg-phone">
+        <div class="tg-screen">
+          <div class="tg-statusbar">
+            <span>9:41</span>
+            <span class="dots"><span></span><span></span><span></span></span>
+          </div>
+          <div class="tg-tgheader">
+            <div class="av">/&gt;</div>
+            <div class="nm">
+              <b>HyperForge Bot</b>
+              <span>online · mirroring live</span>
+            </div>
+          </div>
+          <div class="tg-msgs">
+            <div class="tg-msg bot">
+              <b>HyperForge</b>
+              Wallet connected. Agent key created with trade-only permission.
+              <span class="ts">14:01</span>
+            </div>
+            <div class="tg-msg bot">
+              <b>📈 Signal · DeltaBot</b>
+              <span class="pos-line">LONG BTC · 3× · $1,200</span><br>
+              Entry 76,420 · stop 75,180
+              <span class="ts">14:02</span>
+            </div>
+            <div class="tg-msg user">
+              ✓ Mirrored to your account
+              <span class="ts">14:02</span>
+            </div>
+            <div class="tg-msg bot">
+              <b>📊 Today</b>
+              Realized <span class="pos-line">+2.14%</span> · 4 trades · WR 75%
+              <span class="ts">14:38</span>
+            </div>
+          </div>
+          <div class="tg-input">Message HyperForge Bot…</div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1319,6 +1575,35 @@ async function joinWaitlist(ev, source){
   btn.textContent = '✓ You\'re in';
   input.value = '';
   setTimeout(() => { btn.disabled = false; btn.textContent = orig; }, 2600);
+  return false;
+}
+
+/* ─── Telegram bot · Stripe checkout ───
+   Set STRIPE_PAYMENT_LINK to your Stripe-hosted Payment Link URL for
+   product prod_URyJNYVZTBiVV2 (e.g. https://buy.stripe.com/xxxxxxx).
+   Until that URL is provided, the button shows a friendly "soon" notice
+   and never sends the user to a broken page.
+*/
+const STRIPE_PAYMENT_LINK = ''; // ← paste Stripe Payment Link URL here
+
+function startCopyCheckout(ev){
+  ev.preventDefault();
+  if (STRIPE_PAYMENT_LINK && /^https:\/\/buy\.stripe\.com\//.test(STRIPE_PAYMENT_LINK)){
+    window.location.href = STRIPE_PAYMENT_LINK;
+    return false;
+  }
+  // Fallback: drop the user into the waitlist instead of a 404
+  const cta = document.getElementById('copy-trade-cta');
+  if (cta){
+    const orig = cta.innerHTML;
+    cta.innerHTML = '✓ Get notified at launch · check waitlist below';
+    cta.style.background = 'var(--calm)';
+    cta.style.color = '#000';
+    setTimeout(() => { cta.innerHTML = orig; cta.style.background=''; cta.style.color=''; }, 2800);
+  }
+  // Scroll to final waitlist
+  const final = document.querySelector('.final');
+  if (final) final.scrollIntoView({ behavior: 'smooth', block: 'start' });
   return false;
 }
 
