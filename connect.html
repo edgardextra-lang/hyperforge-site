@@ -134,7 +134,9 @@ footer a{ color:var(--ink-3); text-decoration:none;}
       <div class="notes">
         <b>What you're signing:</b> a Hyperliquid <code>approveAgent</code> message authorizing the agent address above.
         Signing happens entirely in your wallet (Rabby / MetaMask / Frame / Hyperliquid app).
-        Your private key never leaves your device. Revoke any time in Hyperliquid → Account → API.
+        Your private key never leaves your device. Revoke any time in Hyperliquid → Account → API.<br><br>
+        <b>Note:</b> if you're on MetaMask, you'll be asked to switch to <b>Arbitrum One</b> before signing.
+        Hyperliquid's signature spec uses Arbitrum's chain id even though trading happens on HyperEVM.
       </div>
     </div>
 
@@ -263,6 +265,61 @@ async function connect(){
       `❌ Couldn't connect to your wallet.<br><code>${msg}</code><br>` +
       `<b>Try:</b> reload this page, then click again and approve the popup. ` +
       `If you have <em>both</em> Rabby and MetaMask installed, disable one.`
+    );
+    resetBtn();
+    return;
+  }
+
+  // MetaMask enforces that the typed-data domain.chainId matches the wallet's
+  // ACTIVE chain. Hyperliquid's approveAgent uses chainId 0xa4b1 (Arbitrum One).
+  // If the user is currently on a different chain (e.g. HyperEVM 0x3e7), we
+  // must switch them to Arbitrum first. Rabby is laxer about this so this step
+  // is a no-op there. If Arbitrum isn't added to their wallet, add it.
+  btn.innerHTML = '<span class="spin"></span> Switching wallet to Arbitrum…';
+  const ARBITRUM_HEX = '0xa4b1';   // 42161 — Arbitrum One
+  try {
+    let activeHex = await withTimeout(provider.send('eth_chainId', []), 5000, 'chain id');
+    if (typeof activeHex === 'string') activeHex = activeHex.toLowerCase();
+    if (activeHex !== ARBITRUM_HEX){
+      try {
+        await withTimeout(
+          provider.send('wallet_switchEthereumChain', [{ chainId: ARBITRUM_HEX }]),
+          60000,
+          'chain switch',
+        );
+      } catch (switchErr){
+        const code = switchErr && (switchErr.code || switchErr.data?.originalError?.code);
+        const msg  = (switchErr && switchErr.message) || '';
+        // 4902 / -32603 with "Unrecognized chain ID" = chain not added; add it then retry switch
+        if (code === 4902 || /unrecognized chain|not been added/i.test(msg)){
+          await withTimeout(
+            provider.send('wallet_addEthereumChain', [{
+              chainId: ARBITRUM_HEX,
+              chainName: 'Arbitrum One',
+              nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+              rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+              blockExplorerUrls: ['https://arbiscan.io'],
+            }]),
+            60000,
+            'chain add',
+          );
+          // After add, MetaMask sometimes auto-switches; some versions don't. Try switch again.
+          await withTimeout(
+            provider.send('wallet_switchEthereumChain', [{ chainId: ARBITRUM_HEX }]),
+            30000,
+            'chain switch (after add)',
+          );
+        } else {
+          throw switchErr;
+        }
+      }
+    }
+  } catch (e){
+    const msg = (e && e.message) || String(e);
+    showBanner('err',
+      `❌ Couldn't switch your wallet to Arbitrum One.<br><code>${msg}</code><br>` +
+      `Manually switch your wallet to <b>Arbitrum One</b> (network selector at the top of MetaMask), then click below to retry. ` +
+      `Hyperliquid's signature spec requires Arbitrum's chain id even though trading happens on HyperEVM.`
     );
     resetBtn();
     return;
