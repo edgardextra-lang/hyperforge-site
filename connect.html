@@ -202,6 +202,23 @@ async function init(){
   }
 }
 
+// Race a promise against a timeout so a hung wallet popup doesn't soft-lock the button.
+function withTimeout(p, ms, name){
+  return Promise.race([
+    p,
+    new Promise((_, rej) => setTimeout(
+      () => rej(new Error(`timeout after ${(ms/1000)|0}s waiting for ${name}`)),
+      ms,
+    )),
+  ]);
+}
+
+function resetBtn(label){
+  const btn = $('connect-btn');
+  btn.disabled = false;
+  btn.innerHTML = label || '⟲ Try again';
+}
+
 async function connect(){
   clearBanner();
   if (!SESSION){
@@ -209,41 +226,74 @@ async function connect(){
     return;
   }
   if (!window.ethereum){
-    showBanner('err', '❌ No wallet detected. Install <a href="https://rabby.io" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Rabby</a> or MetaMask, then reload this page.');
+    showBanner('err',
+      '❌ No wallet detected. Install <a href="https://rabby.io" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Rabby</a>, MetaMask, or open this link in the Hyperliquid app, then reload.'
+    );
     return;
+  }
+  // If multiple wallets injected (Rabby + MetaMask + ...), `window.ethereum.providers`
+  // gives us the array. Pick the first one that exposes signTypedData_v4-friendly RPC.
+  // For simplicity: warn the user if more than one detected.
+  if (window.ethereum.providers && window.ethereum.providers.length > 1){
+    showBanner('info',
+      `⚠ ${window.ethereum.providers.length} wallet extensions are active in this browser. ` +
+      `If signing hangs, disable all but one (Rabby <em>or</em> MetaMask) and reload.`
+    );
   }
 
   const btn = $('connect-btn');
   btn.disabled = true;
-  btn.innerHTML = '<span class="spin"></span> Connecting wallet…';
+  btn.innerHTML = '<span class="spin"></span> Connecting wallet… (approve in your wallet popup)';
 
   let provider, signer, mainAddr;
   try {
     provider = new ethers.BrowserProvider(window.ethereum);
-    await provider.send('eth_requestAccounts', []);
-    signer = await provider.getSigner();
-    mainAddr = (await signer.getAddress()).toLowerCase();
+    // 60s timeout — long enough for a thoughtful user, short enough that a
+    // dismissed popup doesn't hang the UI forever.
+    await withTimeout(
+      provider.send('eth_requestAccounts', []),
+      60000,
+      'wallet permission'
+    );
+    signer = await withTimeout(provider.getSigner(), 5000, 'getSigner');
+    mainAddr = (await withTimeout(signer.getAddress(), 5000, 'getAddress')).toLowerCase();
   } catch (e){
-    showBanner('err', `❌ Wallet connection rejected: <code>${(e && e.message) || e}</code>`);
-    btn.disabled = false;
-    btn.innerHTML = '⟲ Try again';
+    const msg = (e && e.message) || String(e);
+    showBanner('err',
+      `❌ Couldn't connect to your wallet.<br><code>${msg}</code><br>` +
+      `<b>Try:</b> reload this page, then click again and approve the popup. ` +
+      `If you have <em>both</em> Rabby and MetaMask installed, disable one.`
+    );
+    resetBtn();
     return;
   }
 
   // Sign the EIP-712 typed data. ethers v6 splits domain/types/message itself.
-  btn.innerHTML = '<span class="spin"></span> Waiting for signature…';
+  btn.innerHTML = '<span class="spin"></span> Waiting for signature… (sign in your wallet)';
   const td = SESSION.typed_data;
-  // ethers expects domain, types (without EIP712Domain), and message.
   const types = Object.assign({}, td.types);
   delete types.EIP712Domain;
 
   let signature;
   try {
-    signature = await signer.signTypedData(td.domain, types, td.message);
+    // 5 minute timeout for signing — wallets sometimes show the prompt slowly.
+    signature = await withTimeout(
+      signer.signTypedData(td.domain, types, td.message),
+      300000,
+      'signature',
+    );
   } catch (e){
-    showBanner('err', `❌ Signature was rejected in your wallet.`);
-    btn.disabled = false;
-    btn.innerHTML = '⟲ Try again';
+    const msg = (e && e.message) || String(e);
+    if (/reject|deni|cancel/i.test(msg)){
+      showBanner('err', '❌ Signature rejected in your wallet. Click below to try again.');
+    } else if (/timeout/i.test(msg)){
+      showBanner('err',
+        '❌ The wallet popup didn\'t respond within 5 minutes. Reload and try again.'
+      );
+    } else {
+      showBanner('err', `❌ Wallet error during signing.<br><code>${msg}</code>`);
+    }
+    resetBtn();
     return;
   }
 
@@ -251,32 +301,36 @@ async function connect(){
   btn.innerHTML = '<span class="spin"></span> Submitting to Hyperliquid…';
   let resp;
   try {
-    const r = await fetch(`${API_BASE}/connect/finish`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        token: TOKEN,
-        signature,
-        hl_main_address: mainAddr,
+    const r = await withTimeout(
+      fetch(`${API_BASE}/connect/finish`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token: TOKEN,
+          signature,
+          hl_main_address: mainAddr,
+        }),
       }),
-    });
+      30000,
+      '/connect/finish',
+    );
     resp = await r.json();
     if (!r.ok || !resp.ok){
-      const detail = resp && (resp.error || JSON.stringify(resp.hl_response).slice(0,200)) || `HTTP ${r.status}`;
-      showBanner('err', `❌ Hyperliquid rejected the authorization.<br><code>${detail}</code><br>Refresh and try again, or get a fresh link from the bot.`);
-      btn.disabled = false;
-      btn.innerHTML = '⟲ Try again';
+      const detail = resp && (resp.error || JSON.stringify(resp.hl_response).slice(0, 240)) || `HTTP ${r.status}`;
+      showBanner('err',
+        `❌ Hyperliquid rejected the authorization.<br><code>${detail}</code><br>` +
+        `Get a fresh link from the bot (<code>/connect</code>) and try once more.`
+      );
+      resetBtn();
       return;
     }
   } catch (e){
-    showBanner('err', `❌ Network error submitting authorization: <code>${(e && e.message) || e}</code>`);
-    btn.disabled = false;
-    btn.innerHTML = '⟲ Try again';
+    showBanner('err', `❌ Network error submitting authorization.<br><code>${(e && e.message) || e}</code>`);
+    resetBtn();
     return;
   }
 
   show('step-done');
-  // Wire the back-to-Telegram button to the deep link
   $('back-btn').href = `tg://resolve?domain=${BOT_HANDLE}`;
   $('back-btn').setAttribute('onclick', `setTimeout(()=>{ window.location.href='https://t.me/${BOT_HANDLE}'; }, 700); return true;`);
 }
