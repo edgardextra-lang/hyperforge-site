@@ -1745,11 +1745,20 @@ function openWelcome(sessionId){
     if (TELEGRAM_BOT_URL && /^https:\/\/t\.me\//.test(TELEGRAM_BOT_URL)){
       tgCta.classList.remove('disabled');
       tgCta.removeAttribute('disabled');
-      // Build deep link: t.me/<bot>?start=<session_id>
-      // Telegram /start payloads are limited to [A-Za-z0-9_-], 1..64 chars.
-      // Stripe session IDs are like cs_test_a1b2... which are alphanumeric+underscore — fits.
-      const base = TELEGRAM_BOT_URL.replace(/\/+$/, '');
-      tgCta.href = sessionId ? `${base}?start=${encodeURIComponent(sessionId)}` : base;
+      // Build deep link. Telegram has a documented quirk: https://t.me/<bot>?start=
+      // links don't re-fire /start <payload> for returning users (they just open
+      // the existing chat). The tg:// URL scheme always re-fires /start, so we
+      // prefer it when the user has the Telegram desktop/mobile app installed.
+      // We fall back to the https://t.me/ form via the click handler below if
+      // tg:// fails to launch within 600ms.
+      // Stripe session IDs are alphanumeric+underscore which fits Telegram's
+      // /start payload constraint of [A-Za-z0-9_-], 1..64 chars.
+      const base    = TELEGRAM_BOT_URL.replace(/\/+$/, '');
+      const handle  = base.replace(/^https?:\/\/t\.me\//, '');
+      const payload = sessionId ? `?start=${encodeURIComponent(sessionId)}` : '';
+      tgCta.dataset.tgScheme = `tg://resolve?domain=${handle}${sessionId ? `&start=${encodeURIComponent(sessionId)}` : ''}`;
+      tgCta.dataset.tgWeb    = `${base}${payload}`;
+      tgCta.href = tgCta.dataset.tgScheme;  // primary attempt
       if (tgLabel) tgLabel.textContent = 'Install HyperForge Bot on Telegram';
     } else {
       tgCta.classList.add('disabled');
@@ -1765,15 +1774,42 @@ function openWelcome(sessionId){
 }
 
 function openTelegramBot(ev){
-  // Defensive: if disabled, do nothing
   const cta = document.getElementById('welcome-tg-cta');
-  if (cta && cta.classList.contains('disabled')){
+  if (!cta) return true;
+
+  // Disabled fallback: do nothing
+  if (cta.classList.contains('disabled')){
     if (ev) ev.preventDefault();
     return false;
   }
-  // Default <a target="_blank"> behavior takes the user to Telegram.
-  // We just don't preventDefault here.
-  return true;
+
+  // Two-step launch: try tg:// scheme first (re-fires /start <payload> for
+  // returning users); fall back to https://t.me/ after 700ms if the OS
+  // doesn't handle tg://. The web fallback opens in a new tab — works for
+  // every Telegram client (web, desktop, mobile) but doesn't always re-fire
+  // /start on returning users.
+  const tgScheme = cta.dataset.tgScheme;
+  const tgWeb    = cta.dataset.tgWeb;
+
+  if (ev) ev.preventDefault();
+
+  // Hidden iframe is the safest way to attempt a custom-scheme launch
+  // without leaving the page if the scheme isn't registered.
+  const f = document.createElement('iframe');
+  f.style.cssText = 'display:none';
+  f.src = tgScheme;
+  document.body.appendChild(f);
+
+  // After a short delay, also open the web fallback in a new tab.
+  // If tg:// already launched the app, the user is already in Telegram and
+  // this new-tab open is harmless background noise. If tg:// failed, this
+  // gets them to the bot via the browser flow.
+  setTimeout(() => {
+    document.body.removeChild(f);
+    window.open(tgWeb, '_blank', 'noopener');
+  }, 700);
+
+  return false;
 }
 
 function closeWelcome(){
