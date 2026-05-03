@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
+<!-- Umami analytics — replace data-website-id with your real ID from cloud.umami.is -->
+<script async defer src="https://cloud.umami.is/script.js" data-website-id="REPLACE_ME_UMAMI_WEBSITE_ID"></script>
 
 <style>
 /* ──────────────────────── Tokens ──────────────────────── */
@@ -1633,11 +1635,18 @@ function updateSeatUI(n, opts){
   }
 })();
 
+/* Umami tracking — defensive no-op if the script hasn't loaded or is blocked. */
+function trk(name, props){
+  try { window.umami && window.umami.track && window.umami.track(name, props || {}); }
+  catch(e){}
+}
+
 async function joinWaitlist(ev, source){
   ev.preventDefault();
   const form = ev.target;
   const input = form.querySelector('input[type=email]');
   const btn   = form.querySelector('button');
+  trk('waitlist_submit', { source: source || 'unknown' });
   const email = (input.value || '').trim().toLowerCase();
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return false;
 
@@ -1698,9 +1707,12 @@ async function joinWaitlist(ev, source){
 
   // 3. If it was a brand-new signup, bump the live seat counter.
   if (isNew){
+    trk('waitlist_signup', { source: source || 'unknown' });
     const seat = document.getElementById('seat-count');
     const cur  = seat ? parseInt((seat.textContent || '0').replace(/,/g, ''), 10) || 0 : 0;
     updateSeatUI(cur + 1, { flash: true });
+  } else {
+    trk('waitlist_duplicate', { source: source || 'unknown' });
   }
 
   btn.textContent = '✓ You\'re in';
@@ -1727,6 +1739,7 @@ let _welcomeSessionId = null;
 function openWelcome(sessionId){
   const ov = document.getElementById('welcome-overlay');
   if (!ov) return;
+  trk('stripe_return_overlay_shown', { has_session: !!sessionId });
   _welcomeSessionId = sessionId || null;
   if (sessionId){
     const sid = document.getElementById('welcome-sid');
@@ -1780,8 +1793,10 @@ function openTelegramBot(ev){
   // Disabled fallback: do nothing
   if (cta.classList.contains('disabled')){
     if (ev) ev.preventDefault();
+    trk('install_tg_bot_blocked_no_url');
     return false;
   }
+  trk('install_tg_bot_clicked', { has_session: !!_welcomeSessionId });
 
   // Two-step launch: try tg:// scheme first (re-fires /start <payload> for
   // returning users); fall back to https://t.me/ after 700ms if the OS
@@ -1856,7 +1871,9 @@ const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/eVqdR9eyA2RXfSHdgN4ow03';
 
 function startCopyCheckout(ev){
   ev.preventDefault();
+  trk('copy_trade_cta_clicked');
   if (STRIPE_PAYMENT_LINK && /^https:\/\/buy\.stripe\.com\//.test(STRIPE_PAYMENT_LINK)){
+    trk('stripe_checkout_redirect');
     window.location.href = STRIPE_PAYMENT_LINK;
     return false;
   }

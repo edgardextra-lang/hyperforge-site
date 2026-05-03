@@ -8,6 +8,8 @@
 <meta name="robots" content="noindex,nofollow">
 
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<!-- Umami analytics — same website ID as index.html -->
+<script async defer src="https://cloud.umami.is/script.js" data-website-id="REPLACE_ME_UMAMI_WEBSITE_ID"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -158,6 +160,7 @@ footer a{ color:var(--ink-3); text-decoration:none;}
 const API_BASE  = 'https://stripe.hip3radar.xyz';   // same tunnel as the webhook receiver
 const BOT_HANDLE = 'hyperforge_copy_bot';
 const $ = (id) => document.getElementById(id);
+function trk(name, props){ try { window.umami && window.umami.track && window.umami.track(name, props || {}); } catch(e){} }
 
 const params = new URLSearchParams(location.search);
 const TOKEN  = (params.get('t') || '').trim();
@@ -175,6 +178,7 @@ function show(stepId){
 let SESSION = null;   // { agent_address, agent_name, nonce, typed_data, action, expires_at }
 
 async function init(){
+  trk('connect_page_opened', { has_token: !!TOKEN });
   if (!TOKEN || TOKEN.length < 16){
     show('step-ready');
     showBanner('err', '❌ Missing or invalid <code>?t=</code> token. Open this page from the Telegram bot link.');
@@ -222,6 +226,7 @@ function resetBtn(label){
 }
 
 async function connect(){
+  trk('connect_button_clicked');
   clearBanner();
   if (!SESSION){
     showBanner('err', 'Session not loaded yet — refresh the page.');
@@ -379,6 +384,7 @@ async function connect(){
                                 ? resp.hl_response
                                 : JSON.stringify(resp.hl_response || resp).slice(0, 240));
       const errCode = (resp && resp.error) || `HTTP ${r.status}`;
+      trk('connect_failed', { error: errCode });
 
       let body = `<b>${errCode === 'needs_deposit' ? '🪙 Deposit required' : '❌ Authorization rejected'}</b><br>`;
       if (human) body += `${human}<br><br>`;
@@ -393,6 +399,7 @@ async function connect(){
     return;
   }
 
+  trk('connect_succeeded');
   show('step-done');
   $('back-btn').href = `tg://resolve?domain=${BOT_HANDLE}`;
   $('back-btn').setAttribute('onclick', `setTimeout(()=>{ window.location.href='https://t.me/${BOT_HANDLE}'; }, 700); return true;`);
