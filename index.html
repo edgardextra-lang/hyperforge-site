@@ -516,6 +516,92 @@ h2.section-title em{ font-family:var(--serif); font-style:italic; font-weight:40
 .tg-trust b{ color:var(--ink); font-weight:600;}
 .tg-trust .sep{ color:var(--ink-4);}
 
+/* ──────────────────────── Stripe-return confirmation overlay ──────────────────────── */
+.welcome-overlay{
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(5,6,8,0.88);
+  backdrop-filter:blur(12px) saturate(140%);
+  -webkit-backdrop-filter:blur(12px) saturate(140%);
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  opacity:0; pointer-events:none;
+  transition:opacity .35s cubic-bezier(.22,.8,.32,1);
+}
+.welcome-overlay.show{ opacity:1; pointer-events:auto;}
+.welcome-card{
+  width:min(560px, 100%);
+  background:linear-gradient(180deg, #0a0d12 0%, #050608 100%);
+  border:1px solid var(--line-strong);
+  padding:48px 44px 40px;
+  position:relative;
+  transform:translateY(18px) scale(.98);
+  transition:transform .45s cubic-bezier(.22,.8,.32,1);
+  box-shadow:
+    0 30px 60px -20px rgba(52,211,153,.20),
+    0 12px 32px rgba(0,0,0,.6),
+    inset 0 0 0 1px rgba(255,255,255,.03);
+}
+.welcome-overlay.show .welcome-card{ transform:none;}
+.welcome-card::before{
+  content:""; position:absolute; left:0; right:0; top:-1px; height:2px;
+  background:linear-gradient(90deg, var(--blood), var(--calm));
+  box-shadow:0 0 18px var(--calm-glow);
+}
+.welcome-mark{
+  width:64px; height:64px; border-radius:16px; margin-bottom:28px;
+  background:linear-gradient(135deg, var(--blood), var(--calm));
+  display:grid; place-items:center; position:relative;
+}
+.welcome-mark::after{
+  content:""; position:absolute;
+  width:22px; height:11px;
+  border:solid #0a0c10; border-width:0 0 4px 4px;
+  transform:translateY(-2px) rotate(-45deg);
+}
+.welcome-eye{
+  font-family:var(--mono); font-size:11px; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--calm); margin-bottom:18px;
+  display:flex; align-items:center; gap:10px;
+}
+.welcome-eye::before{
+  content:""; width:6px; height:6px; border-radius:50%; background:var(--calm);
+  box-shadow:0 0 8px var(--calm-glow); animation:p 1.6s ease-out infinite;
+}
+.welcome-card h3{
+  font-family:var(--sans); font-weight:800;
+  font-size:clamp(28px, 3.4vw, 38px); line-height:1.05; letter-spacing:-.025em;
+  margin-bottom:18px;
+}
+.welcome-card h3 em{ font-family:var(--serif); font-style:italic; font-weight:400; color:var(--calm);}
+.welcome-card p{ color:var(--ink-2); font-size:15px; line-height:1.6; margin-bottom:14px;}
+.welcome-card p strong{ color:var(--ink); font-weight:600;}
+.welcome-meta{
+  margin:24px 0 28px; padding:14px 18px;
+  border:1px solid var(--line); background:rgba(255,255,255,0.025);
+  font-family:var(--mono); font-size:12px; letter-spacing:.04em; color:var(--ink-3);
+  display:flex; flex-direction:column; gap:6px;
+}
+.welcome-meta b{ color:var(--ink);}
+.welcome-meta .row{ display:flex; justify-content:space-between; gap:14px;}
+.welcome-meta code{
+  font-family:var(--mono); font-size:11px; color:var(--calm);
+  background:rgba(52,211,153,.08); padding:2px 8px; border:1px solid rgba(52,211,153,.2);
+}
+.welcome-cta{
+  display:inline-flex; align-items:center; gap:14px; padding:16px 26px;
+  background:var(--ink); color:var(--bg); border:none; cursor:pointer;
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; font-weight:700;
+  transition:background .2s, color .2s, transform .2s;
+}
+.welcome-cta:hover{ background:var(--calm); color:#000; transform:translateY(-2px);}
+.welcome-close{
+  position:absolute; top:14px; right:14px;
+  width:32px; height:32px; border:1px solid var(--line); background:transparent;
+  color:var(--ink-2); cursor:pointer; font-size:16px; line-height:1;
+  transition:border-color .2s, color .2s;
+}
+.welcome-close:hover{ border-color:var(--calm); color:var(--calm);}
+
 /* ──────────────────────── FAQ ──────────────────────── */
 .faq-list{ margin-top:48px; max-width:980px;}
 .faq-item{
@@ -672,6 +758,23 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
 </style>
 </head>
 <body>
+
+<!-- ─────── Stripe-return confirmation overlay (auto-shows on ?session_id=...) ─────── -->
+<div class="welcome-overlay" id="welcome-overlay" role="dialog" aria-modal="true" aria-labelledby="welcome-title" aria-hidden="true">
+  <div class="welcome-card">
+    <button class="welcome-close" type="button" aria-label="Close" onclick="closeWelcome()">×</button>
+    <div class="welcome-mark" aria-hidden="true"></div>
+    <div class="welcome-eye">▌ Payment received</div>
+    <h3 id="welcome-title">You're <em>in.</em><br>Bot invite incoming.</h3>
+    <p>Stripe confirmed your payment. The HyperForge copy-trade bot is in <strong>private beta</strong> — you've been added to the priority list.</p>
+    <p>We'll email the Telegram invite link the day onboarding opens. Expected <strong>within 7 days</strong>. No action needed from you in the meantime.</p>
+    <div class="welcome-meta" id="welcome-meta" style="display:none;">
+      <div class="row"><span>Stripe session</span><code id="welcome-sid">—</code></div>
+      <div class="row"><span>Status</span><b style="color:var(--calm);">Confirmed · queued for onboarding</b></div>
+    </div>
+    <button class="welcome-cta" type="button" onclick="closeWelcome()">Back to site</button>
+  </div>
+</div>
 
 <div class="grid-bg" aria-hidden="true"></div>
 <div class="amb" aria-hidden="true"></div>
@@ -1577,6 +1680,64 @@ async function joinWaitlist(ev, source){
   setTimeout(() => { btn.disabled = false; btn.textContent = orig; }, 2600);
   return false;
 }
+
+/* ─── Stripe-return confirmation overlay ───
+   Auto-opens when the user lands with ?session_id=cs_... or #welcome.
+   Stripe Payment Links append ?session_id=cs_xxx automatically when their
+   redirect URL is set to this site, so this fires on every successful pay.
+*/
+function openWelcome(sessionId){
+  const ov = document.getElementById('welcome-overlay');
+  if (!ov) return;
+  if (sessionId){
+    const sid = document.getElementById('welcome-sid');
+    const meta = document.getElementById('welcome-meta');
+    // Show only the prefix + suffix to keep the field tidy & not leak full IDs
+    const short = sessionId.length > 16
+      ? sessionId.slice(0, 8) + '…' + sessionId.slice(-6)
+      : sessionId;
+    if (sid)  sid.textContent  = short;
+    if (meta) meta.style.display = '';
+  }
+  // Lock body scroll while overlay is open
+  document.documentElement.style.overflow = 'hidden';
+  requestAnimationFrame(() => ov.classList.add('show'));
+  ov.setAttribute('aria-hidden', 'false');
+}
+
+function closeWelcome(){
+  const ov = document.getElementById('welcome-overlay');
+  if (!ov) return;
+  ov.classList.remove('show');
+  ov.setAttribute('aria-hidden', 'true');
+  document.documentElement.style.overflow = '';
+  // Strip the query/hash so a refresh doesn't re-open the overlay
+  if (location.search.includes('session_id=') || location.hash === '#welcome'){
+    history.replaceState(null, '', location.pathname);
+  }
+}
+
+(function autoOpenWelcome(){
+  const params = new URLSearchParams(location.search);
+  const sid    = params.get('session_id');
+  const isHash = location.hash === '#welcome';
+  if (sid || isHash){
+    // Wait for the DOM (overlay HTML must be parsed)
+    if (document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', () => openWelcome(sid));
+    } else {
+      openWelcome(sid);
+    }
+  }
+})();
+
+// ESC key dismisses the overlay
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape'){
+    const ov = document.getElementById('welcome-overlay');
+    if (ov && ov.classList.contains('show')) closeWelcome();
+  }
+});
 
 /* ─── Telegram bot · Stripe checkout ───
    Set STRIPE_PAYMENT_LINK to your Stripe-hosted Payment Link URL for
