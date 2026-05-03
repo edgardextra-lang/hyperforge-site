@@ -587,13 +587,33 @@ h2.section-title em{ font-family:var(--serif); font-style:italic; font-weight:40
   font-family:var(--mono); font-size:11px; color:var(--calm);
   background:rgba(52,211,153,.08); padding:2px 8px; border:1px solid rgba(52,211,153,.2);
 }
-.welcome-cta{
-  display:inline-flex; align-items:center; gap:14px; padding:16px 26px;
-  background:var(--ink); color:var(--bg); border:none; cursor:pointer;
-  font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; font-weight:700;
-  transition:background .2s, color .2s, transform .2s;
+.welcome-actions{
+  display:flex; flex-direction:column; gap:12px; align-items:flex-start;
 }
-.welcome-cta:hover{ background:var(--calm); color:#000; transform:translateY(-2px);}
+.welcome-cta{
+  display:inline-flex; align-items:center; gap:12px; padding:16px 26px;
+  border:none; cursor:pointer; text-decoration:none;
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; font-weight:700;
+  transition:background .2s, color .2s, transform .2s, opacity .2s;
+}
+.welcome-cta.primary{
+  background:var(--calm); color:#000;
+  box-shadow:0 0 24px rgba(52,211,153,.32);
+}
+.welcome-cta.primary:hover{ transform:translateY(-2px); box-shadow:0 0 32px rgba(52,211,153,.48);}
+.welcome-cta.primary[disabled],
+.welcome-cta.primary.disabled{
+  background:rgba(52,211,153,.20); color:rgba(0,0,0,.55);
+  cursor:not-allowed; box-shadow:none; pointer-events:none;
+}
+.welcome-cta.primary svg{ flex-shrink:0;}
+.welcome-cta.secondary{
+  background:transparent; color:var(--ink-2);
+  padding:6px 0; border:none;
+  font-size:11px; letter-spacing:.08em;
+}
+.welcome-cta.secondary:hover{ color:var(--calm);}
+.welcome-cta.secondary::before{ content:"←"; margin-right:8px;}
 .welcome-close{
   position:absolute; top:14px; right:14px;
   width:32px; height:32px; border:1px solid var(--line); background:transparent;
@@ -772,7 +792,15 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
       <div class="row"><span>Stripe session</span><code id="welcome-sid">—</code></div>
       <div class="row"><span>Status</span><b style="color:var(--calm);">Confirmed · queued for onboarding</b></div>
     </div>
-    <button class="welcome-cta" type="button" onclick="closeWelcome()">Back to site</button>
+    <div class="welcome-actions">
+      <a id="welcome-tg-cta" class="welcome-cta primary disabled" href="#" onclick="return openTelegramBot(event);" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M22.46 5.27 19.4 19.7c-.23 1.02-.84 1.27-1.7.79l-4.7-3.46-2.27 2.18c-.25.25-.46.46-.95.46l.34-4.8 8.74-7.9c.38-.34-.08-.53-.59-.19L7.46 13.36 2.8 11.9c-1.01-.32-1.03-1.01.21-1.5L21.16 3.8c.84-.31 1.58.2 1.3 1.47Z"/>
+        </svg>
+        <span id="welcome-tg-label">Install HyperForge Bot on Telegram</span>
+      </a>
+      <button class="welcome-cta secondary" type="button" onclick="closeWelcome()">Back to site</button>
+    </div>
   </div>
 </div>
 
@@ -1685,10 +1713,21 @@ async function joinWaitlist(ev, source){
    Auto-opens when the user lands with ?session_id=cs_... or #welcome.
    Stripe Payment Links append ?session_id=cs_xxx automatically when their
    redirect URL is set to this site, so this fires on every successful pay.
+
+   TELEGRAM_BOT_URL: paste the t.me URL once you've created the bot via
+   BotFather (e.g. 'https://t.me/HyperForgeCopyBot'). When set, the primary
+   CTA on the confirmation overlay activates and deep-links to the bot,
+   passing the Stripe session_id as a /start payload so the bot can verify
+   the user paid before granting access.
 */
+const TELEGRAM_BOT_URL = ''; // ← paste t.me/<botname> here once created
+
+let _welcomeSessionId = null;
+
 function openWelcome(sessionId){
   const ov = document.getElementById('welcome-overlay');
   if (!ov) return;
+  _welcomeSessionId = sessionId || null;
   if (sessionId){
     const sid = document.getElementById('welcome-sid');
     const meta = document.getElementById('welcome-meta');
@@ -1699,10 +1738,42 @@ function openWelcome(sessionId){
     if (sid)  sid.textContent  = short;
     if (meta) meta.style.display = '';
   }
+  // Activate the Telegram CTA only if we have a real bot URL configured
+  const tgCta   = document.getElementById('welcome-tg-cta');
+  const tgLabel = document.getElementById('welcome-tg-label');
+  if (tgCta){
+    if (TELEGRAM_BOT_URL && /^https:\/\/t\.me\//.test(TELEGRAM_BOT_URL)){
+      tgCta.classList.remove('disabled');
+      tgCta.removeAttribute('disabled');
+      // Build deep link: t.me/<bot>?start=<session_id>
+      // Telegram /start payloads are limited to [A-Za-z0-9_-], 1..64 chars.
+      // Stripe session IDs are like cs_test_a1b2... which are alphanumeric+underscore — fits.
+      const base = TELEGRAM_BOT_URL.replace(/\/+$/, '');
+      tgCta.href = sessionId ? `${base}?start=${encodeURIComponent(sessionId)}` : base;
+      if (tgLabel) tgLabel.textContent = 'Install HyperForge Bot on Telegram';
+    } else {
+      tgCta.classList.add('disabled');
+      tgCta.setAttribute('disabled', '');
+      tgCta.href = '#';
+      if (tgLabel) tgLabel.textContent = 'Bot launching soon · check email';
+    }
+  }
   // Lock body scroll while overlay is open
   document.documentElement.style.overflow = 'hidden';
   requestAnimationFrame(() => ov.classList.add('show'));
   ov.setAttribute('aria-hidden', 'false');
+}
+
+function openTelegramBot(ev){
+  // Defensive: if disabled, do nothing
+  const cta = document.getElementById('welcome-tg-cta');
+  if (cta && cta.classList.contains('disabled')){
+    if (ev) ev.preventDefault();
+    return false;
+  }
+  // Default <a target="_blank"> behavior takes the user to Telegram.
+  // We just don't preventDefault here.
+  return true;
 }
 
 function closeWelcome(){
