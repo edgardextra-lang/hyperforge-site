@@ -811,7 +811,7 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
 
 <!-- ─────── LIQUIDATION TAPE ─────── -->
 <div class="liq-tape" aria-hidden="true">
-  <div class="label">▌ Liquidated past 24h</div>
+  <div class="label">▌ Liquidated · Binance perps · live</div>
   <div style="overflow:hidden; flex:1;">
     <div class="liq-track" id="liq-track">
       <!-- filled by JS -->
@@ -855,7 +855,7 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
   <div class="hero-floor stagger">
     <div class="it reveal">
       <div class="v"><span class="x" id="floor-liq">−$2.41B</span></div>
-      <div class="l"><a href="https://www.coinglass.com/LiquidationData" target="_blank" rel="noopener" style="border-bottom:1px solid var(--ink-4);">Retail liquidated · 24h</a></div>
+      <div class="l"><a href="https://www.coinglass.com/LiquidationData" target="_blank" rel="noopener" style="border-bottom:1px solid var(--ink-4);">Liquidated past 24h · Binance perps · live</a></div>
     </div>
     <div class="it reveal">
       <div class="v"><span class="x">81%</span></div>
@@ -1359,38 +1359,22 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
   const WIN_MS   = 24 * 3600e3; // 24h sliding window for the total
   const RENDER_MS = 60_000;     // DOM refresh cadence
 
-  // Initial seed for the 24h total. Once the WebSocket has been connected for
-  // long enough that observed_window_ms ≈ WIN_MS, we drop the seed and use
-  // pure observed data. Until then, observed events ADD to this baseline.
-  const SEED_USD = 2_410_000_000;
+  // We do NOT hardcode a 24h total — real liquidations vary 10× day-to-day
+  // ($200M quiet → $5B+ in a flash crash), so any fixed number would be
+  // misleading. Instead we display the observed sum, and once we have at
+  // least 5 minutes of observation we extrapolate the observed rate to 24h.
+  // Both numbers come from REAL Binance force-order events.
+  const WARMUP_MS = 5 * 60 * 1000;  // 5 minutes before we trust the rate
 
   const tape = [];                  // {coin, sideLabel, usd, px, t}
   const trail = [];                 // {usd, t} — for sliding 24h sum
   const t0 = Date.now();
   let lastRender = 0;               // throttle for real-event renders
 
-  // ── Seed: prefill the tape with believable synthetic entries so the bar
-  // is never empty before the first real WS message arrives, and so it
-  // gracefully degrades if the WebSocket is blocked (corp firewall, etc).
-  // These entries have NO impact on `trail`, so the running 24h sum still
-  // reflects only real events + the prorated seed amount.
-  (function seed(){
-    const coins = ['BTC','ETH','SOL','HYPE','XRP','DOGE','LINK','SUI','APT','AVAX','TIA','ARB','OP','NEAR','ADA','BNB','TRX'];
-    const pxBase = {BTC: 76000, ETH: 2300, SOL: 150, HYPE: 40, BNB: 580, XRP: 1.4, DOGE: 0.16};
-    for (let i = 0; i < 28; i++){
-      const c = coins[Math.floor(Math.random() * coins.length)];
-      const isLong = Math.random() < 0.55;
-      const usd = Math.random() * 250_000 + 5_000;
-      const base = pxBase[c] || (Math.random() * 5 + 0.1);
-      const px = base * (0.95 + Math.random() * 0.1);
-      tape.push({
-        coin: c,
-        sideLabel: isLong ? 'LONG liquidated' : 'SHORT liquidated',
-        usd, px,
-        t: Date.now() - (28 - i) * 6_000,
-      });
-    }
-  })();
+  // No seed entries — the tape only displays REAL liquidations from Binance's
+  // public force-order WebSocket. While we wait for the first message
+  // (typically <2s on a busy market), `render()` paints a "Connecting…"
+  // placeholder so the bar isn't visibly empty.
 
   function addLiq({coin, sideLabel, usd, px}){
     const t = Date.now();
@@ -1403,11 +1387,15 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
   }
 
   function totalUsd24h(){
-    // Observed sum + (seed prorated by how much of the 24h window we've covered).
+    // Real-data 24h estimate: extrapolate the observed liquidation rate.
+    // Before 5 min of observation we show only the observed sum (any
+    // earlier extrapolation has too much variance to be meaningful).
+    // After 5 min we project the per-second rate over a 24h window.
+    // After 24h of continuous streaming the result is purely observed.
     const observedMs = Math.min(Date.now() - t0, WIN_MS);
     const observedSum = trail.reduce((a, x) => a + x.usd, 0);
-    const seedShare   = SEED_USD * (1 - observedMs / WIN_MS);
-    return observedSum + Math.max(0, seedShare);
+    if (observedMs < WARMUP_MS || observedSum === 0) return observedSum;
+    return observedSum * (WIN_MS / observedMs);
   }
 
   function fmtUsd(v){
@@ -1435,22 +1423,43 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
   function render(){
     lastRender = Date.now();
     const track = document.getElementById('liq-track');
-    if (track && tape.length){
-      const items = tape.map(l =>
-        `<span><b>${fmtUsd(l.usd)}</b> ${l.coin} ${l.sideLabel} <em>@ ${fmtPx(l.px)}</em></span>`
-      );
-      // Doubled for seamless infinite-scroll
-      track.innerHTML = items.join('') + items.join('');
+    if (track){
+      if (tape.length){
+        const items = tape.map(l =>
+          `<span><b>${fmtUsd(l.usd)}</b> ${l.coin} ${l.sideLabel} <em>@ ${fmtPx(l.px)}</em></span>`
+        );
+        // Doubled for seamless infinite-scroll
+        track.innerHTML = items.join('') + items.join('');
+      } else {
+        track.innerHTML = '<span style="opacity:.6">Connecting to Binance liquidation feed…</span>';
+      }
     }
+    const v = totalUsd24h();
+    const observedMs = Date.now() - t0;
+    const isWarmup = observedMs < WARMUP_MS;
     const tot = document.getElementById('liq-total');
     if (tot){
-      const v = totalUsd24h();
-      tot.textContent = v >= 1e9 ? '$' + (v / 1e9).toFixed(2) + 'B' : '$' + (v / 1e6).toFixed(0) + 'M';
+      if (v <= 0){
+        tot.textContent = '—';
+      } else if (v >= 1e9){
+        tot.textContent = '$' + (v / 1e9).toFixed(2) + 'B' + (isWarmup ? '' : '');
+      } else if (v >= 1e6){
+        tot.textContent = '$' + (v / 1e6).toFixed(0) + 'M';
+      } else {
+        tot.textContent = '$' + (v / 1e3).toFixed(0) + 'K';
+      }
     }
     const heroLiq = document.getElementById('floor-liq');
     if (heroLiq){
-      const v = totalUsd24h();
-      heroLiq.textContent = '−$' + (v / 1e9).toFixed(2) + 'B';
+      if (v <= 0){
+        heroLiq.textContent = '—';
+      } else if (v >= 1e9){
+        heroLiq.textContent = '−$' + (v / 1e9).toFixed(2) + 'B';
+      } else if (v >= 1e6){
+        heroLiq.textContent = '−$' + (v / 1e6).toFixed(0) + 'M';
+      } else {
+        heroLiq.textContent = '−$' + (v / 1e3).toFixed(0) + 'K';
+      }
     }
   }
   setInterval(render, RENDER_MS);
