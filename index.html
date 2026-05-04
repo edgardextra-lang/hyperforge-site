@@ -1348,57 +1348,24 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
 })();
 
 /* ─────────────────────────────────────────────
-   Liquidation tape — REAL data via Binance public force-order WebSocket.
-   Free, no API key. Streams every liquidation across BTC/ETH/SOL/etc the
-   moment Binance fills the force-order. We accumulate them into a sliding
-   24h window for the running total, and refresh the visible DOM every 60s
-   per the design ("update every 60 sec").
+   Liquidation tape — REAL data via the HyperForge server-side aggregator.
+   Previously this was a per-tab Binance WebSocket, which restarted from
+   zero on every page load and could only show "since you opened the tab"
+   data. The aggregator now runs on our cloud box, holds a single shared
+   24h rolling window in memory, persists it to disk every 60s, and
+   exposes it at https://stripe.hip3radar.xyz/api/liq/24h. The site polls
+   that endpoint every 60s — so all visitors see the same warmed buffer
+   and the headline 24h figure is real (cold start until 24h elapse).
    ───────────────────────────────────────────── */
-(function liqStream(){
-  const TAPE_MAX = 60;          // visible tape capacity
-  const WIN_MS   = 24 * 3600e3; // 24h sliding window for the total
-  const RENDER_MS = 60_000;     // DOM refresh cadence
+(function liqFeed(){
+  const ENDPOINT = 'https://stripe.hip3radar.xyz/api/liq/24h';
+  const POLL_MS  = 60_000;
 
-  // We do NOT hardcode a 24h total — real liquidations vary 10× day-to-day
-  // ($200M quiet → $5B+ in a flash crash), so any fixed number would be
-  // misleading. Instead we display the observed sum, and once we have at
-  // least 5 minutes of observation we extrapolate the observed rate to 24h.
-  // Both numbers come from REAL Binance force-order events.
-  const WARMUP_MS = 5 * 60 * 1000;  // 5 minutes before we trust the rate
-
-  const tape = [];                  // {coin, sideLabel, usd, px, t}
-  const trail = [];                 // {usd, t} — for sliding 24h sum
-  const t0 = Date.now();
-  let lastRender = 0;               // throttle for real-event renders
-  let wsState = 'connecting';       // connecting | open | live | error
-  let firstMsgAt = 0;
-
-  // No seed entries — the tape only displays REAL liquidations from Binance's
-  // public force-order WebSocket. While we wait for the first message
-  // (typically <2s on a busy market), `render()` paints a "Connecting…"
-  // placeholder so the bar isn't visibly empty.
-
-  function addLiq({coin, sideLabel, usd, px}){
-    const t = Date.now();
-    tape.unshift({coin, sideLabel, usd, px, t});
-    if (tape.length > TAPE_MAX) tape.length = TAPE_MAX;
-    trail.push({usd, t});
-    // Trim window
-    const cutoff = t - WIN_MS;
-    while (trail.length && trail[0].t < cutoff) trail.shift();
-  }
-
-  function totalUsd24h(){
-    // Real-data 24h estimate: extrapolate the observed liquidation rate.
-    // Before 5 min of observation we show only the observed sum (any
-    // earlier extrapolation has too much variance to be meaningful).
-    // After 5 min we project the per-second rate over a 24h window.
-    // After 24h of continuous streaming the result is purely observed.
-    const observedMs = Math.min(Date.now() - t0, WIN_MS);
-    const observedSum = trail.reduce((a, x) => a + x.usd, 0);
-    if (observedMs < WARMUP_MS || observedSum === 0) return observedSum;
-    return observedSum * (WIN_MS / observedMs);
-  }
+  let tape = [];        // [{coin, side, usd, px, t}, ...] newest first
+  let totalUsd = 0;     // server-computed 24h sum
+  let count = 0;        // total events in window
+  let lastFetchOk = 0;  // ms ts of most recent successful fetch
+  let lastError  = '';
 
   function fmtUsd(v){
     if (v >= 1e9) return '$' + (v / 1e9).toFixed(2) + 'B';
@@ -1406,7 +1373,6 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
     if (v >= 1e3) return '$' + (v / 1e3).toFixed(0) + 'K';
     return '$' + v.toFixed(0);
   }
-
   function fmtPx(p){
     if (p >= 1000) return p.toFixed(2);
     if (p >= 1)    return p.toFixed(3);
@@ -1414,124 +1380,61 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
     return p.toExponential(2);
   }
 
-  // ── DOM render — runs every 60s + throttled on each new real event ──
-  function maybeRender(){
-    const now = Date.now();
-    if (now - lastRender > 2_000){
-      lastRender = now;
-      render();
-    }
-  }
   function render(){
-    lastRender = Date.now();
     const track = document.getElementById('liq-track');
     if (track){
       if (tape.length){
-        const items = tape.map(l =>
-          `<span><b>${fmtUsd(l.usd)}</b> ${l.coin} ${l.sideLabel} <em>@ ${fmtPx(l.px)}</em></span>`
-        );
-        // Doubled for seamless infinite-scroll
-        track.innerHTML = items.join('') + items.join('');
+        const items = tape.map(l => {
+          const sideLabel = l.side === 'LONG' ? 'LONG liquidated' : 'SHORT liquidated';
+          return `<span><b>${fmtUsd(l.usd)}</b> ${l.coin} ${sideLabel} <em>@ ${fmtPx(l.px)}</em></span>`;
+        });
+        track.innerHTML = items.join('') + items.join('');   // doubled for seamless scroll
       } else {
-        // Repeat placeholder enough times that the scroll animation is visible.
-        // The CSS animates -50% translateX over 80s; if content is shorter
-        // than the viewport it stays static-looking.
         let label;
-        if (wsState === 'error') {
-          label = '⚠ Live feed unavailable in this network · refresh to retry';
-        } else if (wsState === 'open') {
-          label = '● Connected · waiting for first liquidation event…';
+        if (lastError && !lastFetchOk) {
+          label = '⚠ Live feed temporarily unavailable · retrying…';
+        } else if (lastFetchOk && count === 0) {
+          label = '● Aggregator warming up · waiting for first liquidation…';
         } else {
-          label = '● Connecting to Binance liquidation feed…';
+          label = '● Loading liquidation feed…';
         }
         const stub = `<span style="opacity:.65">${label}</span>`;
         track.innerHTML = Array(8).fill(stub).join('');
       }
     }
-    const v = totalUsd24h();
-    const observedMs = Date.now() - t0;
-    const isWarmup = observedMs < WARMUP_MS;
+
     const tot = document.getElementById('liq-total');
     if (tot){
-      if (v <= 0){
-        tot.textContent = '—';
-      } else if (v >= 1e9){
-        tot.textContent = '$' + (v / 1e9).toFixed(2) + 'B' + (isWarmup ? '' : '');
-      } else if (v >= 1e6){
-        tot.textContent = '$' + (v / 1e6).toFixed(0) + 'M';
-      } else {
-        tot.textContent = '$' + (v / 1e3).toFixed(0) + 'K';
-      }
+      tot.textContent = totalUsd > 0 ? fmtUsd(totalUsd) : '—';
     }
     const heroLiq = document.getElementById('floor-liq');
     if (heroLiq){
-      if (v <= 0){
-        heroLiq.textContent = '—';
-      } else if (v >= 1e9){
-        heroLiq.textContent = '−$' + (v / 1e9).toFixed(2) + 'B';
-      } else if (v >= 1e6){
-        heroLiq.textContent = '−$' + (v / 1e6).toFixed(0) + 'M';
-      } else {
-        heroLiq.textContent = '−$' + (v / 1e3).toFixed(0) + 'K';
-      }
+      heroLiq.textContent = totalUsd > 0 ? '−' + fmtUsd(totalUsd) : '—';
     }
   }
-  setInterval(render, RENDER_MS);
 
-  // ── Binance force-order stream (no auth required) ──────────────────
-  // Auto-reconnect on close. Browser-throttled when tab is inactive — fine.
-  function connect(){
-    let ws;
+  async function poll(){
     try {
-      ws = new WebSocket('wss://fstream.binance.com/ws/!forceOrder@arr');
-    } catch(e){
-      wsState = 'error';
-      render();
-      return;
+      const r = await fetch(ENDPOINT, { cache: 'no-store' });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      const d = await r.json();
+      if (d && d.ok){
+        tape     = (d.recent || []);
+        totalUsd = d.total_usd || 0;
+        count    = d.count || 0;
+        lastFetchOk = Date.now();
+        lastError = '';
+      } else {
+        lastError = (d && d.error) || 'bad payload';
+      }
+    } catch (e){
+      lastError = String(e && e.message || e);
     }
-    ws.onopen = () => {
-      wsState = 'open';
-      render();
-    };
-    ws.onmessage = (ev) => {
-      try {
-        const d = JSON.parse(ev.data || '{}');
-        const o = d.o || {};
-        const sym = (o.s || '').replace(/USDT$|USDC$|BUSD$|USD$/, '');
-        const sz  = parseFloat(o.q  || 0);
-        const px  = parseFloat(o.ap || o.p || 0);
-        const usd = sz * px;
-        if (!sym || !(usd > 20)) return;       // capture more events; HL min ≈$10
-        // Binance reports the side that was FILLED to liquidate.
-        // SELL fill = a LONG position was liquidated; BUY fill = SHORT was liquidated.
-        const sideLabel = o.S === 'SELL' ? 'LONG liquidated' : 'SHORT liquidated';
-        addLiq({coin: sym, sideLabel, usd, px});
-        if (firstMsgAt === 0) firstMsgAt = Date.now();
-        wsState = 'live';
-        maybeRender();
-      } catch(e){}
-    };
-    ws.onclose = () => {
-      if (wsState !== 'live') wsState = 'connecting';
-      setTimeout(connect, 5_000);
-    };
-    ws.onerror = () => {
-      if (wsState !== 'live') wsState = 'error';
-      try { ws.close(); } catch(_){}
-    };
+    render();
   }
-  connect();
 
-  // Diagnostic timeout: if no message after 12s, surface as error so the user
-  // sees a clear placeholder instead of the indefinite "Connecting…".
-  setTimeout(() => {
-    if (firstMsgAt === 0 && wsState !== 'live'){
-      wsState = wsState === 'open' ? wsState : 'error';
-      render();
-    }
-  }, 12_000);
-
-  render();   // initial paint
+  poll();                       // first paint
+  setInterval(poll, POLL_MS);   // refresh every 60s
 })();
 
 /* ─────────────────────────────────────────────
