@@ -1370,6 +1370,8 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
   const trail = [];                 // {usd, t} — for sliding 24h sum
   const t0 = Date.now();
   let lastRender = 0;               // throttle for real-event renders
+  let wsState = 'connecting';       // connecting | open | live | error
+  let firstMsgAt = 0;
 
   // No seed entries — the tape only displays REAL liquidations from Binance's
   // public force-order WebSocket. While we wait for the first message
@@ -1431,7 +1433,19 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
         // Doubled for seamless infinite-scroll
         track.innerHTML = items.join('') + items.join('');
       } else {
-        track.innerHTML = '<span style="opacity:.6">Connecting to Binance liquidation feed…</span>';
+        // Repeat placeholder enough times that the scroll animation is visible.
+        // The CSS animates -50% translateX over 80s; if content is shorter
+        // than the viewport it stays static-looking.
+        let label;
+        if (wsState === 'error') {
+          label = '⚠ Live feed unavailable in this network · refresh to retry';
+        } else if (wsState === 'open') {
+          label = '● Connected · waiting for first liquidation event…';
+        } else {
+          label = '● Connecting to Binance liquidation feed…';
+        }
+        const stub = `<span style="opacity:.65">${label}</span>`;
+        track.innerHTML = Array(8).fill(stub).join('');
       }
     }
     const v = totalUsd24h();
@@ -1471,10 +1485,14 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
     try {
       ws = new WebSocket('wss://fstream.binance.com/ws/!forceOrder@arr');
     } catch(e){
-      // Fully blocked (corporate firewall, etc.) — render once with seed and keep static.
+      wsState = 'error';
       render();
       return;
     }
+    ws.onopen = () => {
+      wsState = 'open';
+      render();
+    };
     ws.onmessage = (ev) => {
       try {
         const d = JSON.parse(ev.data || '{}');
@@ -1483,18 +1501,37 @@ footer a{ color:var(--ink-2);} footer a:hover{ color:var(--calm);}
         const sz  = parseFloat(o.q  || 0);
         const px  = parseFloat(o.ap || o.p || 0);
         const usd = sz * px;
-        if (!sym || !(usd > 100)) return;  // skip noise / bad rows
-        // Binance reports the side that was FILLED to liquidate. SELL fill = LONG was liqd.
+        if (!sym || !(usd > 20)) return;       // capture more events; HL min ≈$10
+        // Binance reports the side that was FILLED to liquidate.
+        // SELL fill = a LONG position was liquidated; BUY fill = SHORT was liquidated.
         const sideLabel = o.S === 'SELL' ? 'LONG liquidated' : 'SHORT liquidated';
         addLiq({coin: sym, sideLabel, usd, px});
+        if (firstMsgAt === 0) firstMsgAt = Date.now();
+        wsState = 'live';
         maybeRender();
       } catch(e){}
     };
-    ws.onclose = () => setTimeout(connect, 5_000);
-    ws.onerror = () => { try { ws.close(); } catch(_){} };
+    ws.onclose = () => {
+      if (wsState !== 'live') wsState = 'connecting';
+      setTimeout(connect, 5_000);
+    };
+    ws.onerror = () => {
+      if (wsState !== 'live') wsState = 'error';
+      try { ws.close(); } catch(_){}
+    };
   }
   connect();
-  render();   // initial paint with seed total before any messages arrive
+
+  // Diagnostic timeout: if no message after 12s, surface as error so the user
+  // sees a clear placeholder instead of the indefinite "Connecting…".
+  setTimeout(() => {
+    if (firstMsgAt === 0 && wsState !== 'live'){
+      wsState = wsState === 'open' ? wsState : 'error';
+      render();
+    }
+  }, 12_000);
+
+  render();   // initial paint
 })();
 
 /* ─────────────────────────────────────────────
