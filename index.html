@@ -1874,7 +1874,7 @@ function startCopyCheckout(ev){
   trk('copy_trade_cta_clicked');
   if (STRIPE_PAYMENT_LINK && /^https:\/\/buy\.stripe\.com\//.test(STRIPE_PAYMENT_LINK)){
     trk('stripe_checkout_redirect');
-    window.location.href = STRIPE_PAYMENT_LINK;
+    window.open(STRIPE_PAYMENT_LINK, '_blank', 'noopener,noreferrer');
     return false;
   }
   // Fallback: drop the user into the waitlist instead of a 404
