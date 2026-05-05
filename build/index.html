@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Custom Trading Bot Build (1:1) — HyperForge</title>
+<meta name="description" content="Done-for-you custom trading bot build. I design and engineer rule-based automated systems tailored to your capital, risk tolerance, and strategy.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<!-- Umami analytics — same property as hyperforge-site -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="ca5167d2-d17c-410a-8c7f-3cac0166b1f9"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#161B22;
+    --bg-2:#1B2129;
+    --bg-3:#222A35;
+    --line:#2A323D;
+    --line-2:#374151;
+    --green:#3FE491;
+    --green-dim:#2BC079;
+    --green-glow:rgba(63,228,145,.18);
+    --text:#E6EDF3;
+    --text-2:#9AA5B1;
+    --text-3:#6B7684;
+    --red:#F87171;
+    --amber:#FBBF24;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --sans:'Inter', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:var(--green);text-decoration:none}
+  img{max-width:100%;display:block}
+
+  body{background:linear-gradient(180deg,#161B22 0%,#131820 100%);background-attachment:fixed;position:relative}
+  body::before{
+    content:"";position:fixed;inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:48px 48px;opacity:.18;pointer-events:none;
+    mask-image:radial-gradient(ellipse at top, #000 30%, transparent 75%);
+    -webkit-mask-image:radial-gradient(ellipse at top, #000 30%, transparent 75%);
+  }
+
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 96px;position:relative;z-index:1;width:100%}
+
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:8px 0 32px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand a{display:flex;align-items:center;gap:12px;color:var(--text)}
+  .logo-mark{
+    width:32px;height:32px;border-radius:8px;
+    background:linear-gradient(135deg,var(--green) 0%,var(--green-dim) 100%);
+    display:grid;place-items:center;
+    font-family:var(--mono);font-weight:700;font-size:14px;color:#0E1218;
+    box-shadow:0 0 18px var(--green-glow);
+  }
+  .brand-name{font-family:var(--mono);font-weight:700;letter-spacing:.06em;font-size:14px;color:var(--text)}
+  .brand-name span{color:var(--green)}
+  .nav-meta{font-family:var(--mono);font-size:11px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase}
+
+  /* hero */
+  .kit-tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--green);background:var(--green-glow);
+    border:1px solid rgba(63,228,145,.3);padding:6px 12px;margin-bottom:24px;
+  }
+  .kit-tag::before{content:"";width:6px;height:6px;background:var(--green);box-shadow:0 0 8px var(--green)}
+
+  h1{font-size:clamp(40px,6vw,72px);line-height:1.02;margin:0 0 20px;font-weight:800;letter-spacing:-.02em}
+  h1 .accent{color:var(--green)}
+  .lede{font-size:18px;line-height:1.6;color:var(--text-2);max-width:680px;margin:0 0 12px}
+  .lede strong{color:var(--text)}
+
+  .hero-foot{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--text-3)}
+  .hero-foot span{padding:6px 10px;border:1px solid var(--line);background:var(--bg-2)}
+
+  /* hero CTA pair */
+  .hero-cta{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap}
+  .hero-cta a{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:14px 22px;font-family:var(--sans);font-weight:600;font-size:15px;
+    border:1px solid var(--line);background:var(--bg-3);color:var(--text);
+    transition:all .15s ease;
+  }
+  .hero-cta a:hover{border-color:var(--green);transform:translateY(-1px)}
+  .hero-cta a.primary{background:var(--green);color:#0E1218;border-color:var(--green)}
+  .hero-cta a.primary:hover{background:#54f0a1}
+
+  /* sections */
+  section{margin-top:64px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:14px}
+  .sec-num{font-family:var(--mono);font-size:13px;color:var(--green);letter-spacing:.1em}
+  .sec-title{font-size:24px;font-weight:700;letter-spacing:-.01em;margin:0}
+  .sec-sub{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.15em}
+
+  .grid{display:grid;gap:16px}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  @media (max-width:780px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+  .card{background:var(--bg-2);border:1px solid var(--line);padding:24px;position:relative}
+  .card.accent{border-color:rgba(63,228,145,.35);background:linear-gradient(180deg,rgba(63,228,145,.04),transparent 60%),var(--bg-2)}
+  .card.danger{border-color:rgba(248,113,113,.3);background:linear-gradient(180deg,rgba(248,113,113,.04),transparent 60%),var(--bg-2)}
+  .card h3{margin:0 0 8px;font-size:16px;font-weight:700;letter-spacing:-.005em}
+  .card p{margin:0;color:var(--text-2);font-size:14px;line-height:1.6}
+  .card .k{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px;display:block}
+  .card.danger .k{color:var(--red)}
+
+  /* simple list */
+  .core-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  .core-list li{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;background:var(--bg-2);border:1px solid var(--line);font-size:15px;color:var(--text-2)}
+  .core-list li::before{content:"";flex:none;width:10px;height:10px;margin-top:6px;background:var(--green);box-shadow:0 0 0 3px rgba(63,228,145,.15)}
+  .core-list li strong{color:var(--text);font-weight:600}
+  .core-list.danger li::before{background:var(--red);box-shadow:0 0 0 3px rgba(248,113,113,.15)}
+
+  /* deliverables grid */
+  .delivs{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media (max-width:780px){.delivs{grid-template-columns:1fr}}
+  .deliv{background:var(--bg-2);border:1px solid var(--line);padding:22px}
+  .deliv-num{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.18em;margin-bottom:10px}
+  .deliv h3{margin:0 0 10px;font-size:17px;font-weight:700}
+  .deliv ul{margin:8px 0 0;padding-left:18px;color:var(--text-2);font-size:14px;line-height:1.7}
+  .deliv ul li{margin-bottom:4px}
+
+  /* deliverable callout */
+  .deliv-out{
+    border:1px dashed var(--line-2);padding:24px;
+    background:repeating-linear-gradient(45deg,transparent 0 14px,rgba(63,228,145,.025) 14px 28px),var(--bg-2);
+  }
+  .deliv-out p{margin:0;font-size:16px;color:var(--text);line-height:1.55}
+  .deliv-out .k{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px;display:block}
+
+  /* steps */
+  .steps{display:grid;gap:0;border:1px solid var(--line);background:var(--bg-2)}
+  .step{display:grid;grid-template-columns:64px 1fr;border-top:1px solid var(--line);padding:18px 20px;align-items:center}
+  .step:first-child{border-top:0}
+  .step-num{font-family:var(--mono);font-weight:700;font-size:18px;color:var(--green);width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid var(--green);background:rgba(63,228,145,.08)}
+  .step-body strong{display:block;font-size:15px;margin-bottom:2px}
+  .step-body span{font-size:13px;color:var(--text-2)}
+
+  /* pricing */
+  .pricing{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:680px){.pricing{grid-template-columns:1fr}}
+  .tier{
+    background:var(--bg-2);border:1px solid var(--line);padding:28px 26px;position:relative;
+  }
+  .tier.featured{
+    border-color:rgba(63,228,145,.35);
+    background:linear-gradient(180deg,rgba(63,228,145,.05),transparent 60%),var(--bg-2);
+  }
+  .tier .ribbon{
+    position:absolute;top:14px;right:14px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--green);padding:4px 8px;border:1px solid rgba(63,228,145,.4);background:rgba(63,228,145,.08);
+  }
+  .tier .tier-k{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;display:block}
+  .tier h3{margin:0 0 6px;font-size:18px;font-weight:700}
+  .tier .price-row{display:flex;align-items:baseline;gap:8px;margin:14px 0 14px;font-family:var(--mono);font-weight:700;line-height:1}
+  .tier .price-row .currency{color:var(--text);font-size:22px}
+  .tier .price-row .num{font-size:48px;color:var(--green);letter-spacing:-.02em}
+  .tier .price-row .num.range{font-size:38px}
+  .tier .desc{font-size:14px;color:var(--text-2);line-height:1.55;margin-bottom:14px}
+  .tier ul{margin:0 0 18px;padding-left:18px;color:var(--text-2);font-size:13.5px;line-height:1.7}
+  .tier .pick{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 18px;border:1px solid var(--line);background:var(--bg-3);color:var(--text);
+    font-weight:600;font-size:14px;width:100%;justify-content:center;
+    transition:all .15s ease;cursor:pointer;
+  }
+  .tier .pick:hover{border-color:var(--green);transform:translateY(-1px)}
+  .tier.featured .pick{background:var(--green);color:#0E1218;border-color:var(--green)}
+  .tier.featured .pick:hover{background:#54f0a1}
+
+  /* CTA */
+  .cta{
+    margin-top:64px;border:1px solid var(--line);
+    background:radial-gradient(120% 100% at 0% 0%,rgba(63,228,145,.08),transparent 50%),var(--bg-2);
+    padding:40px;
+  }
+  .cta h2{margin:0 0 8px;font-size:32px;letter-spacing:-.01em}
+  .cta p{color:var(--text-2);margin:0 0 24px;font-size:16px}
+  .cta .row{display:flex;gap:14px;flex-wrap:wrap}
+  .cta .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    padding:16px 26px;border:1px solid var(--line);background:var(--bg-3);color:var(--text);
+    font-weight:600;font-size:15px;transition:all .15s ease;
+  }
+  .cta .btn:hover{border-color:var(--green);transform:translateY(-1px)}
+  .cta .btn.primary{background:var(--green);color:#0E1218;border-color:var(--green)}
+  .cta .btn.primary:hover{background:#54f0a1}
+  .cta .scarcity{margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--amber);letter-spacing:.04em}
+
+  /* upgrade note */
+  .upgrade{
+    margin-top:32px;padding:18px 22px;border-left:3px solid var(--green);
+    background:rgba(63,228,145,.05);font-family:var(--mono);font-size:13.5px;color:var(--text-2);line-height:1.6;
+  }
+  .upgrade a{font-weight:600}
+
+  /* footer */
+  footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .disclaim{margin-top:32px;font-size:12px;color:var(--text-3);line-height:1.6;font-family:var(--mono)}
+
+  /* mobile pass */
+  @media (max-width:600px){
+    .wrap{padding:24px 18px 64px}
+    .nav{padding:4px 0 24px}
+    .kit-tag{font-size:10px;padding:5px 10px;margin-bottom:18px;letter-spacing:.16em}
+    h1{font-size:28px;line-height:1.12;letter-spacing:-.015em;overflow-wrap:break-word}
+    .lede{font-size:15px;line-height:1.55}
+    .hero-foot{margin-top:20px;gap:8px;font-size:11px}
+    .hero-foot span{padding:5px 8px}
+    .hero-cta{margin-top:24px;gap:10px}
+    .hero-cta a{padding:12px 18px;font-size:14px;flex:1 1 auto;justify-content:center}
+    section{margin-top:44px}
+    .sec-head{flex-wrap:wrap;gap:8px 12px;margin-bottom:18px;padding-bottom:12px}
+    .sec-title{font-size:20px;flex:1 1 auto}
+    .sec-sub{font-size:10px;margin-left:0;flex-basis:100%;order:3}
+    .sec-num{font-size:12px}
+    .card{padding:18px}
+    .card h3{font-size:15px}
+    .card p{font-size:13.5px}
+    .core-list li{padding:12px 14px;font-size:14px}
+    .deliv{padding:18px}
+    .deliv h3{font-size:15.5px}
+    .deliv-out{padding:18px}
+    .deliv-out p{font-size:14.5px}
+    .step{grid-template-columns:48px 1fr;padding:14px 16px;gap:12px}
+    .step-num{width:36px;height:36px;font-size:15px}
+    .step-body strong{font-size:14px}
+    .step-body span{font-size:12.5px}
+    .tier{padding:22px 20px}
+    .tier .price-row .num{font-size:38px}
+    .tier .price-row .num.range{font-size:30px}
+    .cta{padding:24px 20px;margin-top:36px}
+    .cta h2{font-size:24px;line-height:1.15}
+    .cta p{font-size:14px;margin-bottom:18px}
+    .cta .btn{padding:14px 18px;font-size:14px;flex:1 1 auto;justify-content:center}
+    .disclaim{font-size:11.5px;line-height:1.55}
+    footer{flex-direction:column;align-items:flex-start;gap:6px;font-size:10px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="brand">
+      <a href="../">
+        <div class="logo-mark">/&gt;</div>
+        <div class="brand-name">HYPER<span>FORGE</span></div>
+      </a>
+    </div>
+    <div class="nav-meta">1:1 · Build Service</div>
+  </nav>
+
+  <!-- HERO -->
+  <header>
+    <div class="kit-tag">Custom Bot Build · 1:1</div>
+    <h1>I'll build your<br/><span class="accent">trading bot</span> for you.</h1>
+    <p class="lede">A done-for-you system build — not a course, not signals, not copy trading. I design and engineer a <strong>rule-based automated strategy</strong> tailored to your capital, risk tolerance, and trading approach.</p>
+    <p class="lede" style="color:var(--text-3)">You walk away with a functioning system that executes consistently, without emotional decision-making.</p>
+    <div class="hero-foot">
+      <span>// done-for-you</span>
+      <span>// rule-based</span>
+      <span>// fully owned by you</span>
+    </div>
+    <div class="hero-cta">
+      <a class="primary" href="mailto:edgard.extra@gmail.com?subject=Custom%20Bot%20Build%20-%20Application" data-cta="build_apply" data-umami-event="build_cta_click" data-umami-event-tier="apply_top">→ Apply / Book a call</a>
+      <a href="#pricing" data-cta="build_pricing" data-umami-event="build_cta_click" data-umami-event-tier="pricing_top">See pricing ↓</a>
+    </div>
+  </header>
+
+  <!-- 1. WHAT THIS IS FOR -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/01</div>
+      <h2 class="sec-title">What this is for</h2>
+      <div class="sec-sub">Fit check</div>
+    </div>
+    <p style="color:var(--text-2);max-width:680px;margin:0 0 18px;font-size:15px;line-height:1.6">This service is for you if you want to:</p>
+    <ul class="core-list">
+      <li><strong>Automate</strong> a strategy you already use — or one you want to develop.</li>
+      <li>Remove <strong>emotional decision-making</strong> from execution.</li>
+      <li>Build a <strong>systematic approach</strong> to trading.</li>
+      <li>Turn manual trading logic into a <strong>repeatable process</strong>.</li>
+      <li>Improve <strong>discipline and consistency</strong> through automation.</li>
+    </ul>
+  </section>
+
+  <!-- 2. WHAT YOU GET -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/02</div>
+      <h2 class="sec-title">What you get</h2>
+      <div class="sec-sub">Scope</div>
+    </div>
+    <div class="delivs">
+      <div class="deliv">
+        <div class="deliv-num">/01 · Strategy design</div>
+        <h3>Strategy design (or optimization)</h3>
+        <p style="color:var(--text-2);font-size:14px;line-height:1.6;margin-bottom:8px">Define or refine your trading logic together:</p>
+        <ul>
+          <li>Entry conditions</li>
+          <li>Exit rules</li>
+          <li>Risk management rules</li>
+          <li>Position sizing logic</li>
+        </ul>
+      </div>
+      <div class="deliv">
+        <div class="deliv-num">/02 · Custom build</div>
+        <h3>Custom bot build</h3>
+        <p style="color:var(--text-2);font-size:14px;line-height:1.6;margin-bottom:8px">Strategy translated into a working automated system:</p>
+        <ul>
+          <li>Rule-based execution logic</li>
+          <li>Backtest-informed structure (where applicable)</li>
+          <li>Exchange integration setup guidance</li>
+        </ul>
+      </div>
+      <div class="deliv">
+        <div class="deliv-num">/03 · Risk layer</div>
+        <h3>Risk management layer</h3>
+        <p style="color:var(--text-2);font-size:14px;line-height:1.6;margin-bottom:8px">Built-in controls so the system can't blow up unsupervised:</p>
+        <ul>
+          <li>Max drawdown limits (conceptual or enforced)</li>
+          <li>Position sizing rules</li>
+          <li>Trade frequency control</li>
+        </ul>
+      </div>
+      <div class="deliv">
+        <div class="deliv-num">/04 · Blueprint</div>
+        <h3>Execution blueprint</h3>
+        <p style="color:var(--text-2);font-size:14px;line-height:1.6;margin-bottom:8px">Full documentation handed to you:</p>
+        <ul>
+          <li>Clear setup documentation</li>
+          <li>Step-by-step deployment guide</li>
+          <li>Operating rules — how to run it safely</li>
+        </ul>
+      </div>
+      <div class="deliv" style="grid-column:1/-1">
+        <div class="deliv-num">/05 · Iteration (optional)</div>
+        <h3>Light tuning after launch</h3>
+        <p style="color:var(--text-2);font-size:14px;line-height:1.6">Once the bot is live, light adjustments to refine logic based on real performance — not a permanent retainer, just a follow-up so the system actually works in your hands.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. DELIVERABLE -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/03</div>
+      <h2 class="sec-title">What you walk away with</h2>
+      <div class="sec-sub">Deliverable</div>
+    </div>
+    <div class="deliv-out">
+      <span class="k">// Final delivery</span>
+      <p>A fully structured, <strong>rules-based trading system</strong> you can run consistently — without manual decision-making, without "vibes," without breaking your own rules at 3am.</p>
+    </div>
+  </section>
+
+  <!-- 4. WHAT THIS IS NOT -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/04</div>
+      <h2 class="sec-title">What this is NOT</h2>
+      <div class="sec-sub">Honesty</div>
+    </div>
+    <div class="grid grid-2">
+      <div class="card danger">
+        <span class="k">Not</span>
+        <h3>A guaranteed profit system</h3>
+        <p>No system guarantees returns. Markets enter regimes where every strategy underperforms. The system gives you discipline — not certainty.</p>
+      </div>
+      <div class="card danger">
+        <span class="k">Not</span>
+        <h3>A signals group</h3>
+        <p>You're not subscribing to my picks. You're getting a system you own and run yourself.</p>
+      </div>
+      <div class="card danger">
+        <span class="k">Not</span>
+        <h3>A plug-and-play money printer</h3>
+        <p>You'll need to deploy it, monitor it, and take ownership of the capital it manages. The bot doesn't supervise itself.</p>
+      </div>
+      <div class="card danger">
+        <span class="k">Not</span>
+        <h3>Financial advice</h3>
+        <p>Trading involves real risk of loss. The goal is systematic execution — not prediction, not get-rich-quick.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. WHO THIS IS NOT FOR -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/05</div>
+      <h2 class="sec-title">Who this is NOT for</h2>
+      <div class="sec-sub">Skip if</div>
+    </div>
+    <ul class="core-list danger">
+      <li>You expect <strong>guaranteed returns</strong>.</li>
+      <li>You don't have any capital to deploy.</li>
+      <li>You want <strong>"quick wins"</strong> or gambling-style setups.</li>
+      <li>You're not willing to follow a structured system once it's built.</li>
+    </ul>
+  </section>
+
+  <!-- 6. HOW IT WORKS -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/06</div>
+      <h2 class="sec-title">How it works</h2>
+      <div class="sec-sub">5 steps</div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <strong>You apply / book a call</strong>
+          <span>Tell me your trading goals, capital, and what you've tried.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <strong>We define your trading approach</strong>
+          <span>Together, we shape entry, exit, sizing, and risk rules.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <strong>I build your system architecture</strong>
+          <span>Translate the logic into a working, automated execution layer.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <strong>You receive deployment instructions</strong>
+          <span>Setup docs, exchange integration steps, operating rules.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-body">
+          <strong>You start running your bot</strong>
+          <span>Optional follow-up tuning based on real-world performance.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. PRICING -->
+  <section id="pricing">
+    <div class="sec-head">
+      <div class="sec-num">/07</div>
+      <h2 class="sec-title">Pricing</h2>
+      <div class="sec-sub">Depends on scope</div>
+    </div>
+    <div class="pricing">
+      <div class="tier">
+        <span class="tier-k">Starter</span>
+        <h3>Simple automation setup</h3>
+        <p class="desc">A clean, single-rule automated strategy on one venue. Best when you already have a defined edge and just need it executing.</p>
+        <div class="price-row">
+          <span class="currency">$</span><span class="num">1,000<span style="font-size:18px;color:var(--text-3);font-weight:400">+</span></span>
+        </div>
+        <ul>
+          <li>1 strategy, 1 venue</li>
+          <li>Backtest-informed structure</li>
+          <li>Setup + deployment docs</li>
+          <li>1 round of post-launch tuning</li>
+        </ul>
+        <a class="pick" href="mailto:edgard.extra@gmail.com?subject=Custom%20Bot%20Build%20-%20Starter" data-cta="build_starter" data-umami-event="build_cta_click" data-umami-event-tier="starter_1k">→ Apply for Starter</a>
+      </div>
+      <div class="tier featured">
+        <div class="ribbon">// Most chosen</div>
+        <span class="tier-k">Full Build</span>
+        <h3>Full custom system + optimization</h3>
+        <p class="desc">Multi-rule strategy design, full risk layer, backtest-driven parameter selection, and deployment guidance end-to-end.</p>
+        <div class="price-row">
+          <span class="currency">$</span><span class="num range">2,000–3,000</span>
+        </div>
+        <ul>
+          <li>Multi-condition strategy design or refactor</li>
+          <li>Backtest + parameter optimization</li>
+          <li>Risk + drawdown layer engineered</li>
+          <li>Deployment, docs, operating rules</li>
+          <li>2 rounds of post-launch iteration</li>
+        </ul>
+        <a class="pick" href="mailto:edgard.extra@gmail.com?subject=Custom%20Bot%20Build%20-%20Full%20Build" data-cta="build_full" data-umami-event="build_cta_click" data-umami-event-tier="full_2_3k">→ Apply for Full Build</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. WHY THIS EXISTS -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/08</div>
+      <h2 class="sec-title">Why this exists</h2>
+      <div class="sec-sub">Plain talk</div>
+    </div>
+    <p class="lede" style="margin-bottom:18px">Most traders fail because they:</p>
+    <ul class="core-list">
+      <li><strong>Overtrade</strong> — boredom, FOMO, revenge.</li>
+      <li><strong>Break their own rules</strong> — especially the ones they wrote sober.</li>
+      <li><strong>Lack consistency</strong> — different setups Monday vs Friday.</li>
+    </ul>
+    <p class="lede" style="margin-top:22px">This service removes decision-making from execution and replaces it with a system. The system doesn't get tired, doesn't tilt, and doesn't move stops at 3am.</p>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta" id="apply">
+    <h2>Ready to stop deciding mid-trade?</h2>
+    <p>Apply now. Limited spots per month due to build time and customization depth — I work directly with you on every system, no junior handoff.</p>
+    <div class="row">
+      <a class="btn primary" href="mailto:edgard.extra@gmail.com?subject=Custom%20Bot%20Build%20-%20Application" data-cta="build_apply_bottom" data-umami-event="build_cta_click" data-umami-event-tier="apply_bottom">→ Apply / Book a call</a>
+      <a class="btn" href="../kit/" data-cta="build_kit_redirect" data-umami-event="build_cta_click" data-umami-event-tier="kit_redirect">Read the free starter kit first</a>
+    </div>
+    <div class="scarcity">// Currently accepting 2–3 builds per month</div>
+  </section>
+
+  <!-- Upgrade note -->
+  <div class="upgrade">
+    // <strong style="color:var(--text)">Most clients start small.</strong> They begin with the free <a href="../kit/">Copy Trading Starter Kit</a> or live signals, then upgrade to a custom build once they understand how the logic actually works in their hands. There's no shame in that order — it usually makes the build better.
+  </div>
+
+  <p class="disclaim">// Disclaimer: trading carries real risk of loss. The custom bot build is a tool, not financial advice. You retain full ownership and responsibility for any system delivered, the capital it manages, and the exchange account it executes through.</p>
+
+  <footer>
+    <div>// HyperForge · Custom Bot Build · 1:1</div>
+    <div>v1.0 · 2026</div>
+  </footer>
+</div>
+
+<script>
+function track(name, props){
+  try{ window.umami && window.umami.track && window.umami.track(name, props||{}); }catch(e){}
+}
+document.querySelectorAll('a[href^="mailto:"]').forEach(a=>{
+  a.addEventListener('click',()=>track('build_outbound', {tier:a.dataset.cta||'mailto', href:a.href}));
+});
+document.querySelectorAll('[data-cta]').forEach(el=>{
+  el.addEventListener('click',()=>track('build_cta_click', {tier:el.dataset.cta}));
+});
+</script>
+</body>
+</html>
