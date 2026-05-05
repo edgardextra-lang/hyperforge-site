@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Copy Trading Starter Kit — HyperForge</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="favicon.svg">
+<!-- Umami analytics — same property as hyperforge-site -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="ca5167d2-d17c-410a-8c7f-3cac0166b1f9"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#161B22;
+    --bg-2:#1B2129;
+    --bg-3:#222A35;
+    --line:#2A323D;
+    --line-2:#374151;
+    --green:#3FE491;
+    --green-dim:#2BC079;
+    --green-glow:rgba(63,228,145,.18);
+    --text:#E6EDF3;
+    --text-2:#9AA5B1;
+    --text-3:#6B7684;
+    --red:#F87171;
+    --amber:#FBBF24;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+    --sans:'Inter', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:var(--green);text-decoration:none}
+  img{max-width:100%;display:block}
+
+  /* pixel grid backdrop */
+  body{
+    background:
+      linear-gradient(180deg, #161B22 0%, #131820 100%);
+    background-attachment:fixed;
+    position:relative;
+  }
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity:.18;
+    pointer-events:none;
+    mask-image: radial-gradient(ellipse at top, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at top, #000 30%, transparent 75%);
+  }
+
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 96px;position:relative;z-index:1;width:100%}
+
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:8px 0 32px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo-mark{
+    width:32px;height:32px;border-radius:8px;
+    background:linear-gradient(135deg, var(--green) 0%, var(--green-dim) 100%);
+    display:grid;place-items:center;
+    font-family:var(--mono);font-weight:700;font-size:14px;color:#0E1218;
+    box-shadow:0 0 18px var(--green-glow);
+  }
+  .brand-name{font-family:var(--mono);font-weight:700;letter-spacing:.06em;font-size:14px}
+  .brand-name span{color:var(--green)}
+  .nav-meta{font-family:var(--mono);font-size:11px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase}
+
+  /* hero */
+  .kit-tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--green);
+    background:var(--green-glow);
+    border:1px solid rgba(63,228,145,.3);
+    padding:6px 12px;
+    margin-bottom:24px;
+  }
+  .kit-tag::before{content:"";width:6px;height:6px;background:var(--green);box-shadow:0 0 8px var(--green)}
+  h1{
+    font-size:clamp(40px,6vw,72px);
+    line-height:1.02;
+    margin:0 0 20px;
+    font-weight:800;
+    letter-spacing:-.02em;
+  }
+  h1 .accent{color:var(--green)}
+  .lede{font-size:18px;line-height:1.6;color:var(--text-2);max-width:680px;margin:0 0 12px}
+  .lede strong{color:var(--text)}
+  .hero-foot{
+    margin-top:28px;
+    display:flex;gap:12px;flex-wrap:wrap;
+    font-family:var(--mono);font-size:12px;color:var(--text-3)
+  }
+  .hero-foot span{padding:6px 10px;border:1px solid var(--line);background:var(--bg-2)}
+
+  /* section */
+  section{margin-top:64px}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:14px}
+  .sec-num{font-family:var(--mono);font-size:13px;color:var(--green);letter-spacing:.1em}
+  .sec-title{font-size:24px;font-weight:700;letter-spacing:-.01em;margin:0}
+  .sec-sub{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:.15em}
+
+  /* cards / grids */
+  .grid{display:grid;gap:16px}
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  @media (max-width:780px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+  .card{
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    padding:24px;
+    position:relative;
+  }
+  .card.accent{border-color:rgba(63,228,145,.35);background:linear-gradient(180deg,rgba(63,228,145,.04),transparent 60%),var(--bg-2)}
+  .card h3{margin:0 0 8px;font-size:16px;font-weight:700;letter-spacing:-.005em}
+  .card p{margin:0;color:var(--text-2);font-size:14px;line-height:1.6}
+  .card .k{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:.15em;text-transform:uppercase;margin-bottom:10px;display:block}
+
+  /* core list */
+  .core-list{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+  .core-list li{
+    display:flex;gap:14px;align-items:flex-start;
+    padding:14px 16px;
+    background:var(--bg-2);
+    border:1px solid var(--line);
+    font-size:15px;
+  }
+  .core-list li::before{
+    content:"";flex:none;
+    width:10px;height:10px;margin-top:6px;
+    background:var(--green);
+    box-shadow:0 0 0 3px rgba(63,228,145,.15);
+  }
+  .pull-quote{
+    margin:24px 0 0;
+    border-left:3px solid var(--green);
+    padding:14px 20px;
+    background:rgba(63,228,145,.05);
+    font-family:var(--mono);
+    font-size:14px;
+    color:var(--text);
+  }
+
+  /* expectations */
+  .exp{display:grid;gap:0;border:1px solid var(--line);background:var(--bg-2)}
+  .exp-row{display:grid;grid-template-columns:42px 1fr;border-top:1px solid var(--line)}
+  .exp-row:first-child{border-top:0}
+  .exp-mark{display:flex;align-items:center;justify-content:center;background:var(--bg-3);font-family:var(--mono);color:var(--green)}
+  .exp-body{padding:16px 20px}
+  .exp-body strong{display:block;font-size:14px;margin-bottom:2px}
+  .exp-body span{font-size:13px;color:var(--text-2)}
+
+  /* risk box */
+  .risk{
+    border:1px dashed var(--line-2);
+    padding:24px;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        transparent 0 14px,
+        rgba(63,228,145,.025) 14px 28px
+      ),
+      var(--bg-2);
+  }
+  .risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:14px}
+  @media (max-width:680px){.risk-grid{grid-template-columns:1fr}}
+  .risk-stat{}
+  .risk-stat .num{font-family:var(--mono);font-size:28px;color:var(--green);font-weight:700;letter-spacing:-.02em}
+  .risk-stat .lbl{font-size:13px;color:var(--text-2);margin-top:2px}
+
+  /* perf */
+  .perf{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:680px){.perf{grid-template-columns:1fr 1fr}}
+  .stat{
+    background:var(--bg-2);border:1px solid var(--line);padding:18px;
+  }
+  .stat .v{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+  .stat .v.pos{color:var(--green)}
+  .stat .v.neg{color:var(--red)}
+  .stat .l{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--text-3);margin-top:6px}
+
+  .trades{margin-top:18px;border:1px solid var(--line);background:var(--bg-2)}
+  .trades-head, .trades-row{
+    display:grid;grid-template-columns:1fr .8fr .8fr .8fr 1fr;
+    padding:12px 16px;font-family:var(--mono);font-size:12px;
+  }
+  .trades-head{background:var(--bg-3);color:var(--text-3);text-transform:uppercase;letter-spacing:.1em}
+  .trades-row{border-top:1px solid var(--line);color:var(--text-2)}
+  .trades-row .pos{color:var(--green)}
+  .trades-row .neg{color:var(--red)}
+  @media (max-width:680px){
+    .trades-head, .trades-row{grid-template-columns:1.1fr .8fr .8fr .9fr;font-size:11px;padding:10px 12px;gap:8px}
+    .trades-head .hide-m, .trades-row .hide-m{display:none}
+  }
+
+  /* ──────────────── Mobile pass ──────────────── */
+  @media (max-width:600px){
+    .wrap{padding:24px 18px 64px}
+    .nav{padding:4px 0 24px}
+    .kit-tag{font-size:10px;padding:5px 10px;margin-bottom:18px;letter-spacing:.16em}
+    h1{font-size:28px;line-height:1.12;letter-spacing:-.015em;overflow-wrap:break-word}
+    .lede{font-size:15px;line-height:1.55}
+    .hero-foot{margin-top:20px;gap:8px;font-size:11px}
+    .hero-foot span{padding:5px 8px}
+
+    section{margin-top:44px}
+    .sec-head{flex-wrap:wrap;gap:8px 12px;margin-bottom:18px;padding-bottom:12px}
+    .sec-title{font-size:20px;flex:1 1 auto}
+    .sec-sub{font-size:10px;margin-left:0;flex-basis:100%;order:3}
+    .sec-num{font-size:12px}
+
+    .card{padding:18px}
+    .card h3{font-size:15px}
+    .card p{font-size:13.5px}
+
+    .core-list li{padding:12px 14px;font-size:14px}
+    .pull-quote{font-size:13px;padding:12px 16px}
+
+    .exp-mark{font-size:13px}
+    .exp-body{padding:13px 16px}
+    .exp-body strong{font-size:13.5px}
+    .exp-body span{font-size:12.5px}
+
+    .risk{padding:18px}
+    .risk-stat .num{font-size:24px}
+    .risk-stat .lbl{font-size:12px}
+
+    .perf{gap:10px}
+    .stat{padding:14px 14px}
+    .stat .v{font-size:21px}
+    .stat .l{font-size:10px;letter-spacing:.12em}
+
+    .step{grid-template-columns:48px 1fr;padding:14px 16px;gap:12px}
+    .step-num{width:36px;height:36px;font-size:15px}
+    .step-body strong{font-size:14px}
+    .step-body span{font-size:12.5px}
+
+    .cta{padding:24px 20px;margin-top:36px}
+    .cta h2{font-size:24px;line-height:1.15}
+    .cta p{font-size:14px;margin-bottom:18px}
+    .btn{padding:14px 16px;font-size:14px}
+    .btn .price{font-size:22px}
+
+    .disclaim{font-size:11.5px;line-height:1.55}
+    footer{flex-direction:column;align-items:flex-start;gap:6px;font-size:10px}
+  }
+
+  @media (max-width:380px){
+    h1{font-size:clamp(28px,9.5vw,40px)}
+    .trades-head, .trades-row{font-size:10.5px;padding:9px 10px}
+    .perf{grid-template-columns:1fr}
+  }
+
+  /* steps */
+  .steps{display:grid;gap:0;border:1px solid var(--line);background:var(--bg-2);counter-reset:step}
+  .step{display:grid;grid-template-columns:64px 1fr;border-top:1px solid var(--line);padding:18px 20px;align-items:center}
+  .step:first-child{border-top:0}
+  .step-num{
+    font-family:var(--mono);font-weight:700;font-size:18px;color:var(--green);
+    width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--green);background:rgba(63,228,145,.08);
+  }
+  .step-body strong{display:block;font-size:15px;margin-bottom:2px}
+  .step-body span{font-size:13px;color:var(--text-2)}
+
+  /* CTA */
+  .cta{
+    margin-top:48px;
+    border:1px solid var(--line);
+    background:
+      radial-gradient(120% 100% at 0% 0%, rgba(63,228,145,.08), transparent 50%),
+      var(--bg-2);
+    padding:40px;
+  }
+  .cta h2{margin:0 0 8px;font-size:32px;letter-spacing:-.01em}
+  .cta p{color:var(--text-2);margin:0 0 24px;font-size:16px}
+  .btns{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:600px){.btns{grid-template-columns:1fr}}
+  .btn{
+    display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+    padding:18px 22px;
+    border:1px solid var(--line);
+    background:var(--bg-3);
+    color:var(--text);
+    font-family:var(--sans);font-weight:600;font-size:15px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .btn:hover{border-color:var(--green);transform:translateY(-1px)}
+  .btn.primary{background:var(--green);color:#0E1218;border-color:var(--green)}
+  .btn.primary:hover{background:#54f0a1}
+  .btn .price{font-family:var(--mono);font-size:24px;font-weight:700;letter-spacing:-.02em}
+  .btn .desc{font-size:12px;color:var(--text-2);font-weight:400}
+  .btn.primary .desc{color:rgba(14,18,24,.7)}
+
+  /* footer */
+  footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--text-3);letter-spacing:.1em;text-transform:uppercase;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .disclaim{margin-top:32px;font-size:12px;color:var(--text-3);line-height:1.6;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="brand">
+      <div class="logo-mark" aria-label="HyperForge">/&gt;</div>
+      <div class="brand-name">HYPER<span>FORGE</span></div>
+    </div>
+    <div class="nav-meta">v1.0 · Starter Kit</div>
+  </nav>
+
+  <!-- HERO -->
+  <header>
+    <div class="kit-tag">Copy Trading · Starter Kit</div>
+    <h1>Welcome to the<br/><span class="accent">Copy Trading</span> Starter Kit.</h1>
+    <p class="lede">A simplified breakdown of how my trading system works — and how people use it to <strong>automate execution</strong> instead of trading manually.</p>
+    <p class="lede" style="color:var(--text-3)">No hype. No promises. Just process.</p>
+    <div class="hero-foot">
+      <span>// rule-based</span>
+      <span>// risk-managed</span>
+      <span>// transparent</span>
+    </div>
+  </header>
+
+  <!-- 2. CORE EXPLANATION -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/01</div>
+      <h2 class="sec-title">How the system works</h2>
+      <div class="sec-sub">core</div>
+    </div>
+    <p style="color:var(--text-2);max-width:680px;margin:0 0 18px;font-size:15px;line-height:1.6">What you're copying — in plain English:</p>
+    <ul class="core-list">
+      <li>A <strong>rule-based</strong> trading system. Not predictions. Not vibes.</li>
+      <li>Entries triggered by <strong>predefined conditions</strong>, not opinion.</li>
+      <li><strong>Automated or semi-automated</strong> execution depending on your plan.</li>
+      <li><strong>Built-in risk management</strong> on every trade — stop loss, sizing, exposure caps.</li>
+    </ul>
+    <div class="pull-quote">// The goal is consistency, not guessing the market.</div>
+  </section>
+
+  <!-- 3. THREE WAYS -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/02</div>
+      <h2 class="sec-title">3 ways people use it</h2>
+      <div class="sec-sub">flexible</div>
+    </div>
+    <div class="grid grid-3">
+      <div class="card accent">
+        <span class="k">Option A</span>
+        <h3>Passive Copy</h3>
+        <p>Connect your account. Trades mirror automatically. Hands-off — the system runs while you don't.</p>
+      </div>
+      <div class="card">
+        <span class="k">Option B</span>
+        <h3>Semi-Active</h3>
+        <p>Receive signals. Decide when to take them. Execute manually on your own exchange.</p>
+      </div>
+      <div class="card">
+        <span class="k">Option C</span>
+        <h3>Learning Mode</h3>
+        <p>Just watch the signals. Use them to study how a real systematic strategy behaves over time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. EXPECTATIONS -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/03</div>
+      <h2 class="sec-title">Realistic expectations</h2>
+      <div class="sec-sub">read this</div>
+    </div>
+    <div class="exp">
+      <div class="exp-row">
+        <div class="exp-mark">!</div>
+        <div class="exp-body">
+          <strong>There will be losing trades.</strong>
+          <span>Every system has them. Anyone telling you otherwise is selling you something else.</span>
+        </div>
+      </div>
+      <div class="exp-row">
+        <div class="exp-mark">!</div>
+        <div class="exp-body">
+          <strong>Not every day is profitable.</strong>
+          <span>Edge plays out over weeks and months — not single sessions.</span>
+        </div>
+      </div>
+      <div class="exp-row">
+        <div class="exp-mark">!</div>
+        <div class="exp-body">
+          <strong>Risk management &gt; win rate.</strong>
+          <span>How much you lose when you're wrong matters more than how often you're right.</span>
+        </div>
+      </div>
+      <div class="exp-row">
+        <div class="exp-mark">✓</div>
+        <div class="exp-body">
+          <strong>Long-term consistency &gt; short-term gains.</strong>
+          <span>The point is to compound, not to win one trade.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. RISK MODEL -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/04</div>
+      <h2 class="sec-title">Simple risk model</h2>
+      <div class="sec-sub">guardrails</div>
+    </div>
+    <div class="risk">
+      <p style="margin:0;color:var(--text-2);font-size:14px">Typical guidance — apply this even if you trade nothing else for the rest of your life:</p>
+      <div class="risk-grid">
+        <div class="risk-stat">
+          <div class="num">1–2%</div>
+          <div class="lbl">Risk per trade</div>
+        </div>
+        <div class="risk-stat">
+          <div class="num">No</div>
+          <div class="lbl">Over-leveraging</div>
+        </div>
+        <div class="risk-stat">
+          <div class="num">Never</div>
+          <div class="lbl">Chase losses</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. PERFORMANCE -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/05</div>
+      <h2 class="sec-title">Performance snapshot</h2>
+      <div class="sec-sub">live · since Apr 06</div>
+    </div>
+    <div class="perf">
+      <div class="stat"><div class="v pos" id="kpi-return">+68.95%</div><div class="l">Realized Return</div></div>
+      <div class="stat"><div class="v" id="kpi-wr">65.3%</div><div class="l">Win Rate</div></div>
+      <div class="stat"><div class="v neg" id="kpi-dd">-3.01%</div><div class="l">Max Drawdown</div></div>
+    </div>
+    <div class="perf" style="margin-top:14px">
+      <div class="stat"><div class="v pos" id="kpi-sharpe">7.33</div><div class="l">Sharpe (annualized)</div></div>
+      <div class="stat"><div class="v" id="kpi-pf">2.33</div><div class="l">Profit Factor</div></div>
+      <div class="stat"><div class="v" id="kpi-n">265</div><div class="l">Trades Closed</div></div>
+    </div>
+    <div class="trades">
+      <div class="trades-head">
+        <div>Bot</div>
+        <div>Trades</div>
+        <div>Win %</div>
+        <div>EV % per trade</div>
+        <div class="hide-m">Status</div>
+      </div>
+      <div class="trades-row" data-bot="deltabot">
+        <div>DeltaBot</div><div data-f="trades">132</div><div class="pos" data-f="wr">59.8%</div><div class="pos" data-f="ev">+0.69%</div><div class="hide-m" style="color:var(--green)">● live</div>
+      </div>
+      <div class="trades-row" data-bot="fibbot">
+        <div>FibBot</div><div data-f="trades">87</div><div class="pos" data-f="wr">71.3%</div><div class="pos" data-f="ev">+0.23%</div><div class="hide-m" style="color:var(--green)">● live</div>
+      </div>
+      <div class="trades-row" data-bot="fibmarket">
+        <div>FibMarket</div><div data-f="trades">46</div><div class="pos" data-f="wr">69.6%</div><div class="pos" data-f="ev">+0.18%</div><div class="hide-m" style="color:var(--green)">● live</div>
+      </div>
+    </div>
+    <p class="disclaim" style="margin-top:14px">// Live data from a $160 account, real money, since Apr 06 2026. Same-window benchmarks: <span id="bench-btc">BTC +17.37%</span>, <span id="bench-spy">SPY +8.97%</span>. <span id="last-updated" style="color:var(--green)">● updating live</span> · Past performance does not guarantee future results.</p>
+
+    <!-- Bot logic cards -->
+    <div class="grid grid-3" style="margin-top:28px">
+      <div class="card">
+        <span class="k">Bot 01 · v1.16</span>
+        <h3>DeltaBot</h3>
+        <p style="margin-bottom:12px"><strong style="color:var(--text)">Open-interest vs price divergence.</strong> Hyperliquid is a perp DEX — every position adds to open interest (OI). When OI and price disagree, traders are about to be wrong.</p>
+        <p style="font-size:13px;color:var(--text-3);font-family:var(--mono);line-height:1.7">
+          ▸ <span style="color:var(--text-2)">Short Squeeze Long</span> — ride squeezes when shorts are crowded<br/>
+          ▸ <span style="color:var(--text-2)">Crowded Long Short</span> — fade the crowd when longs are paying premium funding
+        </p>
+      </div>
+      <div class="card">
+        <span class="k">Bot 02 · v1.8</span>
+        <h3>FibBot</h3>
+        <p style="margin-bottom:12px"><strong style="color:var(--text)">Fibonacci pullback in trend.</strong> Identifies the last confirmed swing leg, waits for a Fibonacci retrace, and joins the trend on the pullback instead of chasing the breakout.</p>
+        <p style="font-size:13px;color:var(--text-3);font-family:var(--mono);line-height:1.7">
+          ▸ <span style="color:var(--text-2)">Direction filter</span> — only enters in the direction of the prevailing trend<br/>
+          ▸ <span style="color:var(--text-2)">Entry</span> — passive limit order at the retrace (lower fees, no chasing)<br/>
+          ▸ <span style="color:var(--text-2)">Exit</span> — tight trailing stop once the trade is in profit
+        </p>
+      </div>
+      <div class="card">
+        <span class="k">Bot 03 · v1.6</span>
+        <h3>FibMarket</h3>
+        <p style="margin-bottom:12px"><strong style="color:var(--text)">Same edge as FibBot, faster entry.</strong> Identical setup logic, but enters at market the moment price reaches the level — trades a little slippage for never missing a fast move.</p>
+        <p style="font-size:13px;color:var(--text-3);font-family:var(--mono);line-height:1.7">
+          ▸ <span style="color:var(--text-2)">Entry</span> — market order on touch, no waiting<br/>
+          ▸ <span style="color:var(--text-2)">Exits</span> — same trail and stop as FibBot for consistency<br/>
+          ▸ <span style="color:var(--text-2)">Use case</span> — high-momentum coins where passive limits get skipped
+        </p>
+      </div>
+    </div>
+    <p class="disclaim" style="margin-top:14px">// All three bots share: 0.5% risk per trade · ATR-based stops · cross-bot position isolation · 24/7 watchdog auto-restart. Strategies and parameters are versioned — every code or config change ships a new version tag so trades can be attributed back to the rule that produced them.</p>
+  </section>
+
+  <!-- 7. HOW TO START -->
+  <section>
+    <div class="sec-head">
+      <div class="sec-num">/06</div>
+      <h2 class="sec-title">How to start</h2>
+      <div class="sec-sub">~10 min</div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <strong>Choose your plan</strong>
+          <span>$29 signals entry, or $199 full automation.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <strong>Connect your account</strong>
+          <span>Or subscribe to live signals on Telegram / dashboard.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <strong>Activate the system</strong>
+          <span>One toggle. Risk caps applied automatically.</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <strong>Monitor the dashboard</strong>
+          <span>Live P&amp;L, open positions, version history. No black box.</span>
+        </div>
+      </div>
+    </div>
+    <p style="margin:18px 0 0;font-family:var(--mono);font-size:13px;color:var(--green)">// Setup takes less than 10 minutes.</p>
+  </section>
+
+  <!-- 8. CTA -->
+  <section class="cta">
+    <h2>Stop guessing. Start using a system.</h2>
+    <p>Pick your entry point. Both come with the same dashboard, version history, and risk model.</p>
+    <div class="btns">
+      <button class="btn" data-cta="signals_29" data-umami-event="kit_cta_click" data-umami-event-tier="signals_29" onclick="window.location.href='#signals'">
+        <span class="desc">Live signals · Telegram + dashboard</span>
+        <span class="price">$29<span style="font-size:13px;color:var(--text-3);font-weight:400"> / mo</span></span>
+        <span class="desc">→ Start with signals</span>
+      </button>
+      <a class="btn primary" data-cta="automation_199" data-umami-event="kit_cta_click" data-umami-event-tier="automation_199" href="https://buy.stripe.com/eVq7sL9egakpdKzekR4ow04" target="_blank" rel="noopener">
+        <span class="desc">Full automation · trades execute for you</span>
+        <span class="price">$199<span style="font-size:13px;font-weight:400;color:rgba(14,18,24,.6)"> / mo</span></span>
+        <span class="desc">→ Upgrade to full automation</span>
+      </a>
+    </div>
+  </section>
+
+  <p class="disclaim">// Disclaimer: trading carries risk of loss. The Copy Trading Starter Kit and HyperForge systems are tools, not financial advice. You are responsible for your own capital, your own exchange account, and your own decisions. Numbers and example trades shown above are illustrative.</p>
+
+  <footer>
+    <div>// HyperForge · Copy Trading Starter Kit</div>
+    <div>v1.0 · 2026</div>
+  </footer>
+</div>
+
+<script>
+/* ─── Live performance updater ─────────────────────────────────── */
+const API = 'https://stats.hip3radar.xyz/api/hyperforge/live-stats';
+const fmtPct = (n, signed=false) => {
+  if (n == null || isNaN(n)) return '—';
+  const s = (signed && n > 0 ? '+' : '') + Number(n).toFixed(2) + '%';
+  return s;
+};
+const fmtNum = (n, d=2) => (n==null||isNaN(n))?'—':Number(n).toFixed(d);
+const $  = id => document.getElementById(id);
+
+async function refreshStats(){
+  try{
+    const r = await fetch(API, {cache:'no-store'});
+    if(!r.ok) throw new Error('http '+r.status);
+    const d = await r.json();
+    // KPI cards
+    if($('kpi-return')) $('kpi-return').textContent = fmtPct(d.combined_pnl_pct, true);
+    if($('kpi-wr'))     $('kpi-wr').textContent     = fmtNum(d.combined_win_rate, 1) + '%';
+    if($('kpi-dd'))     $('kpi-dd').textContent     = fmtPct(d.max_dd_pct, true);
+    if($('kpi-sharpe')) $('kpi-sharpe').textContent = fmtNum(d.sharpe_annualized, 2);
+    if($('kpi-pf'))     $('kpi-pf').textContent     = fmtNum(d.profit_factor, 2);
+    if($('kpi-n'))      $('kpi-n').textContent      = (d.combined_trade_count||0).toString();
+    // Per-bot rows
+    (d.bots||[]).forEach(b=>{
+      const row = document.querySelector(`.trades-row[data-bot="${b.key}"]`);
+      if(!row) return;
+      const tcell = row.querySelector('[data-f="trades"]');
+      const wcell = row.querySelector('[data-f="wr"]');
+      if(tcell) tcell.textContent = (b.trade_count||0).toString();
+      if(wcell) wcell.textContent = fmtNum(b.win_rate, 1) + '%';
+      // EV not in public endpoint — leave the static value as the lifetime baseline
+    });
+    // Bench
+    if(d.benchmarks){
+      const bb = d.benchmarks;
+      const btc = $('bench-btc'), spy = $('bench-spy');
+      if(btc) btc.textContent = 'BTC ' + fmtPct(bb.btc_return_pct, true);
+      if(spy) spy.textContent = 'SPY ' + fmtPct(bb.spy_return_pct, true);
+    }
+    // Last updated
+    if($('last-updated')){
+      const ts = d.updated_ts ? new Date(d.updated_ts*1000) : new Date();
+      const hh = String(ts.getHours()).padStart(2,'0'), mm = String(ts.getMinutes()).padStart(2,'0');
+      $('last-updated').textContent = `● live · ${hh}:${mm}`;
+    }
+  }catch(e){
+    if($('last-updated')) $('last-updated').textContent = '● cached';
+  }
+}
+refreshStats();
+setInterval(refreshStats, 30000);
+
+/* ─── Umami event helpers ──────────────────────────────────────── */
+function track(name, props){
+  try{ window.umami && window.umami.track && window.umami.track(name, props||{}); } catch(e){}
+}
+// Stripe outbound (Stan Store / Stripe links)
+document.querySelectorAll('a[href*="stripe.com"], a[href*="stan.store"]').forEach(a=>{
+  a.addEventListener('click',()=>track('kit_outbound', {href:a.href, tier:a.dataset.cta||''}));
+});
+// Generic CTA buttons
+document.querySelectorAll('[data-cta]').forEach(el=>{
+  el.addEventListener('click',()=>track('kit_cta_click', {tier:el.dataset.cta}));
+});
+</script>
+</body>
+</html>
