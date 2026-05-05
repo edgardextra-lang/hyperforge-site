@@ -157,9 +157,9 @@
   const params  = new URLSearchParams(location.search);
   const session = params.get('session_id');
 
-  // The entitlement service URL — configured at deploy time (see ENTITLEMENT_BASE below).
-  // For now points to the named tunnel that exposes :5052 publicly.
-  const ENTITLEMENT_BASE = 'https://entitle.hip3radar.xyz';
+  // Proxy through the existing stats tunnel (more DNS-resilient than entitle subdomain).
+  // Backend: dashboard.py on :5051 forwards /api/entitle/* → entitlement service on :5052.
+  const ENTITLEMENT_BASE = 'https://stats.hip3radar.xyz/api/entitle';
 
   const stateBox = document.getElementById('state');
   const stateLbl = document.getElementById('state-label');
@@ -187,6 +187,7 @@
   async function fetchInvite(){
     attempts += 1;
     try{
+      // Note: proxy adds /api/entitle prefix, then forwards to entitlement which expects /api/invite
       const r = await fetch(`${ENTITLEMENT_BASE}/api/invite?session_id=${encodeURIComponent(session)}`, {cache:'no-store'});
       const d = await r.json().catch(()=>({}));
       if (r.ok && d.ok && d.invite_link){
