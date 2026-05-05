@@ -273,7 +273,7 @@
       <span>// fully owned by you</span>
     </div>
     <div class="hero-cta">
-      <a class="primary" href="mailto:edgard.extra@gmail.com?subject=Custom%20Bot%20Build%20-%20Application" data-cta="build_apply" data-umami-event="build_cta_click" data-umami-event-tier="apply_top">→ Apply / Book a call</a>
+      <a class="primary" href="https://calendar.app.google/6NvqQAkVbWF16C4K9" target="_blank" rel="noopener" data-cta="build_apply" data-umami-event="build_cta_click" data-umami-event-tier="apply_top">→ Apply / Book a call</a>
       <a href="#pricing" data-cta="build_pricing" data-umami-event="build_cta_click" data-umami-event-tier="pricing_top">See pricing ↓</a>
     </div>
   </header>
@@ -478,7 +478,7 @@
           <li>Setup + deployment docs</li>
           <li>1 round of post-launch tuning</li>
         </ul>
-        <a class="pick" href="mailto:edgard.extra@gmail.com?subject=Custom%20Bot%20Build%20-%20Starter" data-cta="build_starter" data-umami-event="build_cta_click" data-umami-event-tier="starter_1k">→ Apply for Starter</a>
+        <a class="pick" href="https://calendar.app.google/6NvqQAkVbWF16C4K9" target="_blank" rel="noopener" data-cta="build_starter" data-umami-event="build_cta_click" data-umami-event-tier="starter_1k">→ Apply for Starter</a>
       </div>
       <div class="tier featured">
         <div class="ribbon">// Most chosen</div>
@@ -495,7 +495,7 @@
           <li>Deployment, docs, operating rules</li>
           <li>2 rounds of post-launch iteration</li>
         </ul>
-        <a class="pick" href="mailto:edgard.extra@gmail.com?subject=Custom%20Bot%20Build%20-%20Full%20Build" data-cta="build_full" data-umami-event="build_cta_click" data-umami-event-tier="full_2_3k">→ Apply for Full Build</a>
+        <a class="pick" href="https://calendar.app.google/6NvqQAkVbWF16C4K9" target="_blank" rel="noopener" data-cta="build_full" data-umami-event="build_cta_click" data-umami-event-tier="full_2_3k">→ Apply for Full Build</a>
       </div>
     </div>
   </section>
@@ -521,7 +521,7 @@
     <h2>Ready to stop deciding mid-trade?</h2>
     <p>Apply now. Limited spots per month due to build time and customization depth — I work directly with you on every system, no junior handoff.</p>
     <div class="row">
-      <a class="btn primary" href="mailto:edgard.extra@gmail.com?subject=Custom%20Bot%20Build%20-%20Application" data-cta="build_apply_bottom" data-umami-event="build_cta_click" data-umami-event-tier="apply_bottom">→ Apply / Book a call</a>
+      <a class="btn primary" href="https://calendar.app.google/6NvqQAkVbWF16C4K9" target="_blank" rel="noopener" data-cta="build_apply_bottom" data-umami-event="build_cta_click" data-umami-event-tier="apply_bottom">→ Apply / Book a call</a>
       <a class="btn" href="../kit/" data-cta="build_kit_redirect" data-umami-event="build_cta_click" data-umami-event-tier="kit_redirect">Read the free starter kit first</a>
     </div>
     <div class="scarcity">// Currently accepting 2–3 builds per month</div>
@@ -544,8 +544,8 @@
 function track(name, props){
   try{ window.umami && window.umami.track && window.umami.track(name, props||{}); }catch(e){}
 }
-document.querySelectorAll('a[href^="mailto:"]').forEach(a=>{
-  a.addEventListener('click',()=>track('build_outbound', {tier:a.dataset.cta||'mailto', href:a.href}));
+document.querySelectorAll('a[href*="calendar.app.google"], a[href^="mailto:"]').forEach(a=>{
+  a.addEventListener('click',()=>track('build_outbound', {tier:a.dataset.cta||'link', href:a.href}));
 });
 document.querySelectorAll('[data-cta]').forEach(el=>{
   el.addEventListener('click',()=>track('build_cta_click', {tier:el.dataset.cta}));
