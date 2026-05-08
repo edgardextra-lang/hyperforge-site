@@ -185,6 +185,67 @@
   .stat .v.neg{color:var(--red)}
   .stat .l{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--text-3);margin-top:6px}
 
+  /* ─────────── Benchmark comparison card ─────────── */
+  .bench-card{
+    margin-top:20px;
+    border:1px solid rgba(63,228,145,.35);
+    background:linear-gradient(180deg,rgba(63,228,145,.06),transparent 60%),var(--bg-2);
+    padding:22px 24px 24px;
+    box-shadow:0 0 28px rgba(63,228,145,.06);
+  }
+  .bench-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line);
+  }
+  .bench-tag{
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--green);
+  }
+  .bench-mult{
+    font-family:var(--mono);font-size:13px;color:var(--text-2);letter-spacing:.04em;
+  }
+  .bench-mult b{color:var(--green);font-weight:700;font-size:15px}
+  .bench-row{
+    display:grid;grid-template-columns:160px 1fr 110px;align-items:center;gap:14px;
+    padding:10px 0;
+  }
+  .bench-row + .bench-row{border-top:1px dashed var(--line)}
+  .bench-label{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text)}
+  .bench-label em{color:var(--green);font-style:normal;font-weight:600;font-size:12px;font-family:var(--mono);margin-left:4px}
+  .bench-name{font-weight:500}
+  .bench-dot{width:10px;height:10px;border-radius:50%;flex:none}
+  .bench-dot.hf{background:var(--green);box-shadow:0 0 10px rgba(63,228,145,.55)}
+  .bench-dot.btc{background:#F7931A}      /* Bitcoin official orange */
+  .bench-dot.spy{background:#9CA3AF}      /* SPY: muted gray (functional, not corporate blue) */
+  .bench-bar{
+    height:14px;background:var(--bg);border:1px solid var(--line);
+    position:relative;overflow:hidden;
+  }
+  .bench-fill{
+    height:100%;
+    transition:width 700ms cubic-bezier(.2,.7,.2,1);
+  }
+  .bench-fill.hf{
+    background:linear-gradient(90deg,var(--green-dim),var(--green));
+    box-shadow:0 0 18px rgba(63,228,145,.35);
+  }
+  .bench-fill.btc{background:linear-gradient(90deg,#B8730A,#F7931A)}
+  .bench-fill.spy{background:linear-gradient(90deg,#6B7280,#9CA3AF)}
+  .bench-val{
+    font-family:var(--mono);font-weight:700;font-size:18px;
+    color:var(--text);text-align:right;letter-spacing:-.01em;
+  }
+  .bench-val.pos{color:var(--green)}
+  /* Mobile: stack label-bar-value vertically per row */
+  @media (max-width:680px){
+    .bench-card{padding:18px 18px 20px}
+    .bench-head{flex-direction:column;align-items:flex-start;gap:6px}
+    .bench-row{grid-template-columns:1fr 90px;grid-template-rows:auto auto;gap:6px 12px}
+    .bench-label{grid-column:1/2;grid-row:1}
+    .bench-val{grid-column:2/3;grid-row:1}
+    .bench-bar{grid-column:1/-1;grid-row:2;height:10px}
+  }
+
   .trades{margin-top:18px;border:1px solid var(--line);background:var(--bg-2)}
   .trades-head, .trades-row{
     display:grid;grid-template-columns:1fr .8fr .8fr .8fr 1fr;
@@ -454,6 +515,39 @@
       <div class="stat"><div class="v" id="kpi-pf">2.33</div><div class="l">Profit Factor</div></div>
       <div class="stat"><div class="v" id="kpi-n">265</div><div class="l">Trades Closed</div></div>
     </div>
+
+    <!-- BENCHMARK COMPARISON: HyperForge vs BTC vs SPY (same-window) -->
+    <div class="bench-card" id="bench-card">
+      <div class="bench-head">
+        <span class="bench-tag">// vs Market · same window</span>
+        <span class="bench-mult"><b id="mult-btc">3.97×</b> BTC · <b id="mult-spy">7.69×</b> SPY</span>
+      </div>
+      <div class="bench-row" data-series="hf">
+        <div class="bench-label">
+          <span class="bench-dot hf"></span>
+          <span class="bench-name">HyperForge <em>(you)</em></span>
+        </div>
+        <div class="bench-bar"><div class="bench-fill hf" id="bar-hf" style="width:100%"></div></div>
+        <div class="bench-val pos" id="bench-hf">+68.95%</div>
+      </div>
+      <div class="bench-row" data-series="btc">
+        <div class="bench-label">
+          <span class="bench-dot btc"></span>
+          <span class="bench-name">Bitcoin</span>
+        </div>
+        <div class="bench-bar"><div class="bench-fill btc" id="bar-btc" style="width:25%"></div></div>
+        <div class="bench-val" id="bench-btc-val">+17.37%</div>
+      </div>
+      <div class="bench-row" data-series="spy">
+        <div class="bench-label">
+          <span class="bench-dot spy"></span>
+          <span class="bench-name">S&amp;P 500</span>
+        </div>
+        <div class="bench-bar"><div class="bench-fill spy" id="bar-spy" style="width:13%"></div></div>
+        <div class="bench-val" id="bench-spy-val">+8.97%</div>
+      </div>
+    </div>
+
     <div class="trades">
       <div class="trades-head">
         <div>Bot</div>
@@ -608,12 +702,36 @@ async function refreshStats(){
       if(wcell) wcell.textContent = fmtNum(b.win_rate, 1) + '%';
       // EV not in public endpoint — leave the static value as the lifetime baseline
     });
-    // Bench
+    // Bench — update both the buried disclaim spans AND the new comparison card
     if(d.benchmarks){
-      const bb = d.benchmarks;
-      const btc = $('bench-btc'), spy = $('bench-spy');
-      if(btc) btc.textContent = 'BTC ' + fmtPct(bb.btc_return_pct, true);
-      if(spy) spy.textContent = 'SPY ' + fmtPct(bb.spy_return_pct, true);
+      const bb  = d.benchmarks;
+      const hf  = Number(d.combined_pnl_pct) || 0;
+      const btc = Number(bb.btc_return_pct)  || 0;
+      const spy = Number(bb.spy_return_pct)  || 0;
+
+      // Legacy disclaim spans (kept for context line)
+      const bspanBtc = $('bench-btc'), bspanSpy = $('bench-spy');
+      if(bspanBtc) bspanBtc.textContent = 'BTC ' + fmtPct(btc, true);
+      if(bspanSpy) bspanSpy.textContent = 'SPY ' + fmtPct(spy, true);
+
+      // New comparison card — values
+      if($('bench-hf'))      $('bench-hf').textContent      = fmtPct(hf,  true);
+      if($('bench-btc-val')) $('bench-btc-val').textContent = fmtPct(btc, true);
+      if($('bench-spy-val')) $('bench-spy-val').textContent = fmtPct(spy, true);
+
+      // Bar widths — proportional to the absolute max across the three series.
+      // Negative returns get a token 4% sliver so the bar is still visible.
+      const maxAbs = Math.max(Math.abs(hf), Math.abs(btc), Math.abs(spy), 1);
+      const widthFor = v => v <= 0 ? 4 : Math.max(4, (v / maxAbs) * 100);
+      const barHF  = $('bar-hf'),  barBtc = $('bar-btc'),  barSpy = $('bar-spy');
+      if(barHF)  barHF.style.width  = widthFor(hf)  + '%';
+      if(barBtc) barBtc.style.width = widthFor(btc) + '%';
+      if(barSpy) barSpy.style.width = widthFor(spy) + '%';
+
+      // Multiplier callouts — only meaningful when both we and benchmark are positive
+      const mBtc = $('mult-btc'), mSpy = $('mult-spy');
+      if(mBtc) mBtc.textContent = (hf > 0 && btc > 0) ? (hf/btc).toFixed(2) + '×' : '—';
+      if(mSpy) mSpy.textContent = (hf > 0 && spy > 0) ? (hf/spy).toFixed(2) + '×' : '—';
     }
     // Last updated
     if($('last-updated')){
